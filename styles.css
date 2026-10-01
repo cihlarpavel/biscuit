@@ -1,6 +1,7 @@
 /* Biscuit – pastelový vzhled s čmáranicemi na pozadí. */
 :root {
   --bg: #fff4f8;
+  --pozadi-kresby: none;
   --karta: #ffffff;
   --text: #3b2a3f;
   --tlumene: #8a7891;
@@ -24,6 +25,7 @@ body {
   font-family: ui-rounded, "SF Pro Rounded", system-ui, -apple-system, sans-serif;
   color: var(--text);
   background: var(--bg) var(--pozadi-kresby) repeat;
+  transition: background-color .6s;
   background-size: 220px;
   -webkit-user-select: none; user-select: none;
 }
@@ -364,3 +366,16 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 @keyframes vykukP { 0%, 80%, 100% { translate: 0 0; rotate: 0deg; } 85% { translate: -6px 0; rotate: -12deg; } 90% { translate: 0 0; rotate: 6deg; } }
 .zlata-velka { display: grid; place-items: center; margin-top: 30px; animation: zlataPrilet .8s cubic-bezier(.3, 1.6, .5, 1); }
 .zlata-velka .ik { filter: drop-shadow(0 8px 20px rgba(224, 168, 0, .45)); }
+
+/* ---------- Světy ---------- */
+.svety { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 8px; }
+.svet { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 12px; min-height: 96px; border-radius: 18px;
+  box-shadow: var(--stin); border: 3px solid #fff; text-align: left; }
+.svet span { font-size: 30px; line-height: 1; }
+.svet b { font-size: 15px; margin-top: auto; }
+.svet small { font-size: 11px; color: var(--tlumene); font-weight: 700; }
+.svet.on { border-color: var(--ruzova); }
+.svet.zamceny { filter: grayscale(.8); opacity: .55; }
+.svet-velky { width: 200px; height: 200px; margin: 40px auto 10px; border-radius: 40px; display: grid; place-items: center;
+  box-shadow: var(--stin); border: 5px solid #fff; background-size: 120px !important; animation: zlataPrilet .8s cubic-bezier(.3, 1.6, .5, 1); }
+.svet-velky span { font-size: 90px; }

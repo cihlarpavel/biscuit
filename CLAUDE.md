@@ -22,6 +22,10 @@ v `sw.js`, commit, `git push` (`gh` je v `~/.local/bin/gh`). Ve škole jsou na s
   větev v kreslicí funkci. **Id věcí neměnit a nesmí se opakovat** (jsou v `koupeno`).
   Náhled všech věcí: `tools/satnik.html?k=<kategorie>`. Masky jen obecné, žádné cizí postavy (autorská práva).
 - Šatník se v aplikaci jmenuje **Drip shop** (vystouplé tlačítko uprostřed lišty, route `#/obchod`). Na záložce Já je vlastní postavička.
+- `js/svety.js` – pozadí aplikace („světy“) se odemyká podle sušenek nasbíraných **celkem**
+  (`susenkyCelkem`, utrácení ho nesnižuje; tituly i žebříček jedou podle něj). Sušenky přidávat jen
+  přes `S.pridej(p, n)`, jinak se celkový součet nepohne.
+- Postavička má obrysy (`OBRYS`), stínování pleti a oblečení, oči s duhovkou (kategorie Barva očí) a obočí.
 - `js/ikony.js` – vlastní ikony ve stylu nálepek (`ik('nazev')`), náhled v `tools/ikony.html`.
 - `js/hlasky.js` – všechny hlášky a tituly. Tón: suchá nadsázka, slang jen střídmě (Pavel:
   nesmí působit jako dospělý, který napodobuje dítě). Neoslovovat jménem (5. pád nejde).

@@ -34,19 +34,3 @@ export function maskot(velikost = 120, nalada = 'radost') {
     <path d="M18 30 l2 6 l6 2 l-6 2 l-2 6 l-2 -6 l-6 -2 l6 -2 z" fill="#ffc94d"/>
   </svg>`;
 }
-
-// Čmáranice na pozadí: srdíčka, hvězdičky, jiskry, sušenky a vlnky. Jedna dlaždice se opakuje.
-export const POZADI = (() => {
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="220" height="220" viewBox="0 0 220 220">
-  <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" opacity=".55">
-    <path d="M30 42 c-8 -10 -22 0 -12 12 l12 12 l12 -12 c10 -12 -4 -22 -12 -12z" stroke="#ff8fbf"/>
-    <path d="M160 30 l4 11 l11 4 l-11 4 l-4 11 l-4 -11 l-11 -4 l11 -4z" stroke="#c4a7ff"/>
-    <circle cx="170" cy="150" r="14" stroke="#f0b46e"/><circle cx="165" cy="146" r="1.6" fill="#f0b46e"/><circle cx="175" cy="153" r="1.6" fill="#f0b46e"/>
-    <path d="M40 160 q10 -10 20 0 t20 0 t20 0" stroke="#7fd8c4"/>
-    <path d="M100 95 l3 7 l7 3 l-7 3 l-3 7 l-3 -7 l-7 -3 l7 -3z" stroke="#ffc94d"/>
-    <path d="M200 100 c-5 -6 -13 0 -7 7 l7 7 l7 -7 c6 -7 -2 -13 -7 -7z" stroke="#c4a7ff"/>
-    <circle cx="80" cy="30" r="3" stroke="#7fd8c4"/><circle cx="125" cy="190" r="3" stroke="#ff8fbf"/>
-    <path d="M20 110 l6 0 m-3 -3 l0 6" stroke="#ffc94d"/><path d="M120 150 l6 0 m-3 -3 l0 6" stroke="#ff8fbf"/>
-  </g></svg>`;
-  return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
-})();

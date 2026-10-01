@@ -7,12 +7,12 @@ import { hraj } from './hra.js';
 import { nastavUceni } from './cas.js';
 import { odemkni, speak, zvukFanfara } from './speech.js';
 import { ODZNAKY, zkontroluj } from './odznaky.js';
-import { maskot, POZADI } from './maskot.js';
+import { maskot } from './maskot.js';
+import { SVETY, nastavSvet, odemcene as odemceneSvety, svetPro, nasbirano, nahledSveta } from './svety.js';
 import * as H from './hlasky.js';
 import { obrazovka, esc, $, $$, kolecko, minuty, toast, konfety, zpet } from './ui.js';
 import { ik, maIkonu } from './ikony.js';
 
-document.documentElement.style.setProperty('--pozadi-kresby', POZADI);
 addEventListener('pointerdown', odemkni, { once: true });
 $$('#tabs a[data-ik]').forEach(a => (a.querySelector('span').innerHTML = ik(a.dataset.ik, a.classList.contains('stred') ? 40 : 32, { podklad: false })));
 // Na záložce Já je vlastní postavička (překreslí se při každé změně obrazovky).
@@ -31,6 +31,13 @@ const TRASY = {
 function route() {
   nastavUceni(false);
   tabJa();
+  const x0 = p();
+  nastavSvet(x0);
+  if (x0) {
+    const nejnovejsi = odemceneSvety(x0).pop();
+    if (x0.svetVidel === undefined) x0.svetVidel = nejnovejsi.id; // stávající profily oslavu nedostanou zpětně
+    if (x0.svetVidel !== nejnovejsi.id) { x0.svetVidel = nejnovejsi.id; S.uloz(); return novySvet(nejnovejsi); }
+  }
   const [cesta, arg] = location.hash.replace(/^#\/?/, '').split('/');
   if (!S.profily().length && cesta !== 'novy') return obrazovkaVitej();
   if (!p() && cesta !== 'novy') return profily();
@@ -43,7 +50,7 @@ const jdi = h => { if (location.hash === h) route(); else location.hash = h; };
 function hlavicka(x) {
   return `<header class="hlavicka">
     <a href="#/profily" class="kdo"><span class="avatar">${av(x)}</span>
-      <span><b>${jmeno(x)}</b><small>${esc(H.titul(x.susenky))}</small></span></a>
+      <span><b>${jmeno(x)}</b><small>${esc(H.titul(nasbirano(x)))}</small></span></a>
     <span class="stat">${ik('ohen', 22, { podklad: false })} ${S.serie(x)}</span><span class="stat">${ik('susenka', 22, { podklad: false })} ${x.susenky}</span></header>`;
 }
 
@@ -58,7 +65,7 @@ function profily() {
   const vse = S.profily();
   obrazovka(`<section class="stranka">${p() ? zpet('#/') : ''}<h1>Kdo hraje?</h1>
     <div class="profily">${vse.map(x => `<button class="profil-karta" data-id="${x.id}">
-      <span class="avatar velky">${av(x, 70)}</span><b>${jmeno(x)}</b><small>${esc(H.titul(x.susenky))}</small></button>`).join('')}
+      <span class="avatar velky">${av(x, 70)}</span><b>${jmeno(x)}</b><small>${esc(H.titul(nasbirano(x)))}</small></button>`).join('')}
       <a class="profil-karta pridat" href="#/novy"><span class="avatar velky">＋</span><b>Přidat kamarádku</b><small>nebo kamaráda</small></a>
     </div></section>`, { bezListy: true });
   $$('.profil-karta[data-id]').forEach(b => (b.onclick = () => { S.prepni(b.dataset.id); jdi('#/'); }));
@@ -150,7 +157,7 @@ function spustLekci(idBalicku) {
       if (u.polozka?.id && prvni) zapis(x, u.polozka, ok);
       const d = S.den(x);
       ok ? d.ok++ : d.chyby++;
-      if (ok && prvni) x.susenky += u.zlata ? 5 : 1;
+      if (ok && prvni) S.pridej(x, u.zlata ? 5 : 1);
       S.uloz();
     },
     konec: v => {
@@ -163,7 +170,7 @@ function spustLekci(idBalicku) {
       let bonus = 5 + (v.perfekt ? 5 : 0);
       const cilTed = !cilPred && d.s >= x.nastaveni.cil * 60;
       if (cilTed) bonus += 10;
-      x.susenky += bonus;
+      S.pridej(x, bonus);
       const nove = zkontroluj(x, { perfekt: v.perfekt, hodina: new Date().getHours() });
       S.uloz();
       konecLekce(x, v, bonus, cilTed, nove);
@@ -254,13 +261,13 @@ function vysledekBattlu(h1, h2, [s1, s2]) {
   let text;
   if (s1 === s2) {
     text = H.nahodne(H.SOUBOJ.remiza);
-    [h1, h2].forEach(h => { h.souboje.remizy++; h.susenky += 5; });
+    [h1, h2].forEach(h => { h.souboje.remizy++; S.pridej(h, 5); });
   } else {
     const [v, pr] = s1 > s2 ? [h1, h2] : [h2, h1];
     const rozdil = Math.abs(s1 - s2);
     text = H.dosad(H.nahodne(rozdil <= 150 ? H.SOUBOJ.tesne : H.SOUBOJ.jasne), { vitez: v.prezdivka, porazena: pr.prezdivka });
-    v.souboje.vyhry++; v.susenky += 10;
-    pr.souboje.prohry++; pr.susenky += 3;
+    v.souboje.vyhry++; S.pridej(v, 10);
+    pr.souboje.prohry++; S.pridej(pr, 3);
   }
   const nove = [h1, h2].flatMap(h => zkontroluj(h).map(o => ({ ...o, kdo: h })));
   S.uloz();
@@ -283,7 +290,7 @@ function zebricek() {
   const x = p();
   const vse = S.profily();
   const kategorie = [
-    { ikona: '🍪', nazev: 'Nejvíc sušenek', hodnota: o => o.susenky, fmt: n => n,
+    { ikona: '🍪', nazev: 'Nejvíc sušenek celkem', hodnota: o => nasbirano(o), fmt: n => n,
       vtip: (v, n) => `${v} vede o ${n} 🍪. Ostatní zatím jen drobí.` },
     { ikona: '🔥', nazev: 'Nejdelší série teď', hodnota: o => S.serie(o), fmt: n => `${n} dní`,
       vtip: v => `${v} je on fire. Doslova.` },
@@ -323,7 +330,7 @@ function ja() {
   const ziskane = ODZNAKY.filter(o => x.odznaky[o.id]);
   const zbyvajici = ODZNAKY.filter(o => !x.odznaky[o.id] && !o.id.startsWith('mistr-'));
   obrazovka(`${hlavicka(x)}<section class="stranka">
-    <div class="ja-hlava"><span class="avatar obri">${postavicka(x.vzhled, 120)}</span><h1>${jmeno(x)}</h1><p class="titul">${esc(H.titul(x.susenky))}</p>
+    <div class="ja-hlava"><span class="avatar obri">${postavicka(x.vzhled, 120)}</span><h1>${jmeno(x)}</h1><p class="titul">${esc(H.titul(nasbirano(x)))}</p>
       <a class="btn" href="#/obchod">${ik('tab-drip', 28, { podklad: false })} Drip shop</a></div>
     <div class="cisla">
       <div><b>${S.serie(x)}</b><small>🔥 série</small></div>
@@ -335,6 +342,10 @@ function ja() {
     <div class="graf">${dny.map(k => { const m = minuty(x.dny[k.k]?.s || 0); return `<div class="sloupec${m >= x.nastaveni.cil ? ' splneno' : ''}">
       <span>${m || ''}</span><i style="height:${m / maxMin * 100}%"></i><small>${k.nazev}</small></div>`; }).join('')}
       <div class="cil-cara" style="bottom:calc(${x.nastaveni.cil / maxMin} * (100% - 34px) + 20px)"></div></div>
+    <h2>Moje světy <small>${odemceneSvety(x).length} z ${SVETY.length}</small></h2>
+    <p class="drobne">Nový svět se odemkne s dalším titulem. Klepnutím si vybereš pozadí.</p>
+    <div class="svety">${SVETY.map(s => { const ok = nasbirano(x) >= s.od; return `<button class="svet${svetPro(x).id === s.id ? ' on' : ''}${ok ? '' : ' zamceny'}" data-svet="${s.id}" ${ok ? '' : 'disabled'}
+      style="background:${s.bg} ${nahledSveta(s)} center/110px"><span>${ok ? s.ikona : ik('zamek', 30, { podklad: false })}</span><b>${esc(s.nazev)}</b><small>${ok ? esc(s.titul) : `od ${s.od} 🍪 celkem`}</small></button>`; }).join('')}</div>
     <h2>Odznaky <small>${ziskane.length}</small></h2>
     <div class="odznaky">${ziskane.map(o => `<div class="odznak"><span>${o.ikona}</span><b>${esc(o.nazev)}</b><small>${esc(o.popis)}</small></div>`).join('')}
       ${zbyvajici.map(o => `<div class="odznak zamceny"><span>${o.ikona}</span><b>${esc(o.nazev)}</b><small>${esc(o.popis)}</small></div>`).join('')}</div>
@@ -342,6 +353,7 @@ function ja() {
       <a class="btn vedlejsi" href="#/profily">Přepnout profil</a>
       <a class="odkaz" href="#/rodic">Pro rodiče</a></div>
   </section>`, { tab: 'ja' });
+  $$('.svet[data-svet]').forEach(b => (b.onclick = () => { x.svet = b.dataset.svet; S.uloz(); nastavSvet(x); ja(); }));
   vlozSchovanou('ja');
 }
 
@@ -471,6 +483,16 @@ function rodic() {
   $('#zmenapin').onclick = () => { r.pin = null; rodicOdemceno = false; S.uloz(); rodic(); };
 }
 
+// ---------- Nový svět ----------
+function novySvet(s) {
+  obrazovka(`<section class="stranka konec">
+    <div class="svet-velky" style="background:${s.bg} ${nahledSveta(s)}"><span>${s.ikona}</span></div>
+    <h1>Nový svět: ${esc(s.nazev)}!</h1>
+    <p class="hlaska">Máš titul ${esc(s.titul)}. Aplikace se ti právě přestěhovala.</p>
+    <a class="btn velke" href="#/">Jdu se podívat</a></section>`, { bezListy: true });
+  konfety(); zvukFanfara();
+}
+
 // ---------- Schovaná zlatá sušenka (překvapení) ----------
 // Některé dny (asi 4 z 10) se po první lekci schová na náhodné obrazovce. Kde a kdy, je dané
 // přezdívkou a datem, takže se během dne nestěhuje. Po nalezení spustí Bleskovku.
@@ -515,7 +537,7 @@ function bleskovka(x) {
       if (v.preruseno) return jdi('#/');
       const vse = v.spravne === ulohy.length;
       const zisk = v.spravne * 2 + (vse ? 10 : 0);
-      x.susenky += zisk;
+      S.pridej(x, zisk);
       const nove = zkontroluj(x);
       S.uloz();
       obrazovka(`<section class="stranka konec">${zpet('#/', 'Domů')}${maskot(140, vse ? 'mrk' : 'radost')}

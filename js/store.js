@@ -20,6 +20,7 @@ export function novyProfil(prezdivka, vzhled) {
     id: crypto.randomUUID?.() || String(Date.now()) + Math.random().toString(16).slice(2),
     prezdivka, vzhled, vytvoreno: Date.now(),
     susenky: 0,
+    susenkyCelkem: 0, // nasbíráno celkem, utrácení ho nesnižuje
     srs: {},          // id položky -> { b: přihrádka 0–6, due: číslo dne, ok, chyby }
     dny: {},          // 'YYYY-MM-DD' -> { s: aktivní sekundy, lekce, ok, chyby }
     odznaky: {},      // id -> datum získání
@@ -31,6 +32,12 @@ export function novyProfil(prezdivka, vzhled) {
   stav.aktivni = p.id;
   uloz();
   return p;
+}
+
+// Přidá sušenky a zároveň je připíše do celkového součtu (podle něj se odemykají tituly a světy).
+export function pridej(p, n) {
+  p.susenkyCelkem = Math.max(p.susenkyCelkem || 0, p.susenky) + n;
+  p.susenky += n;
 }
 
 export const profil = (id = stav.aktivni) => stav.profily.find(p => p.id === id) || null;
