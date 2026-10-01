@@ -304,13 +304,13 @@ function oci(id, iris = '#7a4a2a') {
     <circle cx="${cx}" cy="${52.6}" r="${3.3 * k}" fill="${iris}"/><circle cx="${cx}" cy="52.6" r="${1.7 * k}" fill="#1e1420"/>
     <circle cx="${cx + 1.3 * k}" cy="${51 - .3 * k}" r="${1.2 * k}" fill="#fff"/><circle cx="${cx - 1.1 * k}" cy="${54.2 + .2 * k}" r="${.55 * k}" fill="#fff"/>
     <path d="M${cx - 4.9 * k} ${51.2 - k} q${4.9 * k} ${-5.2 * k} ${9.8 * k} 0" stroke="${H}" stroke-width="1.9" fill="none" stroke-linecap="round"/>`;
-  const zornicky = () => oko(50) + oko(70);
+  const zornicky = () => oko(50, 1.18) + oko(70, 1.18);
   const rasy = `<path d="M45 49.4 l-2.8 -2.2 M46.6 47.6 l-1.6 -2.8 M75 49.4 l2.8 -2.2 M73.4 47.6 l1.6 -2.8" stroke="${H}" stroke-width="1.5" stroke-linecap="round"/>`;
   switch (id) {
     case 'rasy': return zornicky() + rasy;
-    case 'mrk': return oko(50) + `<path d="M65.5 53 q4.5 -4 9 0" stroke="${H}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
+    case 'mrk': return oko(50, 1.18) + `<path d="M65.5 53 q4.5 -4 9 0" stroke="${H}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
     case 'linky': return zornicky() + `<path d="M54.6 50.4 l3 -2.4 M65.4 50.4 l-3 -2.4" stroke="${H}" stroke-width="2" fill="none" stroke-linecap="round"/>`;
-    case 'velke': return oko(50, 1.22) + oko(70, 1.22) + rasy;
+    case 'velke': return oko(50, 1.42) + oko(70, 1.42) + rasy;
     case 'oci-hvezdy': return hvezdicka(50, 52, 6, '#ffc94d') + hvezdicka(70, 52, 6, '#ffc94d');
     case 'oci-srdce': return srdicko(50, 51, 4.5, '#ff3b6b') + srdicko(70, 51, 4.5, '#ff3b6b');
     case 'ospale': return `<path d="M46 53 q4 3 8 0 M66 53 q4 3 8 0" stroke="${H}" stroke-width="2.4" fill="none" stroke-linecap="round"/><text x="84" y="40" font-size="8" fill="#8a7891" font-weight="700">z</text><text x="89" y="34" font-size="6" fill="#8a7891" font-weight="700">z</text>`;
@@ -338,7 +338,7 @@ function pusa(id) {
     case 'zlaty-zub': return `<path d="M52 62 q8 9 16 0 z" fill="#fff" stroke="${H}" stroke-width="2" stroke-linejoin="round"/><rect x="61" y="62.5" width="3.5" height="3.5" rx=".8" fill="#ffd34d" stroke="#c9962c" stroke-width=".6"/>` + hvezdicka(67, 60, 2.2, '#ffd34d');
     case 'duhovy-jazyk': return `<path d="M53 63 q7 8 14 0" stroke="${H}" stroke-width="2.4" fill="none" stroke-linecap="round"/>` +
       DUHA.map((c, i) => `<rect x="57" y="${66 + i * 2.2}" width="6" height="2.3" fill="${c}"/>`).join('') + `<path d="M57 79 q3 3 6 0" fill="${DUHA[5]}"/>`;
-    default: return `<path d="M53 63 q7 8 14 0" stroke="${H}" stroke-width="2.4" fill="#ff8fab" stroke-linecap="round"/>`;
+    default: return `<path d="M51.5 62.5 q8.5 11 17 0 z" fill="#8a2f4a" stroke="${H}" stroke-width="2" stroke-linejoin="round"/><path d="M55.5 68 q4.5 -3.6 9 0 q-4.5 3.4 -9 0z" fill="#ff8fab"/>`;
   }
 }
 
@@ -589,7 +589,7 @@ export function postavicka(vzhled = VYCHOZI, velikost = 120, vyrez = 'cela', poh
     ${kapucova || !sOfinou ? '' : `<g clip-path="url(#${fid})"><g transform="translate(0 3.5)" opacity=".16">${vlasyVpredu(z.uces, '#000')}</g></g>`}
     <path d="M59.5 56.5 q2.4 2.8 -.6 3.8" stroke="${kx.c ? odstin(kx.c, -.35) : H}" stroke-width="1.4" fill="none" stroke-linecap="round"/>
     ${kx.lesk ? '<ellipse cx="50" cy="42" rx="8" ry="5" fill="#fff" opacity=".45" transform="rotate(-25 50 42)"/>' : ''}
-    <ellipse cx="44" cy="61" rx="4.5" ry="3" fill="#ffadc6" opacity=".7"/><ellipse cx="76" cy="61" rx="4.5" ry="3" fill="#ffadc6" opacity=".7"/>
+    <ellipse cx="42.5" cy="61.5" rx="5.5" ry="3.6" fill="#ff8fab" opacity=".7"/><ellipse cx="77.5" cy="61.5" rx="5.5" ry="3.6" fill="#ff8fab" opacity=".7"/>
     ${tvar(z.tvar)}
     ${vousy(z.vousy, c, defs)}
     <g class="pv-pusa">${pusa(z.pusa)}</g>
@@ -611,6 +611,7 @@ export function postavicka(vzhled = VYCHOZI, velikost = 120, vyrez = 'cela', poh
     <g clip-path="url(#${id})">
     ${pozadi(z.pozadi, defs)}
     <g class="pv-telo">
+    <g transform="translate(60 120) scale(.86 .9) translate(-60 -120)">
     ${obleceni(z.obleceni, defs)}
     <path d="M28 120 q2 -30 32 -32 q30 2 32 32 z" fill="url(#${tid})"/>
     <path d="M28 120 q2 -30 32 -32 q30 2 32 32" fill="none" ${OBRYS}/>
@@ -618,11 +619,12 @@ export function postavicka(vzhled = VYCHOZI, velikost = 120, vyrez = 'cela', poh
     <path d="M52 79 v8 M68 79 v8" ${OBRYS}/>
     <path d="M52 80 h16 v3.5 q-8 5 -16 0z" fill="#000" opacity=".14"/>
  ${nahrdelnik(z.nahrdelnik)}
-    <g class="pv-hlava">
+    </g>
+    <g class="pv-hlava"><g transform="translate(0 4) translate(60 84) scale(1.16) translate(-60 -84)">
     ${hlava}
     ${maska(m, kuzePlna, c)}
     ${naHlavu(vec(z.hlava), c)}
-    </g></g>
+    </g></g></g>
     <g class="pv-ruka">
     ${ruka ? `<text x="96" y="110" font-size="26" text-anchor="middle">${ruka}</text>` : ''}
     ${ruka || z.naramek ? `<path d="M78.5 106 q-1 -6 5 -7 q6 0 6.5 5 q0 5 -5.5 6 q-5 0 -6 -4z" fill="${kuze}" stroke="${H}" stroke-width="1.2" stroke-opacity=".6"/><path d="M80.5 103 q2 -1.6 4 -.6" stroke="${H}" stroke-width="1" stroke-opacity=".5" fill="none" stroke-linecap="round"/>` : ''}

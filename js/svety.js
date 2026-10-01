@@ -23,14 +23,22 @@ const MOTIVY = {
   raketa: c => `<path d="M0 -16 q8 8 6 20 h-12 q-2 -12 6 -20z M-6 4 l-5 7 l5 -2 M6 4 l5 7 l-5 -2" stroke="${c}"/><circle cy="-4" r="2.5" stroke="${c}"/>`,
 };
 
-const ROZLOZENI = [[30, 42], [160, 40], [170, 150], [55, 160], [100, 100], [200, 100], [80, 30], [125, 190], [20, 110], [120, 150]];
+// Rozložení jako u původní růžové tapety: 5 velkých motivů, mezi nimi drobné tečky a křížky.
+// Bez natáčení a s větším odstupem, ať je pozadí jemné a nepřebíjí obsah.
+const ROZLOZENI = [[30, 42, 'v'], [160, 30, 'v'], [170, 150, 'v'], [70, 160, 'v'], [200, 100, 'v'],
+  [100, 95, 'm'], [80, 30, 'm'], [125, 190, 'm'], [20, 110, 'm'], [120, 150, 'm']];
+const MALE = ['tecka', 'kriz', 'hvezda'];
 
 function dlazdice(motivy) {
-  const tvary = ROZLOZENI.map(([x, y], i) => {
-    const [motiv, barva] = motivy[i % motivy.length];
-    return `<g transform="translate(${x} ${y}) rotate(${(i * 37) % 40 - 20})">${MOTIVY[motiv](barva)}</g>`;
+  const velke = motivy.filter(([m]) => !MALE.includes(m) || m === 'hvezda');
+  const male = motivy.filter(([m]) => MALE.includes(m));
+  let iv = 0, im = 0;
+  const tvary = ROZLOZENI.map(([x, y, druh]) => {
+    const [motiv, barva] = druh === 'v' ? velke[iv++ % velke.length] : (male.length ? male[im++ % male.length] : ['tecka', velke[0][1]]);
+    const meritko = druh === 'm' ? (motiv === 'hvezda' ? .55 : 1) : (['srdce', 'susenka', 'vlnka', 'hvezda'].includes(motiv) ? 1 : .75);
+    return `<g transform="translate(${x} ${y}) scale(${meritko})">${MOTIVY[motiv](barva)}</g>`;
   }).join('');
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="220" height="220" viewBox="0 0 220 220"><g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" opacity=".55">${tvary}</g></svg>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="220" height="220" viewBox="0 0 220 220"><g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" opacity=".5">${tvary}</g></svg>`;
   return `url('data:image/svg+xml,${encodeURIComponent(svg)}')`; // jednoduché uvozovky: vkládá se i do style=""
 }
 
