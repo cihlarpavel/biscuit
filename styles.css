@@ -286,7 +286,8 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .vec { background: #fff; border-radius: 18px; padding: 10px 4px 8px; box-shadow: var(--stin); display: flex; flex-direction: column; align-items: center; gap: 4px; border: 3px solid transparent; }
 .vec.on { border-color: var(--ruzova); }
 .vec small { font-size: 12px; font-weight: 700; color: var(--tlumene); text-align: center; line-height: 1.2; }
-.vec.cizi small { color: var(--susenka); }
+.vec .cena { font-size: 12px; font-weight: 800; color: var(--susenka); }
+.vec .vzacnost { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .4px; }
 .vec.cizi svg { opacity: .75; }
 .vec-nic { width: 74px; height: 74px; display: grid; place-items: center; font-size: 30px; color: var(--tlumene); background: var(--ruzova-svetla); border-radius: 50%; }
 .satnik-lista { position: fixed; left: 0; right: 0; bottom: var(--lista); padding: 8px 16px; background: linear-gradient(transparent, var(--bg) 30%); text-align: center; }

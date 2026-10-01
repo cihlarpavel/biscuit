@@ -16,8 +16,12 @@ v `sw.js`, commit, `git push` (`gh` je v `~/.local/bin/gh`). Ve škole jsou na s
   Dnešní lekce = opakování + 3 nová z aktuální Unit + kousek „do šířky“ z jiného balíčku.
 - `js/hra.js` – přehrávání úloh (nové slovíčko, poslech s obrázky, en→cz, cz→en, skládání slova
   z písmen, hláskování, skládání věty, písmena abecedy, čísla). Stejný kód hraje i battle.
-- `js/postavicka.js` – postavička ve stylu Pou: katalog věcí (`VECI`) s cenami v sušenkách,
-  kreslení vrstev do SVG. Nová věc = položka ve `VECI` + větev v příslušné kreslicí funkci.
+- `js/postavicka.js` – postavička ve stylu Pou (Lotka chtěla zůstat u původního stylu, jen víc
+  detailů): 18 kategorií, ~220 věcí, vzácnost podle ceny (Běžné → Cool → Epické → Legendární →
+  Bizár, masky a kostýmy až 3 000 🍪). Kreslení vrstev do SVG. Nová věc = položka ve `VECI` +
+  větev v kreslicí funkci. **Id věcí neměnit a nesmí se opakovat** (jsou v `koupeno`).
+  Náhled všech věcí: `tools/satnik.html?k=<kategorie>`. Masky jen obecné, žádné cizí postavy (autorská práva).
+- `js/ikony.js` – vlastní ikony ve stylu nálepek (`ik('nazev')`), náhled v `tools/ikony.html`.
 - `js/hlasky.js` – všechny hlášky a tituly. Tón: suchá nadsázka, slang jen střídmě (Pavel:
   nesmí působit jako dospělý, který napodobuje dítě). Neoslovovat jménem (5. pád nejde).
 - `js/cas.js` – aktivní čas: jen na obrazovce lekce/battlu, v popředí, do 45 s od klepnutí.

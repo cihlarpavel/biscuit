@@ -1,7 +1,7 @@
 // Biscuit – obrazovky a navigace.
 import * as S from './store.js';
 import { SKUPINY, BALICKY, balicek, polozky } from './data.js';
-import { postavicka, KATEGORIE, VECI, vec, maVec, nahodnyVzhled } from './postavicka.js';
+import { postavicka, KATEGORIE, VECI, vec, maVec, nahodnyVzhled, vzacnost } from './postavicka.js';
 import { sestav, sestavBattle, odemcene, zapis, postupBalicku, slabiny, UMI } from './lekce.js';
 import { hraj } from './hra.js';
 import { nastavUceni } from './cas.js';
@@ -350,22 +350,24 @@ function obchod() {
   const kat = KATEGORIE.find(k => k.id === satnikKat);
 
   const vykresli = () => {
-    const veci = VECI.filter(v => v.kat === kat.id);
+    const veci = VECI.filter(v => v.kat === kat.id).sort((a, b) => a.cena - b.cena);
     const zkousenaVec = vec(zkouska[kat.id]);
     const nekoupena = zkousenaVec && !maVec(x, zkousenaVec) ? zkousenaVec : null;
     obrazovka(`${hlavicka(x)}<section class="stranka satnik">
       ${zpet('#/ja')}
-      <div class="satnik-nahled">${postavicka(zkouska, 190)}</div>
+      <div class="satnik-nahled">${postavicka(zkouska, 250)}</div>
       <div class="kategorie">${KATEGORIE.map(k => `<button class="kat${k.id === kat.id ? ' on' : ''}" data-k="${k.id}"><span>${k.ikona}</span>${esc(k.nazev)}</button>`).join('')}</div>
       <div class="veci">
         ${kat.povinne ? '' : `<button class="vec${!zkouska[kat.id] ? ' on' : ''}" data-v=""><span class="vec-nic">✕</span><small>Nic</small></button>`}
         ${veci.map(v => `<button class="vec${zkouska[kat.id] === v.id ? ' on' : ''}${maVec(x, v) ? '' : ' cizi'}" data-v="${v.id}">
-          ${postavicka({ ...x.vzhled, [kat.id]: v.id }, 74, ['hlava', 'bryle', 'tvar', 'uces', 'barva', 'kuze'].includes(kat.id) ? 'hlava' : 'cela')}
-          <small>${maVec(x, v) ? esc(v.nazev) : '🍪 ' + v.cena}</small></button>`).join('')}
+          ${postavicka({ ...x.vzhled, [kat.id]: v.id }, 74, kat.hlava ? 'hlava' : 'cela')}
+          <small>${esc(v.nazev)}</small>
+          ${maVec(x, v) ? '' : `<span class="cena">🍪 ${v.cena}</span>`}
+          ${v.cena ? `<span class="vzacnost" style="color:${vzacnost(v.cena).barva}">${vzacnost(v.cena).nazev}</span>` : ''}</button>`).join('')}
       </div>
       <div class="satnik-lista">${nekoupena
         ? `<button class="btn velke" id="koupit">${x.susenky >= nekoupena.cena ? `Koupit ${esc(nekoupena.nazev)} za 🍪 ${nekoupena.cena}` : `Chybí ti 🍪 ${nekoupena.cena - x.susenky}`}</button>`
-        : '<p class="drobne">Klepni na věc a vyzkoušej si ji. Co máš, si rovnou oblečeš.</p>'}</div>
+        : `<button class="btn vedlejsi" id="mix">🎲 Náhodný mix z mých věcí</button>`}</div>
     </section>`, { tab: 'ja' });
   vlozSchovanou('ja');
 
@@ -380,6 +382,16 @@ function obchod() {
       vykresli();
       document.getElementById('app').scrollTop = top;
     }));
+    const mix = $('#mix');
+    if (mix) mix.onclick = () => {
+      const novy = {};
+      for (const k of KATEGORIE) {
+        const moje = VECI.filter(v => v.kat === k.id && maVec(x, v));
+        const nic = !k.povinne && Math.random() < 0.5;
+        novy[k.id] = nic || !moje.length ? (k.povinne ? x.vzhled[k.id] : null) : moje[Math.floor(Math.random() * moje.length)].id;
+      }
+      x.vzhled = novy; zkouska = { ...novy }; S.uloz(); vykresli();
+    };
     const koupit = $('#koupit');
     if (koupit) koupit.onclick = () => {
       if (x.susenky < nekoupena.cena) return toast('Ještě pár lekcí a je to tvoje 💪');
