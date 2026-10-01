@@ -3,8 +3,9 @@
 Osobní projekt. Uživatelka je Šarlotka, 10 let, 4. třída ZŠ, začátek úrovně A1.
 Rodič (zadavatel) je Pavel. S ním komunikuj česky.
 
-Stav k 1. 10. 2026: první verze hotová a lokálně otestovaná, zatím nenasazená (čeká na
-Pavlův souhlas s veřejným repem na GitHub Pages). Ve škole jsou na str. 6 = Unit 1, lekce 3.
+Stav k 1. 10. 2026: první verze nasazená na **https://cihlarpavel.github.io/biscuit/**
+(GitHub Pages z větve `main`, veřejné repo cihlarpavel/biscuit). Aktualizace = zvýšit `CACHE`
+v `sw.js`, commit, `git push` (`gh` je v `~/.local/bin/gh`). Ve škole jsou na str. 6 = Unit 1, lekce 3.
 
 ## Kód (statická PWA, bez build kroku)
 
