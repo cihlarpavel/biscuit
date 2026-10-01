@@ -406,3 +406,29 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .rod-volba button { flex: 1; padding: 12px; border-radius: 16px; background: #fff; box-shadow: var(--stin); font-size: 17px; font-weight: 800; border: 3px solid transparent; }
 .rod-volba button.on { border-color: var(--ruzova); background: var(--ruzova-svetla); }
 .rod-volba.velka button { padding: 20px 12px; font-size: 20px; }
+
+/* ---------- Online kamarádi a výzvy ---------- */
+.tabs a[data-tab="battle"] { position: relative; }
+.tabs a[data-pocet]:not([data-pocet=""])::after { content: attr(data-pocet); position: absolute; top: 4px; right: calc(50% - 26px); min-width: 18px; height: 18px;
+  padding: 0 5px; border-radius: 9px; background: var(--cervena); color: #fff; font-size: 11px; font-weight: 800; display: grid; place-items: center; border: 2px solid #fff; }
+.vyzva { display: flex; align-items: center; gap: 10px; background: #fff; border-radius: var(--r); box-shadow: var(--stin); padding: 10px 12px; margin: 8px 0;
+  border: 3px solid var(--zluta); animation: zlataPrilet .6s cubic-bezier(.3, 1.6, .5, 1); }
+.vyzva > div { flex: 1; min-width: 0; }
+.vyzva b, .vyzva small { display: block; }
+.vyzva-en { display: block; font-weight: 800; color: var(--ruzova); }
+.vyzva small { color: var(--tlumene); font-size: 12px; }
+.btn.maly { padding: 8px 14px; font-size: 14px; margin-top: 4px; }
+.muj-kod { display: flex; align-items: center; gap: 10px; background: var(--lila-svetla); border-radius: 18px; padding: 10px 14px; margin: 14px 0 8px; }
+.muj-kod span { font-size: 13px; color: var(--tlumene); font-weight: 700; }
+.muj-kod b { flex: 1; font-size: 24px; letter-spacing: 4px; color: #6b4fd8; }
+.pridat-kod { display: flex; gap: 8px; }
+.pridat-kod .pole { text-transform: uppercase; letter-spacing: 3px; font-size: 18px; padding: 10px 14px; }
+.hlaska-vyzvy { text-align: left; }
+.hlaska-vyzvy b { display: block; font-size: 18px; }
+.hlaska-vyzvy small { color: var(--tlumene); font-weight: 600; font-size: 13px; }
+.vyzva-hlava { text-align: center; }
+.souper { display: flex; align-items: center; gap: 8px; margin-top: 8px; padding: 6px 10px; background: #fff; border-radius: 14px; box-shadow: var(--stin); font-size: 13px; font-weight: 700; }
+.souper-jmeno { max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.prubeh.maly { height: 8px; flex: 1; }
+.prubeh.maly i { background: linear-gradient(90deg, var(--lila), #7fb3ff); }
+.h-radek .odkaz { padding: 0; }

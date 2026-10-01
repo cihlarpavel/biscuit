@@ -3,7 +3,8 @@ import * as S from './store.js';
 import { SKUPINY, BALICKY, balicek, polozky } from './data.js';
 import { postavicka, KATEGORIE, VECI, vec, maVec, nahodnyVzhled, vzacnost } from './postavicka.js';
 import { sestav, sestavBattle, odemcene, zapis, postupBalicku, slabiny, UMI } from './lekce.js';
-import { hraj } from './hra.js';
+import { hraj, nastavSoupere } from './hra.js';
+import * as O from './online.js';
 import { nastavUceni } from './cas.js';
 import { odemkni, speak, zvukFanfara } from './speech.js';
 import { ODZNAKY, zkontroluj } from './odznaky.js';
@@ -34,6 +35,8 @@ function route() {
   const x0 = p();
   nastavSvet(x0);
   if (x0 && !x0.rod) return otazkaRod(x0);
+  spustOnline();
+  zverejniPozdeji();
   if (x0) {
     const nejnovejsi = odemceneSvety(x0).pop();
     if (x0.svetVidel === undefined) x0.svetVidel = nejnovejsi.id; // stávající profily oslavu nedostanou zpětně
@@ -207,7 +210,9 @@ function battle() {
   const jm = id => esc(S.profil(id)?.prezdivka || '?');
   obrazovka(`${hlavicka(x)}<section class="stranka">
     <h1>Battle ⚔️</h1>
-    <p class="drobne">Jeden na jednoho na jednom telefonu. Stejné otázky, rozhoduje správnost a rychlost.</p>
+    ${x.online && O.nakonfigurovano() ? onlineSekce(x) : `<div class="prazdne"><p>Chceš hrát s kamarádkou, každá na svém mobilu? Ať ti rodič zapne <b>Kamarádi online</b> v sekci Pro rodiče.</p></div>`}
+    <h2>Na jednom telefonu</h2>
+    <p class="drobne">Jeden na jednoho, telefon si předáváte. Stejné otázky, rozhoduje správnost a rychlost.</p>
     ${ostatni.length ? `<h3>Koho vyzveš?</h3><div class="profily">${ostatni.map(o => {
       const z = vzajemne(x.id, o.id);
       return `<button class="profil-karta" data-id="${o.id}"><span class="avatar velky">${av(o, 70)}</span><b>${jmeno(o)}</b>
@@ -219,6 +224,7 @@ function battle() {
   </section>`, { tab: 'battle' });
   vlozSchovanou('battle');
   $$('.profil-karta[data-id]').forEach(b => (b.onclick = () => hrajBattle(x, S.profil(b.dataset.id))));
+  napojOnlineSekci(x);
 }
 
 function vzajemne(a, b) {
@@ -295,17 +301,17 @@ function vysledekBattlu(h1, h2, [s1, s2]) {
 // ---------- Žebříček ----------
 function zebricek() {
   const x = p();
-  const vse = S.profily();
+  const vse = [...S.profily(), ...online.kamaradky.filter(k => !S.profil(k.id))];
   const kategorie = [
-    { ikona: '🍪', nazev: 'Nejvíc sušenek celkem', hodnota: o => nasbirano(o), fmt: n => n,
+    { ikona: '🍪', nazev: 'Nejvíc sušenek celkem', hodnota: o => statistiky(o).susenkyCelkem, fmt: n => n,
       vtip: (v, n) => `${v} vede o ${n} 🍪. Ostatní zatím jen drobí.` },
-    { ikona: '🔥', nazev: 'Nejdelší série teď', hodnota: o => S.serie(o), fmt: n => `${n} dní`,
+    { ikona: '🔥', nazev: 'Nejdelší série teď', hodnota: o => statistiky(o).serie, fmt: n => `${n} dní`,
       vtip: v => `${v} je on fire. Doslova.` },
-    { ikona: '⏱️', nazev: 'Minuty tento týden', hodnota: o => minuty(S.tydenSekund(o)), fmt: n => `${n} min`,
+    { ikona: '⏱️', nazev: 'Minuty tento týden', hodnota: o => statistiky(o).tydenMin, fmt: n => `${n} min`,
       vtip: (v, n, o) => `${v} se ${H.rod('[učil|učila]', o)} o ${n} minut víc. Podezřelé. Možná je to robot 🤖` },
-    { ikona: '🧠', nazev: 'Umí slovíček', hodnota: o => S.umiSlov(o), fmt: n => n,
+    { ikona: '🧠', nazev: 'Umí slovíček', hodnota: o => statistiky(o).umiSlov, fmt: n => n,
       vtip: (v, n) => `${v} umí o ${n} slovíček víc. Chodící slovník.` },
-    { ikona: '⚔️', nazev: 'Výhry v battlech', hodnota: o => o.souboje.vyhry, fmt: n => n,
+    { ikona: '⚔️', nazev: 'Výhry v battlech', hodnota: o => statistiky(o).vyhry, fmt: n => n,
       vtip: v => `${v} je postrach battlů.` },
   ];
   const medaile = ['🥇', '🥈', '🥉'];
@@ -462,6 +468,7 @@ function rodic() {
       <label>Holka / kluk <select data-rod>${[['z', 'Holka'], ['m', 'Kluk']].map(([k, t]) => `<option value="${k}" ${(o.rod || 'z') === k ? 'selected' : ''}>${t}</option>`).join('')}</select></label>
       <label>Denní cíl <select data-k="cil">${[5, 10, 15, 20, 30].map(n => `<option ${o.nastaveni.cil === n ? 'selected' : ''} value="${n}">${n} min</option>`).join('')}</select></label>
       <label class="prepinac"><input type="checkbox" data-k="vsechnyUnity" ${o.nastaveni.vsechnyUnity ? 'checked' : ''}> Odemknout všechny lekce dopředu</label>
+      <label class="prepinac"><input type="checkbox" data-online ${o.online ? 'checked' : ''}> Kamarádi online (battle na dálku, společný žebříček)</label>
       <button class="odkaz cervene" data-smazat="${o.id}">Smazat profil</button></div>`;
   }).join('');
   obrazovka(`<section class="stranka">${zpet('#/ja')}<h1>Pro rodiče</h1>
@@ -474,6 +481,12 @@ function rodic() {
   $$('.r-karta select, .r-karta input').forEach(el => (el.onchange = () => {
     const o = S.profil(el.closest('.r-karta').dataset.id);
     if (el.dataset.rod !== undefined) { o.rod = el.value; S.uloz(); return toast('Uloženo'); }
+    if (el.dataset.online !== undefined) {
+      if (el.checked && !O.nakonfigurovano()) { el.checked = false; return toast('Online režim ještě není nastavený.'); }
+      if (el.checked && !confirm(`Zapnout kamarády online pro ${o.prezdivka}?\n\nDo databáze Google Firebase se uloží jen přezdívka, postavička a statistiky učení (žádné jméno, fotka ani poloha). Kamarádky se přidávají jen kódem, který si děti předají osobně, a nejde si psát volné zprávy.\n\nSouhlasím jako rodič.`)) { el.checked = false; return; }
+      o.online = el.checked; S.uloz(); zastavOnline(); spustOnline();
+      return toast(el.checked ? 'Kamarádi online zapnuti' : 'Kamarádi online vypnuti');
+    }
     o.nastaveni[el.dataset.k] = el.type === 'checkbox' ? el.checked : +el.value;
     S.uloz();
     toast('Uloženo');
@@ -492,6 +505,185 @@ function rodic() {
     try { S.import_(await e.target.files[0].text()); toast('Obnoveno'); rodic(); } catch (err) { toast(err.message || 'Záloha nejde načíst'); }
   };
   $('#zmenapin').onclick = () => { r.pin = null; rodicOdemceno = false; S.uloz(); rodic(); };
+}
+
+// ---------- Online: kamarádi, výzvy, battle na dálku ----------
+// Hlášky k výzvě: v databázi je jen jejich číslo, žádný volný text.
+const VYZVY = [['Are you ready? 😎', 'Můžeme?'], ['Catch me if you can! 🏃', 'Chyť mě, jestli to dokážeš!'], ["Let's play! 🎮", 'Pojďme hrát!'],
+  ['Bring it on! 🔥', 'Sem s tím!'], ['Good luck! 🍀', 'Hodně štěstí!'], ["I'm the champion! 🏆", 'Šampion jsem já!']];
+let online = { profilId: null, kamaradky: [], battly: [], stop: [], chyba: false };
+
+// Statistiky do žebříčku: u místního profilu se spočítají, u online kamarádky přijdou z databáze.
+function statistiky(o) {
+  if (!o.dny) return { susenkyCelkem: o.susenkyCelkem || 0, serie: o.serie || 0, tydenMin: o.tydenMin || 0, umiSlov: o.umiSlov || 0, vyhry: o.vyhry || 0 };
+  return { susenkyCelkem: nasbirano(o), serie: S.serie(o), tydenMin: minuty(S.tydenSekund(o)), umiSlov: S.umiSlov(o), vyhry: o.souboje.vyhry };
+}
+
+function spustOnline() {
+  const x = p();
+  if (!x || !x.online || !O.nakonfigurovano()) return zastavOnline();
+  if (online.profilId === x.id) return;
+  zastavOnline();
+  online.profilId = x.id;
+  O.zverejni(x, statistiky(x)).then(() => S.uloz()).catch(() => {});
+  online.stop.push(O.sledujKamaradky(x, l => { online.chyba = l === null; online.kamaradky = l || []; obnovOnline(); }));
+  online.stop.push(O.sledujBattly(x, l => { if (l) online.battly = l; zpracujBattly(x); obnovOnline(); }));
+}
+function zastavOnline() { online.stop.forEach(f => f()); online = { profilId: null, kamaradky: [], battly: [], stop: [], chyba: false }; odznakBattle(); }
+
+let posledniZverejneni = 0;
+function zverejniPozdeji() {
+  const x = p();
+  if (!x?.online || !O.nakonfigurovano() || Date.now() - posledniZverejneni < 20000) return;
+  posledniZverejneni = Date.now();
+  O.zverejni(x, statistiky(x)).catch(() => {});
+}
+
+// Překreslí Battle / Žebříček, když přijdou nová data (ne během hry a ne při psaní kódu).
+function obnovOnline() {
+  odznakBattle();
+  const h = location.hash.replace(/^#\/?/, '').split('/')[0];
+  if (document.querySelector('#hra') || document.activeElement?.tagName === 'INPUT') return;
+  if (h === 'battle' && !document.querySelector('.cekani')) battle();
+  if (h === 'zebricek') zebricek();
+}
+const mojeVysl = (b, id) => b.vysledky?.[id] || {};
+const souperkaId = (b, id) => b.hraci.find(h => h !== id);
+const kamaradka = id => online.kamaradky.find(k => k.id === id) || { id, prezdivka: 'Kamarádka', vzhled: {} };
+const oboHotovo = b => b.hraci.every(h => mojeVysl(b, h).hotovo);
+
+function odznakBattle() {
+  const x = p();
+  const n = x ? online.battly.filter(b => !mojeVysl(b, x.id).hotovo).length : 0;
+  const tab = $('#tabs [data-tab="battle"]');
+  if (tab) tab.dataset.pocet = n || '';
+}
+
+// Odměny za dohrané online battly (každý se započítá jen jednou).
+function zpracujBattly(x) {
+  x.zpracovano ||= [];
+  let zmena = false;
+  for (const b of online.battly) {
+    if (!oboHotovo(b) || x.zpracovano.includes(b.id)) continue;
+    const ja = mojeVysl(b, x.id).body || 0, ona = mojeVysl(b, souperkaId(b, x.id)).body || 0;
+    if (ja > ona) { x.souboje.vyhry++; S.pridej(x, 10); } else if (ja < ona) { x.souboje.prohry++; S.pridej(x, 3); } else { x.souboje.remizy++; S.pridej(x, 5); }
+    x.zpracovano.push(b.id);
+    zmena = true;
+  }
+  if (zmena) { x.zpracovano = x.zpracovano.slice(-300); zkontroluj(x); S.uloz(); posledniZverejneni = 0; zverejniPozdeji(); }
+}
+
+function onlineSekce(x) {
+  if (online.chyba) return `<div class="prazdne"><p>Kamarádi se teď nedají načíst. Jsi připojená k internetu?</p></div>`;
+  const hrat = online.battly.filter(b => !mojeVysl(b, x.id).hotovo);
+  const cekam = online.battly.filter(b => mojeVysl(b, x.id).hotovo && !oboHotovo(b));
+  const hotove = online.battly.filter(oboHotovo);
+  const skore = id => { const z = { v: 0, p: 0 }; hotove.filter(b => b.hraci.includes(id)).forEach(b => { const a = mojeVysl(b, x.id).body, o = mojeVysl(b, id).body; if (a > o) z.v++; else if (a < o) z.p++; }); return z; };
+  const vyzva = b => VYZVY[b.hlaska] || VYZVY[0];
+  return `
+    ${hrat.length ? `<h2>Výzvy pro tebe</h2>${hrat.map(b => { const k = kamaradka(souperkaId(b, x.id)); const odMe = b.hraci[0] === x.id;
+      return `<div class="vyzva"><span class="avatar velky">${av(k, 60)}</span><div><b>${odMe ? `Tvoje výzva pro ${jmeno(k)}` : `${jmeno(k)} ${H.rod('[tě vyzval|tě vyzvala]', k)}!`}</b>
+        <span class="vyzva-en">${esc(vyzva(b)[0])}</span><small>${esc(vyzva(b)[1])}</small></div>
+        <button class="btn" data-hrat="${b.id}">Hrát</button></div>`; }).join('')}` : ''}
+    ${cekam.length ? `<div class="historie">${cekam.map(b => { const k = kamaradka(souperkaId(b, x.id)); const st = mojeVysl(b, k.id);
+      return `<div class="h-radek"><span>${st.odpovezeno ? `${jmeno(k)} právě hraje 🔥` : `Čeká se na ${jmeno(k)}`}</span><small>ty ⚡ ${mojeVysl(b, x.id).body}</small></div>`; }).join('')}</div>` : ''}
+    <h2>Kamarádi</h2>
+    ${online.kamaradky.length ? `<div class="profily">${online.kamaradky.map(k => { const z = skore(k.id);
+      return `<div class="profil-karta"><span class="avatar velky">${av(k, 70)}</span><b>${jmeno(k)}</b><small>${esc(H.titul(k.susenkyCelkem || 0, k))} · ${z.v}:${z.p}</small>
+        <button class="btn maly" data-vyzvat="${k.id}">Vyzvat ⚔️</button></div>`; }).join('')}</div>`
+      : `<p class="drobne">Zatím žádné. Pošli kamarádce svůj kód, nebo zadej ten její.</p>`}
+    <div class="muj-kod"><span>Tvůj kód</span><b>${esc(x.kod || '…')}</b><button class="btn vedlejsi maly" id="sdilet">Poslat</button></div>
+    <div class="pridat-kod"><input id="kod" class="pole" maxlength="6" placeholder="Kód kamarádky" autocapitalize="characters" autocomplete="off"><button class="btn" id="pridat">Přidat</button></div>
+    ${hotove.length ? `<h3>Výsledky</h3><div class="historie">${hotove.slice(0, 5).map(b => { const k = kamaradka(souperkaId(b, x.id)); const a = mojeVysl(b, x.id).body, o = mojeVysl(b, k.id).body;
+      return `<div class="h-radek"><span>${a > o ? '👑 ' : ''}ty <b>${a}</b> : <b>${o}</b> ${jmeno(k)}</span><button class="odkaz" data-odveta="${k.id}">Odveta</button></div>`; }).join('')}</div>` : ''}`;
+}
+
+function napojOnlineSekci(x) {
+  if (!x.online || !O.nakonfigurovano()) return;
+  $$('[data-hrat]').forEach(b => (b.onclick = () => hrajOnline(x, online.battly.find(v => v.id === b.dataset.hrat))));
+  $$('[data-vyzvat], [data-odveta]').forEach(b => (b.onclick = () => vybratVyzvu(x, kamaradka(b.dataset.vyzvat || b.dataset.odveta))));
+  $('#sdilet')?.addEventListener('click', () => {
+    const text = `Hraj se mnou Biscuit! Můj kód je ${x.kod}. https://cihlarpavel.github.io/biscuit/`;
+    if (navigator.share) navigator.share({ text }).catch(() => {});
+    else navigator.clipboard?.writeText(text).then(() => toast('Zkopírováno'));
+  });
+  $('#pridat')?.addEventListener('click', async () => {
+    const kod = $('#kod').value.trim();
+    if (kod.length < 6) return toast('Kód má 6 znaků.');
+    try { const k = await O.pridejKamaradku(x, kod); toast(`${k.prezdivka} je ${H.rod('[tvůj kamarád|tvoje kamarádka]', k)}! 🎉`); konfety(); $('#kod').value = ''; battle(); }
+    catch (e) { toast(e.message || 'Přidání nevyšlo, zkus to znovu.'); }
+  });
+}
+
+function vybratVyzvu(x, k) {
+  obrazovka(`<section class="stranka">${zpet('#/battle')}
+    <div class="vyzva-hlava"><span class="avatar obri">${postavicka(k.vzhled, 120)}</span><h1>Výzva pro ${jmeno(k)}</h1>
+    <p class="drobne">Vyber hlášku, kterou ${H.rod('[mu|jí]', k)} pošleš. Pak hned hraješ ty, ${jmeno(k)} odehraje svoje kolo, až bude mít čas (nebo hned, když je online).</p></div>
+    <div class="seznam">${VYZVY.map(([en, cz], i) => `<button class="moznost hlaska-vyzvy" data-i="${i}"><b>${esc(en)}</b><small>${esc(cz)}</small></button>`).join('')}</div>
+  </section>`, { bezListy: true });
+  $$('.hlaska-vyzvy').forEach(b => (b.onclick = async () => {
+    b.disabled = true;
+    try {
+      const ulohy = sestavBattle(x, { nastaveni: { unit: k.unit || 1, vsechnyUnity: false } });
+      const id = await O.vyzvi(x, k, ulohy, +b.dataset.i);
+      hrajOnline(x, { id, ulohy, hraci: [x.id, k.id], vysledky: {} });
+    } catch { toast('Výzva se neodeslala. Jsi online?'); b.disabled = false; }
+  }));
+}
+
+function hrajOnline(x, b) {
+  if (!b) return battle();
+  const sid = souperkaId(b, x.id);
+  const k = kamaradka(sid);
+  let posledni = b;
+  nastavSoupere({ jmeno: k.prezdivka, celkem: b.ulohy.length, odpovezeno: 0, body: 0, hotovo: false, ...mojeVysl(b, sid) });
+  const stop = O.sledujBattle(b.id, nb => { posledni = nb; nastavSoupere({ ...mojeVysl(nb, sid), celkem: nb.ulohy.length }); });
+  nastavUceni(true);
+  hraj(b.ulohy, {
+    battle: true, nazev: `vs ${k.prezdivka}`, profil: x, souper: true,
+    priOdpovedi: (u, ok, prvni, st) => {
+      const d = S.den(x); ok ? d.ok++ : d.chyby++;
+      O.zapisPrubeh(b.id, x.id, { body: st.body, spravne: st.spravne, odpovezeno: st.odpovezeno, hotovo: false }).catch(() => {});
+    },
+    konec: v => {
+      nastavUceni(false);
+      // I při vzdání se kolo uzavře, jinak by battle visel napořád.
+      O.zapisPrubeh(b.id, x.id, { body: v.body, spravne: v.spravne, odpovezeno: b.ulohy.length, hotovo: true }, !!mojeVysl(posledni, sid).hotovo).catch(() => {});
+      cekaniNaVysledek(x, b.id, k, stop);
+    },
+  });
+}
+
+function cekaniNaVysledek(x, id, k, stopHra) {
+  stopHra();
+  const vykresli = b => {
+    if (b && oboHotovo(b)) { stop(); return vysledekOnline(x, b, k); }
+    const st = b ? mojeVysl(b, k.id) : {};
+    obrazovka(`<section class="stranka konec cekani">${zpet('#/battle')}<span class="avatar obri">${postavicka(k.vzhled, 120)}</span>
+      <h1>${st.odpovezeno ? `${jmeno(k)} právě hraje 🔥` : `Čeká se na ${jmeno(k)}`}</h1>
+      <p class="hlaska">Tvoje body: ⚡ ${b ? mojeVysl(b, x.id).body : '…'}</p>
+      <p class="drobne">Výsledek se ukáže, až ${jmeno(k)} dohraje. Klidně zatím dělej něco jiného, výsledek ti přijde.</p>
+      <a class="btn velke" href="#/">Jdu dál</a></section>`, { bezListy: true });
+  };
+  vykresli(null);
+  const stop = O.sledujBattle(id, b => { if (location.hash.startsWith('#/lekce')) return; if (document.querySelector('.cekani')) vykresli(b); });
+}
+
+function vysledekOnline(x, b, k) {
+  const a = mojeVysl(b, x.id).body || 0, o = mojeVysl(b, k.id).body || 0;
+  let text;
+  if (a === o) text = H.nahodne(H.SOUBOJ.remiza);
+  else { const [v, pr] = a > o ? [x, k] : [k, x]; text = H.rod(H.dosad(H.nahodne(Math.abs(a - o) <= 150 ? H.SOUBOJ.tesne : H.SOUBOJ.jasne), { vitez: v.prezdivka, porazena: pr.prezdivka }), v); }
+  const karta = (h, sc, vyhra) => `<div class="b-hracka${vyhra ? ' vitez' : ''}"><span class="avatar velky">${av(h, 70)}</span><b>${jmeno(h)}</b><span class="b-body">${sc}</span>${vyhra ? '<span class="korunka">👑</span>' : ''}</div>`;
+  obrazovka(`<section class="stranka konec">${zpet('#/battle')}
+    <h1>Výsledek</h1>
+    <div class="b-vysledek">${karta(x, a, a > o)}<span class="vs">vs</span>${karta(k, o, o > a)}</div>
+    <p class="hlaska">${esc(text)}</p>
+    <p class="drobne">${a > o ? 'Výhra 🍪 +10' : a < o ? 'Prohra 🍪 +3' : 'Remíza 🍪 +5'}</p>
+    <button class="btn velke" id="odveta">Odveta ⚔️</button>
+    <a class="odkaz" href="#/battle">Konec</a></section>`, { bezListy: true });
+  konfety(); zvukFanfara();
+  $('#odveta').onclick = () => vybratVyzvu(x, k);
 }
 
 // ---------- Holka, nebo kluk (jednou u profilů založených dřív) ----------

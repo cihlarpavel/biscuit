@@ -10,10 +10,22 @@ const hlaskuj = slovo => [...slovo.toUpperCase()].join(', ');
 
 // ulohy: pole úloh z lekce.js. moznosti: { battle, nazev, priOdpovedi(uloha, spravne), konec(vysledek) }
 // limit = časový limit v sekundách (Bleskovka); po vypršení hra skončí.
-export function hraj(ulohy, { battle = false, nazev = '', limit = 0, profil = null, priOdpovedi = () => {}, konec }) {
+// Soupeřka v online battlu: její postup se ukazuje v hlavičce a průběžně aktualizuje.
+let souperStav = { odpovezeno: 0, celkem: 0, body: 0, hotovo: false };
+const souperHtml = () => `<div class="souper"><span class="souper-jmeno">${esc(souperStav.jmeno || '')}</span>
+  <div class="prubeh maly"><i style="width:${souperStav.celkem ? souperStav.odpovezeno / souperStav.celkem * 100 : 0}%"></i></div>
+  <span class="souper-body">${souperStav.hotovo ? '✓ ' : ''}⚡ ${souperStav.body || 0}</span></div>`;
+export function nastavSoupere(stav) {
+  souperStav = { ...souperStav, ...stav };
+  const el = document.querySelector('.souper');
+  if (el) el.outerHTML = souperHtml();
+}
+
+export function hraj(ulohy, { battle = false, nazev = '', limit = 0, profil = null, souper = null, priOdpovedi = () => {}, konec }) {
   const fronta = [...ulohy];
   const celkem = fronta.filter(u => u.typ !== 'nove').length;
   let hotovo = 0, susenky = 0, chyby = 0, body = 0, spravne = 0;
+  const pocetSpravne = () => spravne;
   const opakovane = new Set();
   let start = 0, skoncila = false, stopky = null;
   const konecLimitu = limit ? Date.now() + limit * 1000 : 0;
@@ -36,15 +48,16 @@ export function hraj(ulohy, { battle = false, nazev = '', limit = 0, profil = nu
     if (!zbyva) skonci({ casVyprsel: true });
   }, 250);
 
-  const this_ok = () => { spravne++; };
-  function hotovaUloha(u, spravne, spravnaOdpoved) {
+  const zapocitejSpravne = () => { spravne++; };
+  function hotovaUloha(u, ok, spravnaOdpoved) {
+    const spravne = ok; // (uvnitř funkce = výsledek této odpovědi; venku je počítadlo)
     const prvniPokus = !opakovane.has(u);
     if (u.typ !== 'nove') {
       if (prvniPokus) hotovo++;
-      priOdpovedi(u, spravne, prvniPokus);
-      if (spravne && prvniPokus) { susenky += u.zlata ? 5 : 1; this_ok(); }
+      if (spravne && prvniPokus) { susenky += u.zlata ? 5 : 1; zapocitejSpravne(); }
       if (!spravne) chyby++;
       if (battle && spravne) body += 100 + Math.max(0, Math.round(50 - (Date.now() - start) / 200));
+      priOdpovedi(u, spravne, prvniPokus, { body, odpovezeno: hotovo, celkem, spravne: pocetSpravne() });
     }
     // Špatně zodpovězenou úlohu v lekci dá ještě jednou na konec (jen jednou).
     if (!spravne && !battle && prvniPokus) { opakovane.add(u); fronta.push(u); }
@@ -77,6 +90,7 @@ export function hraj(ulohy, { battle = false, nazev = '', limit = 0, profil = nu
       ${limit ? `<div class="hra-cas">${Math.max(0, Math.ceil((konecLimitu - Date.now()) / 1000))} s</div>` : ''}
       <div class="hra-skore">${battle && !limit ? '⚡ ' + body : ik('susenka', 22, { podklad: false }) + ' ' + susenky}</div></div>
       ${nazev ? `<div class="hra-nazev">${esc(nazev)}</div>` : ''}
+      ${souper ? souperHtml() : ''}
       ${u.zlata ? `<div class="zlata-pruh">${ik('zlata', 34, { podklad: false })}<b>Zlatá otázka!</b><span>Správně = 5 sušenek</span></div>` : ''}`;
     const p = u.polozka;
     const poslech = (text, pomalu) => `<button class="repro" data-text="${esc(text)}" aria-label="Přehrát">${ik('repro', 34, { podklad: false })}</button>
