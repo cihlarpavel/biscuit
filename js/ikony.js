@@ -6,6 +6,7 @@ const t = `stroke="${O}" stroke-width="2.6" stroke-linejoin="round" stroke-linec
 const jiskra = (x, y, r = 3, c = '#fff') => `<path d="M${x} ${y - r} l${r * .3} ${r * .7} l${r * .7} ${r * .3} l-${r * .7} ${r * .3} l-${r * .3} ${r * .7} l-${r * .3} -${r * .7} l-${r * .7} -${r * .3} l${r * .7} -${r * .3}z" fill="${c}"/>`;
 
 const PODKLAD = {
+  'tab-uceni': '#ffd6e8', 'tab-battle': '#e3d9ff', 'tab-drip': '#d6ecff', 'tab-zebricek': '#fff1c2',
   domu: '#ffd6e8', battle: '#e3d9ff', zebricek: '#fff1c2', ja: '#d6f5ec',
   ohen: '#ffe3d6', susenka: '#fff1dc', zlata: '#fff1c2',
   barvy: '#e3d9ff', cisla20: '#d6ecff', telo: '#ffe3d6', zviratka: '#fff1c2', skola: '#d6f5ec',
@@ -35,6 +36,21 @@ const KRESBY = {
     <circle cx="18" cy="20" r="2.2" fill="#c9962c"/><circle cx="26" cy="27" r="2.2" fill="#c9962c"/><circle cx="17" cy="30" r="2" fill="#c9962c"/>${jiskra(38, 8, 4.5)}${jiskra(9, 38, 3.5)}`,
   satnik: `<path d="M24 12 a3 3 0 1 1 3 3 v3 l12 10 a2 2 0 0 1 -1 4 H10 a2 2 0 0 1 -1 -4 l12 -10" fill="none" ${t}/>
     <path d="M14 32 l3 7 h14 l3 -7" fill="#ff8fbf" ${t}/>`,
+
+  // ---------- Spodní lišta ----------
+  'tab-uceni': `<path d="M24 15 c-5 -4 -11 -4.5 -16 -2.5 v23 c5 -2 11 -1.5 16 2.5z" fill="#fff" ${t}/>
+    <path d="M24 15 c5 -4 11 -4.5 16 -2.5 v23 c-5 -2 -11 -1.5 -16 2.5z" fill="#ffb3d4" ${t}/>
+    <path d="M12 19 q5 -1 8 1 M12 24 q5 -1 8 1 M28 20 q4 -2 8 -1" fill="none" stroke="${O}" stroke-width="1.8" stroke-linecap="round" opacity=".55"/>${jiskra(38, 8, 4.5, '#ffd34d')}`,
+  'tab-battle': `<path d="M24 6 l15 5.5 v11 c0 10 -7 16 -15 20 c-8 -4 -15 -10 -15 -20 v-11z" fill="#9b7bff" ${t}/>
+    <path d="M24 6 l15 5.5 v11 c0 10 -7 16 -15 20z" fill="#7d5cf0"/>
+    <path d="M24 6 l15 5.5 v11 c0 10 -7 16 -15 20 c-8 -4 -15 -10 -15 -20 v-11z" fill="none" ${t}/>
+    <text x="24" y="29.5" text-anchor="middle" font-size="13" font-weight="900" fill="#fff" font-family="ui-rounded, system-ui" font-style="italic">VS</text>${jiskra(40, 36, 3.5, '#ffd34d')}`,
+  'tab-drip': `<path d="M24 6 l13 12 l-13 22 l-13 -22z" fill="#9fe7ff" ${t}/>
+    <path d="M11 18 h26 M18 18 l6 22 l6 -22 M17.5 11 l6.5 7 l6.5 -7" fill="none" stroke="${O}" stroke-width="1.8" stroke-linejoin="round" opacity=".6"/>
+    <path d="M15 14 l4 -4" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>${jiskra(39, 9, 5, '#fff')}${jiskra(9, 35, 3.5, '#ffd34d')}`,
+  'tab-zebricek': `<rect x="17" y="20" width="14" height="20" rx="2" fill="#ffd34d" ${t}/><rect x="5" y="27" width="12" height="13" rx="2" fill="#c7cfdb" ${t}/><rect x="31" y="31" width="12" height="9" rx="2" fill="#f0b07a" ${t}/>
+    <text x="24" y="34" text-anchor="middle" font-size="10" font-weight="900" fill="${O}" font-family="ui-rounded, system-ui">1</text>
+    <path d="M17 16 l2 -8 l4 4 l1 -6 l1 6 l4 -4 l2 8z" fill="#ffd34d" ${t}/>`,
 
   // ---------- Opakování ze 3. třídy ----------
   barvy: `<path d="M24 9 c10 0 16 7 16 14 c0 5 -4 6 -7 5 c-3 -1 -5 1 -4 4 c1 4 -2 8 -7 8 c-9 0 -15 -7 -15 -15 c0 -9 7 -16 17 -16z" fill="#fff" ${t}/>

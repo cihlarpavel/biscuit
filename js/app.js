@@ -14,7 +14,9 @@ import { ik, maIkonu } from './ikony.js';
 
 document.documentElement.style.setProperty('--pozadi-kresby', POZADI);
 addEventListener('pointerdown', odemkni, { once: true });
-$$('#tabs a').forEach(a => (a.querySelector('span').innerHTML = ik(a.dataset.tab, 30, { podklad: false })));
+$$('#tabs a[data-ik]').forEach(a => (a.querySelector('span').innerHTML = ik(a.dataset.ik, a.classList.contains('stred') ? 40 : 32, { podklad: false })));
+// Na záložce Já je vlastní postavička (překreslí se při každé změně obrazovky).
+const tabJa = () => { const x = p(); $('#tabs [data-tab="ja"] span').innerHTML = x ? postavicka(x.vzhled, 32, 'hlava') : ik('ja', 32, { podklad: false }); };
 const ikBalicku = (b, px = 40) => maIkonu(b.id) ? ik(b.id, px) : b.ikona;
 
 const p = () => S.profil();
@@ -28,6 +30,7 @@ const TRASY = {
 };
 function route() {
   nastavUceni(false);
+  tabJa();
   const [cesta, arg] = location.hash.replace(/^#\/?/, '').split('/');
   if (!S.profily().length && cesta !== 'novy') return obrazovkaVitej();
   if (!p() && cesta !== 'novy') return profily();
@@ -68,7 +71,7 @@ function novy() {
     <input id="prezdivka" class="pole" maxlength="14" placeholder="Přezdívka" autocomplete="off">
     <div class="nova-postavicka"><div id="nahled">${postavicka(vzhled, 150)}</div>
       <button class="btn vedlejsi" id="jina">🎲 Jiná</button></div>
-    <p class="drobne">Tohle je tvoje postavička. Oblečení, brýle, čepice a mazlíčky jí koupíš za sušenky v Šatníku.</p>
+    <p class="drobne">Tohle je tvoje postavička. Oblečení, brýle, čepice a mazlíčky jí koupíš za sušenky v Drip shopu.</p>
     <button class="btn velke" id="hotovo">Hotovo</button>
     </section>`, { bezListy: true });
   $('#jina').onclick = () => { vzhled = nahodnyVzhled(); $('#nahled').innerHTML = postavicka(vzhled, 150); };
@@ -321,7 +324,7 @@ function ja() {
   const zbyvajici = ODZNAKY.filter(o => !x.odznaky[o.id] && !o.id.startsWith('mistr-'));
   obrazovka(`${hlavicka(x)}<section class="stranka">
     <div class="ja-hlava"><span class="avatar obri">${postavicka(x.vzhled, 120)}</span><h1>${jmeno(x)}</h1><p class="titul">${esc(H.titul(x.susenky))}</p>
-      <a class="btn" href="#/obchod">${ik('satnik', 26, { podklad: false })} Šatník</a></div>
+      <a class="btn" href="#/obchod">${ik('tab-drip', 28, { podklad: false })} Drip shop</a></div>
     <div class="cisla">
       <div><b>${S.serie(x)}</b><small>🔥 série</small></div>
       <div><b>${S.nejdelsiSerie(x)}</b><small>nejdelší série</small></div>
@@ -342,7 +345,7 @@ function ja() {
   vlozSchovanou('ja');
 }
 
-// ---------- Šatník (postavička ve stylu Pou) ----------
+// ---------- Drip shop (šatník postavičky ve stylu Pou) ----------
 let satnikKat = 'obleceni';
 function obchod() {
   const x = p();
@@ -354,7 +357,7 @@ function obchod() {
     const zkousenaVec = vec(zkouska[kat.id]);
     const nekoupena = zkousenaVec && !maVec(x, zkousenaVec) ? zkousenaVec : null;
     obrazovka(`${hlavicka(x)}<section class="stranka satnik">
-      ${zpet('#/ja')}
+      <h1 class="drip-nadpis">Drip shop</h1>
       <div class="satnik-nahled">${postavicka(zkouska, 250)}</div>
       <div class="kategorie">${KATEGORIE.map(k => `<button class="kat${k.id === kat.id ? ' on' : ''}" data-k="${k.id}"><span>${k.ikona}</span>${esc(k.nazev)}</button>`).join('')}</div>
       <div class="veci">
@@ -368,8 +371,7 @@ function obchod() {
       <div class="satnik-lista">${nekoupena
         ? `<button class="btn velke" id="koupit">${x.susenky >= nekoupena.cena ? `Koupit ${esc(nekoupena.nazev)} za 🍪 ${nekoupena.cena}` : `Chybí ti 🍪 ${nekoupena.cena - x.susenky}`}</button>`
         : `<button class="btn vedlejsi" id="mix">🎲 Náhodný mix z mých věcí</button>`}</div>
-    </section>`, { tab: 'ja' });
-  vlozSchovanou('ja');
+    </section>`, { tab: 'drip' });
 
     $('.kat.on')?.scrollIntoView({ inline: 'center', block: 'nearest' });
     $$('.kat').forEach(b => (b.onclick = () => { satnikKat = b.dataset.k; obchod(); }));

@@ -15,7 +15,7 @@
   --cervena: #ff6b7a;
   --stin: 0 6px 18px rgba(150, 90, 140, .13);
   --r: 22px;
-  --lista: calc(68px + env(safe-area-inset-bottom));
+  --lista: calc(70px + env(safe-area-inset-bottom));
   color-scheme: light;
 }
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -63,14 +63,31 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 /* ---------- Spodní lišta ---------- */
 .tabs {
   position: fixed; left: 0; right: 0; bottom: 0; height: var(--lista);
-  display: flex; padding: 6px 8px env(safe-area-inset-bottom);
-  background: rgba(255, 255, 255, .92); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
-  border-top: 2px solid var(--ruzova-svetla);
+  display: flex; align-items: flex-end; padding: 0 6px env(safe-area-inset-bottom);
+  background: rgba(255, 255, 255, .94); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  border-top: 2px solid var(--ruzova-svetla); border-radius: 24px 24px 0 0;
+  box-shadow: 0 -6px 20px rgba(150, 90, 140, .10);
 }
-.tabs a { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 12px; font-weight: 600; color: var(--tlumene); border-radius: 16px; padding-top: 4px; }
-.tabs a span { font-size: 24px; filter: grayscale(.7); opacity: .7; transition: transform .15s; }
-.tabs a.on { color: var(--ruzova); background: var(--ruzova-svetla); }
-.tabs a.on span { filter: none; opacity: 1; transform: scale(1.12); }
+.tabs a { flex: 1; height: 66px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px;
+  font-size: 11px; font-weight: 700; color: var(--tlumene); }
+.tabs a span { display: grid; place-items: center; width: 44px; height: 38px; border-radius: 14px; line-height: 0;
+  opacity: .55; transition: transform .2s cubic-bezier(.3, 1.6, .5, 1), opacity .2s, background .2s; }
+.tabs a.on { color: var(--ruzova); }
+.tabs a.on span { opacity: 1; background: var(--ruzova-svetla); transform: translateY(-3px) rotate(-6deg) scale(1.08); }
+.tabs a[data-tab="ja"] span { opacity: .8; }
+.tabs a[data-tab="ja"] span svg { border-radius: 50%; box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--ruzova-svetla); }
+.tabs a[data-tab="ja"].on span svg { box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--ruzova); }
+/* Drip shop: vystouplé kulaté tlačítko uprostřed */
+.tabs a.stred { position: relative; }
+.tabs a.stred span {
+  width: 64px; height: 64px; border-radius: 50%; opacity: 1; margin-top: -30px; margin-bottom: 2px;
+  background: linear-gradient(135deg, #ff8fc4, #b69cff); border: 4px solid #fff;
+  box-shadow: 0 6px 16px rgba(182, 120, 220, .45); animation: drip 3.5s ease-in-out infinite;
+}
+.tabs a.stred.on span { transform: scale(1.08); background: linear-gradient(135deg, #ff6fae, #9b7bff); }
+@keyframes drip { 0%, 85%, 100% { rotate: 0deg; } 90% { rotate: -10deg; } 95% { rotate: 8deg; } }
+.drip-nadpis { text-align: center; font-size: 30px; margin: 6px 0 0;
+  background: linear-gradient(90deg, #ff6fae, #9b7bff, #4dabf7); -webkit-background-clip: text; background-clip: text; color: transparent; }
 
 /* ---------- Hlavička ---------- */
 .hlavicka {
