@@ -583,7 +583,7 @@ export function postavicka(vzhled = VYCHOZI, velikost = 120, vyrez = 'cela') {
   const viewBox = vyrez === 'hlava' ? '12 6 96 96' : '0 0 120 120';
 
   const hlava = celaMaska ? '' : `
-    ${kapucova ? '' : vlasy(vlasyVzadu(z.uces, c))}
+    ${kapucova ? '' : `<g class="pv-vlasy">${vlasy(vlasyVzadu(z.uces, c))}</g>`}
     <ellipse cx="35" cy="58" rx="4" ry="6" fill="${kuze}" ${OBRYS}/><ellipse cx="85" cy="58" rx="4" ry="6" fill="${kuze}" ${OBRYS}/>
     <ellipse cx="60" cy="56" rx="25" ry="26" fill="${kuze}" ${OBRYS}/>
     ${kapucova || !sOfinou ? '' : `<g clip-path="url(#${fid})"><g transform="translate(0 3.5)" opacity=".16">${vlasyVpredu(z.uces, '#000')}</g></g>`}
@@ -592,34 +592,42 @@ export function postavicka(vzhled = VYCHOZI, velikost = 120, vyrez = 'cela') {
     <ellipse cx="44" cy="61" rx="4.5" ry="3" fill="#ffadc6" opacity=".7"/><ellipse cx="76" cy="61" rx="4.5" ry="3" fill="#ffadc6" opacity=".7"/>
     ${tvar(z.tvar)}
     ${vousy(z.vousy, c, defs)}
-    ${pusa(z.pusa)}
+    <g class="pv-pusa">${pusa(z.pusa)}</g>
     ${kapucova ? '' : vlasy(vlasyVpredu(z.uces, c))}
     ${kapucova || !sOfinou ? '' : '<path d="M43 35 q7 -6 16 -6.5" stroke="#fff" stroke-opacity=".45" stroke-width="2.4" fill="none" stroke-linecap="round"/>'}
-    ${['kyklop'].includes(z.oci) ? '' : `<path d="M44 44.6 q5.5 -3.6 11 -1.4 M65 43.2 q5.5 -2.2 11 1.4" stroke="${obociBarva}" stroke-width="2.3" fill="none" stroke-linecap="round"/>`}
+    ${['kyklop'].includes(z.oci) ? '' : `<path class="pv-oboci" d="M44 44.6 q5.5 -3.6 11 -1.4 M65 43.2 q5.5 -2.2 11 1.4" stroke="${obociBarva}" stroke-width="2.3" fill="none" stroke-linecap="round"/>`}
     ${barvaVlasu?.hvezdy && !kapucova ? hvezdicka(44, 34, 2.5, '#fff') + hvezdicka(70, 30, 2, '#fff') + hvezdicka(58, 38, 1.6, '#fff') : ''}
     ${z.uces === 'culik' && !kapucova ? '<circle cx="80" cy="24" r="5" fill="#ff6fae"/>' : ''}
-    ${oci(z.oci, iris)}
+    <g class="pv-oci">${oci(z.oci, iris)}</g>
     ${piercing(z.piercing)}
     ${bryle(z.bryle)}
     ${nausnice(vec(z.nausnice))}`;
 
-  return `<svg class="postavicka" width="${velikost}" height="${velikost}" viewBox="${viewBox}" aria-hidden="true">
+  // Pohyb (mrkání, hlava, vlasy, dech…) jen u větších postaviček; malé náhledy stojí. Každá má jiné zpoždění,
+  // aby dvě postavičky vedle sebe nemrkaly naráz.
+  const hybe = velikost >= 90 ? ` hybe" style="--d:${(-Math.random() * 6).toFixed(2)}s` : '';
+  return `<svg class="postavicka${hybe}" width="${velikost}" height="${velikost}" viewBox="${viewBox}" aria-hidden="true">
     <clipPath id="${id}"><circle cx="60" cy="60" r="60"/></clipPath>
     <g clip-path="url(#${id})">
     ${pozadi(z.pozadi, defs)}
+    <g class="pv-telo">
     ${obleceni(z.obleceni, defs)}
     <path d="M28 120 q2 -30 32 -32 q30 2 32 32 z" fill="url(#${tid})"/>
     <path d="M28 120 q2 -30 32 -32 q30 2 32 32" fill="none" ${OBRYS}/>
     <path d="M52 87 q8 6 16 0 v-8 h-16z" fill="${kuze}"/>
     <path d="M52 79 v8 M68 79 v8" ${OBRYS}/>
     <path d="M52 80 h16 v3.5 q-8 5 -16 0z" fill="#000" opacity=".14"/>
-    ${nahrdelnik(z.nahrdelnik)}
+ ${nahrdelnik(z.nahrdelnik)}
+    <g class="pv-hlava">
     ${hlava}
     ${maska(m, kuzePlna, c)}
     ${naHlavu(vec(z.hlava), c)}
+    </g></g>
+    <g class="pv-ruka">
     ${ruka ? `<text x="96" y="110" font-size="26" text-anchor="middle">${ruka}</text>` : ''}
     ${ruka || z.naramek ? `<path d="M78.5 106 q-1 -6 5 -7 q6 0 6.5 5 q0 5 -5.5 6 q-5 0 -6 -4z" fill="${kuze}" stroke="${H}" stroke-width="1.2" stroke-opacity=".6"/><path d="M80.5 103 q2 -1.6 4 -.6" stroke="${H}" stroke-width="1" stroke-opacity=".5" fill="none" stroke-linecap="round"/>` : ''}
     ${naramek(z.naramek, kuze)}
-    ${mazl ? `<text x="25" y="106" font-size="24" text-anchor="middle">${mazl}</text>` : ''}
+    </g>
+    ${mazl ? `<text class="pv-mazl" x="25" y="106" font-size="24" text-anchor="middle">${mazl}</text>` : ''}
     </g><circle cx="60" cy="60" r="58.6" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="2.4"/><defs>${defs.join('')}</defs></svg>`;
 }

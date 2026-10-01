@@ -33,6 +33,7 @@ function route() {
   tabJa();
   const x0 = p();
   nastavSvet(x0);
+  if (x0 && !x0.rod) return otazkaRod(x0);
   if (x0) {
     const nejnovejsi = odemceneSvety(x0).pop();
     if (x0.svetVidel === undefined) x0.svetVidel = nejnovejsi.id; // stávající profily oslavu nedostanou zpětně
@@ -50,7 +51,7 @@ const jdi = h => { if (location.hash === h) route(); else location.hash = h; };
 function hlavicka(x) {
   return `<header class="hlavicka">
     <a href="#/profily" class="kdo"><span class="avatar">${av(x)}</span>
-      <span><b>${jmeno(x)}</b><small>${esc(H.titul(nasbirano(x)))}</small></span></a>
+      <span><b>${jmeno(x)}</b><small>${esc(H.titul(nasbirano(x), x))}</small></span></a>
     <span class="stat">${ik('ohen', 22, { podklad: false })} ${S.serie(x)}</span><span class="stat">${ik('susenka', 22, { podklad: false })} ${x.susenky}</span></header>`;
 }
 
@@ -65,7 +66,7 @@ function profily() {
   const vse = S.profily();
   obrazovka(`<section class="stranka">${p() ? zpet('#/') : ''}<h1>Kdo hraje?</h1>
     <div class="profily">${vse.map(x => `<button class="profil-karta" data-id="${x.id}">
-      <span class="avatar velky">${av(x, 70)}</span><b>${jmeno(x)}</b><small>${esc(H.titul(nasbirano(x)))}</small></button>`).join('')}
+      <span class="avatar velky">${av(x, 70)}</span><b>${jmeno(x)}</b><small>${esc(H.titul(nasbirano(x), x))}</small></button>`).join('')}
       <a class="profil-karta pridat" href="#/novy"><span class="avatar velky">＋</span><b>Přidat kamarádku</b><small>nebo kamaráda</small></a>
     </div></section>`, { bezListy: true });
   $$('.profil-karta[data-id]').forEach(b => (b.onclick = () => { S.prepni(b.dataset.id); jdi('#/'); }));
@@ -76,16 +77,21 @@ function novy() {
   obrazovka(`<section class="stranka">${S.profily().length ? zpet(p() ? '#/profily' : '#/profily') : ''}
     <div class="maskot-bublina">${maskot(80, 'mrk')}<div class="bublina">Jak ti mám říkat? Stačí přezdívka.</div></div>
     <input id="prezdivka" class="pole" maxlength="14" placeholder="Přezdívka" autocomplete="off">
+    <div class="rod-volba"><button data-rod="z">👧 Holka</button><button data-rod="m">👦 Kluk</button></div>
     <div class="nova-postavicka"><div id="nahled">${postavicka(vzhled, 150)}</div>
       <button class="btn vedlejsi" id="jina">🎲 Jiná</button></div>
     <p class="drobne">Tohle je tvoje postavička. Oblečení, brýle, čepice a mazlíčky jí koupíš za sušenky v Drip shopu.</p>
     <button class="btn velke" id="hotovo">Hotovo</button>
     </section>`, { bezListy: true });
+  let rodNovy = null;
+  $$('.rod-volba button').forEach(b => (b.onclick = () => { rodNovy = b.dataset.rod; $$('.rod-volba button').forEach(x => x.classList.toggle('on', x === b)); }));
   $('#jina').onclick = () => { vzhled = nahodnyVzhled(); $('#nahled').innerHTML = postavicka(vzhled, 150); };
   $('#hotovo').onclick = () => {
     const n = $('#prezdivka').value.trim();
     if (!n) return toast('Napiš přezdívku 🙂');
-    S.novyProfil(n, vzhled);
+    if (!rodNovy) return toast('Klepni, jestli jsi holka, nebo kluk 🙂');
+    S.novyProfil(n, vzhled).rod = rodNovy;
+    S.uloz();
     jdi('#/');
   };
 }
@@ -97,7 +103,7 @@ function domu() {
   const cil = x.nastaveni.cil;
   const hotovo = d.s >= cil * 60;
   const unitTed = BALICKY.find(b => b.unit === x.nastaveni.unit);
-  const pozdrav = hotovo ? H.nahodne(H.CIL_SPLNEN) : S.serie(x) >= 2 ? H.dosad(H.nahodne(H.SERIE), { n: S.serie(x) }) : H.dosad(H.nahodne(H.POZDRAVY), { jmeno: x.prezdivka });
+  const pozdrav = hotovo ? H.nahodne(H.CIL_SPLNEN) : S.serie(x) >= 2 ? H.dosad(H.nahodne(H.SERIE), { n: S.serie(x) }) : H.rod(H.dosad(H.nahodne(H.POZDRAVY), { jmeno: x.prezdivka }), x);
   const otevrene = new Set(odemcene(x).map(b => b.id));
 
   const skupiny = SKUPINY.map(g => `<h2>${esc(g.nazev)}</h2><p class="drobne">${esc(g.popis)}</p>
@@ -152,7 +158,7 @@ function spustLekci(idBalicku) {
   const cilPred = S.den(x).s >= x.nastaveni.cil * 60;
   nastavUceni(true);
   hraj(ulohy, {
-    nazev: idBalicku ? balicek(idBalicku)?.nazev : 'Dnešní lekce',
+    nazev: idBalicku ? balicek(idBalicku)?.nazev : 'Dnešní lekce', profil: x,
     priOdpovedi: (u, ok, prvni) => {
       if (u.polozka?.id && prvni) zapis(x, u.polozka, ok);
       const d = S.den(x);
@@ -182,7 +188,7 @@ function konecLekce(x, v, bonus, cilTed, nove) {
   const druh = v.perfekt ? 'perfekt' : v.chyby <= 2 ? 'dobre' : 'slabsi';
   const d = S.den(x);
   obrazovka(`<section class="stranka konec">${zpet('#/', 'Domů')}${maskot(150, v.perfekt ? 'mrk' : 'radost')}
-    <h1>${esc(H.nahodne(H.KONEC_LEKCE[druh]))}</h1>
+    <h1>${esc(H.rod(H.nahodne(H.KONEC_LEKCE[druh]), x))}</h1>
     <div class="odmena"><span>🍪 +${v.susenky + bonus}</span><small>${v.susenky} za odpovědi, ${bonus} bonus${cilTed ? ' (vč. denního cíle!)' : ''}</small></div>
     ${kolecko(d.s / (x.nastaveni.cil * 60), `<b>${minuty(d.s)}</b><small>z ${x.nastaveni.cil} min</small>`, 110)}
     ${cilTed ? `<p class="hlaska">${esc(H.nahodne(H.CIL_SPLNEN))}</p>` : ''}
@@ -201,7 +207,7 @@ function battle() {
   const jm = id => esc(S.profil(id)?.prezdivka || '?');
   obrazovka(`${hlavicka(x)}<section class="stranka">
     <h1>Battle ⚔️</h1>
-    <p class="drobne">Holka proti holce na jednom telefonu. Stejné otázky, rozhoduje správnost a rychlost.</p>
+    <p class="drobne">Jeden na jednoho na jednom telefonu. Stejné otázky, rozhoduje správnost a rychlost.</p>
     ${ostatni.length ? `<h3>Koho vyzveš?</h3><div class="profily">${ostatni.map(o => {
       const z = vzajemne(x.id, o.id);
       return `<button class="profil-karta" data-id="${o.id}"><span class="avatar velky">${av(o, 70)}</span><b>${jmeno(o)}</b>
@@ -238,7 +244,7 @@ function hrajBattle(h1, h2) {
       S.prepni(hracka.id); // čas učení se počítá té, která právě hraje
       nastavUceni(true);
       hraj(ulohy, {
-        battle: true, nazev: hracka.prezdivka,
+        battle: true, nazev: hracka.prezdivka, profil: hracka,
         priOdpovedi: (u, ok) => { const d = S.den(hracka); ok ? d.ok++ : d.chyby++; },
         konec: v => { nastavUceni(false); S.prepni(puvodni); hotovo(v); },
       });
@@ -266,7 +272,7 @@ function vysledekBattlu(h1, h2, [s1, s2]) {
   } else {
     const [v, pr] = s1 > s2 ? [h1, h2] : [h2, h1];
     const rozdil = Math.abs(s1 - s2);
-    text = H.dosad(H.nahodne(rozdil <= 150 ? H.SOUBOJ.tesne : H.SOUBOJ.jasne), { vitez: v.prezdivka, porazena: pr.prezdivka });
+    text = H.rod(H.dosad(H.nahodne(rozdil <= 150 ? H.SOUBOJ.tesne : H.SOUBOJ.jasne), { vitez: v.prezdivka, porazena: pr.prezdivka }), v);
     v.souboje.vyhry++; S.pridej(v, 10);
     pr.souboje.prohry++; S.pridej(pr, 3);
   }
@@ -296,7 +302,7 @@ function zebricek() {
     { ikona: '🔥', nazev: 'Nejdelší série teď', hodnota: o => S.serie(o), fmt: n => `${n} dní`,
       vtip: v => `${v} je on fire. Doslova.` },
     { ikona: '⏱️', nazev: 'Minuty tento týden', hodnota: o => minuty(S.tydenSekund(o)), fmt: n => `${n} min`,
-      vtip: (v, n) => `${v} se učila o ${n} minut víc. Podezřelé. Možná je to robot 🤖` },
+      vtip: (v, n, o) => `${v} se ${H.rod('[učil|učila]', o)} o ${n} minut víc. Podezřelé. Možná je to robot 🤖` },
     { ikona: '🧠', nazev: 'Umí slovíček', hodnota: o => S.umiSlov(o), fmt: n => n,
       vtip: (v, n) => `${v} umí o ${n} slovíček víc. Chodící slovník.` },
     { ikona: '⚔️', nazev: 'Výhry v battlech', hodnota: o => o.souboje.vyhry, fmt: n => n,
@@ -307,14 +313,14 @@ function zebricek() {
     const serazene = [...vse].sort((a, b) => k.hodnota(b) - k.hodnota(a));
     const [prvni, druha] = serazene;
     const rozdil = druha ? k.hodnota(prvni) - k.hodnota(druha) : 0;
-    const vtip = vse.length > 1 && rozdil > 0 ? k.vtip(prvni.prezdivka, rozdil) : vse.length > 1 ? 'Zatím nerozhodně. Napínavé.' : '';
+    const vtip = vse.length > 1 && rozdil > 0 ? k.vtip(prvni.prezdivka, rozdil, prvni) : vse.length > 1 ? 'Zatím nerozhodně. Napínavé.' : '';
     return `<div class="z-karta"><h3>${k.ikona} ${k.nazev}</h3>
       ${serazene.map((o, i) => `<div class="z-radek${o.id === x.id ? ' ja' : ''}"><span class="z-poradi">${medaile[i] || i + 1}</span>
         <span class="avatar">${av(o, 34)}</span><span class="z-jmeno">${jmeno(o)}</span><b>${k.fmt(k.hodnota(o))}</b></div>`).join('')}
       ${vtip ? `<p class="z-vtip">${esc(vtip)}</p>` : ''}</div>`;
   }).join('');
   obrazovka(`${hlavicka(x)}<section class="stranka"><h1>Žebříček 🏆</h1>
-    ${vse.length < 2 ? `<div class="prazdne">${maskot(90, 'hmm')}<p>Zatím jsi tu sama. Vyhráváš všechno, ale to se nepočítá 😅</p>
+    ${vse.length < 2 ? `<div class="prazdne">${maskot(90, 'hmm')}<p>Zatím jsi tu ${H.rod('[sám|sama]', x)}. Vyhráváš všechno, ale to se nepočítá 😅</p>
       <a class="btn" href="#/novy">＋ Přidat kamarádku</a></div>` : ''}
     ${karty}</section>`, { tab: 'zebricek' });
   vlozSchovanou('zebricek');
@@ -331,7 +337,7 @@ function ja() {
   const ziskane = ODZNAKY.filter(o => x.odznaky[o.id]);
   const zbyvajici = ODZNAKY.filter(o => !x.odznaky[o.id] && !o.id.startsWith('mistr-'));
   obrazovka(`${hlavicka(x)}<section class="stranka">
-    <div class="ja-hlava"><span class="avatar obri">${postavicka(x.vzhled, 120)}</span><h1>${jmeno(x)}</h1><p class="titul">${esc(H.titul(nasbirano(x)))}</p>
+    <div class="ja-hlava"><span class="avatar obri">${postavicka(x.vzhled, 120)}</span><h1>${jmeno(x)}</h1><p class="titul">${esc(H.titul(nasbirano(x), x))}</p>
       <a class="btn" href="#/obchod">${ik('tab-drip', 28, { podklad: false })} Drip shop</a></div>
     <div class="cisla">
       <div><b>${S.serie(x)}</b><small>🔥 série</small></div>
@@ -346,10 +352,10 @@ function ja() {
     <h2>Moje světy <small>${odemceneSvety(x).length} z ${SVETY.length}</small></h2>
     <p class="drobne">Nový svět se odemkne s dalším titulem. Klepnutím si vybereš pozadí.</p>
     <div class="svety">${SVETY.map(s => { const ok = nasbirano(x) >= s.od; return `<button class="svet${svetPro(x).id === s.id ? ' on' : ''}${ok ? '' : ' zamceny'}" data-svet="${s.id}" ${ok ? '' : 'disabled'}
-      style="background:${s.bg} ${nahledSveta(s)} center/110px"><span>${ok ? s.ikona : ik('zamek', 30, { podklad: false })}</span><b>${esc(s.nazev)}</b><small>${ok ? esc(s.titul) : `od ${s.od} 🍪 celkem`}</small></button>`; }).join('')}</div>
+      style="background:${s.bg} ${nahledSveta(s)} center/110px"><span>${ok ? s.ikona : ik('zamek', 30, { podklad: false })}</span><b>${esc(s.nazev)}</b><small>${ok ? esc(H.rod(s.titul, x)) : `od ${s.od} 🍪 celkem`}</small></button>`; }).join('')}</div>
     <h2>Odznaky <small>${ziskane.length}</small></h2>
-    <div class="odznaky">${ziskane.map(o => `<div class="odznak"><span>${o.ikona}</span><b>${esc(o.nazev)}</b><small>${esc(o.popis)}</small></div>`).join('')}
-      ${zbyvajici.map(o => `<div class="odznak zamceny"><span>${o.ikona}</span><b>${esc(o.nazev)}</b><small>${esc(o.popis)}</small></div>`).join('')}</div>
+    <div class="odznaky">${ziskane.map(o => `<div class="odznak"><span>${o.ikona}</span><b>${esc(o.nazev)}</b><small>${esc(H.rod(o.popis, x))}</small></div>`).join('')}
+      ${zbyvajici.map(o => `<div class="odznak zamceny"><span>${o.ikona}</span><b>${esc(o.nazev)}</b><small>${esc(H.rod(o.popis, x))}</small></div>`).join('')}</div>
     <div class="tlacitka">
       <a class="btn vedlejsi" href="#/profily">Přepnout profil</a>
       <a class="odkaz" href="#/rodic">Pro rodiče</a></div>
@@ -451,6 +457,7 @@ function rodic() {
       <p>Umí ${S.umiSlov(o)} položek · série ${S.serie(o)} dní · 🍪 ${o.susenky}</p>
       ${sl.length ? `<p><b>Nejvíc chyb:</b> ${sl.map(s => `${esc(s.en)} (${s.chyby}×)`).join(', ')}</p>` : ''}
       <label>Ve škole probírají <select data-k="unit">${[1, 2, 3, 4, 5, 6, 7, 8].map(n => `<option ${o.nastaveni.unit === n ? 'selected' : ''} value="${n}">Unit ${n}</option>`).join('')}</select></label>
+      <label>Holka / kluk <select data-rod>${[['z', 'Holka'], ['m', 'Kluk']].map(([k, t]) => `<option value="${k}" ${(o.rod || 'z') === k ? 'selected' : ''}>${t}</option>`).join('')}</select></label>
       <label>Denní cíl <select data-k="cil">${[5, 10, 15, 20, 30].map(n => `<option ${o.nastaveni.cil === n ? 'selected' : ''} value="${n}">${n} min</option>`).join('')}</select></label>
       <label class="prepinac"><input type="checkbox" data-k="vsechnyUnity" ${o.nastaveni.vsechnyUnity ? 'checked' : ''}> Odemknout všechny lekce dopředu</label>
       <button class="odkaz cervene" data-smazat="${o.id}">Smazat profil</button></div>`;
@@ -464,6 +471,7 @@ function rodic() {
       <button class="btn vedlejsi" id="zmenapin">Změnit PIN</button></div></section>`, { bezListy: true });
   $$('.r-karta select, .r-karta input').forEach(el => (el.onchange = () => {
     const o = S.profil(el.closest('.r-karta').dataset.id);
+    if (el.dataset.rod !== undefined) { o.rod = el.value; S.uloz(); return toast('Uloženo'); }
     o.nastaveni[el.dataset.k] = el.type === 'checkbox' ? el.checked : +el.value;
     S.uloz();
     toast('Uloženo');
@@ -484,12 +492,20 @@ function rodic() {
   $('#zmenapin').onclick = () => { r.pin = null; rodicOdemceno = false; S.uloz(); rodic(); };
 }
 
+// ---------- Holka, nebo kluk (jednou u profilů založených dřív) ----------
+function otazkaRod(x) {
+  obrazovka(`<section class="stranka konec"><span class="avatar obri">${postavicka(x.vzhled, 120)}</span>
+    <h1>Ještě jedna věc 🙂</h1><p class="hlaska">Jsi holka, nebo kluk? Ať ti aplikace píše správně.</p>
+    <div class="rod-volba velka"><button data-rod="z">👧 Holka</button><button data-rod="m">👦 Kluk</button></div></section>`, { bezListy: true });
+  $$('.rod-volba button').forEach(b => (b.onclick = () => { x.rod = b.dataset.rod; S.uloz(); route(); }));
+}
+
 // ---------- Nový svět ----------
 function novySvet(s) {
   obrazovka(`<section class="stranka konec">
     <div class="svet-velky" style="background:${s.bg} ${nahledSveta(s)}"><span>${s.ikona}</span></div>
     <h1>Nový svět: ${esc(s.nazev)}!</h1>
-    <p class="hlaska">Máš titul ${esc(s.titul)}. Aplikace se ti právě přestěhovala.</p>
+    <p class="hlaska">Máš titul ${esc(H.rod(s.titul, p()))}. Aplikace se ti právě přestěhovala.</p>
     <a class="btn velke" href="#/">Jdu se podívat</a></section>`, { bezListy: true });
   konfety(); zvukFanfara();
 }
@@ -519,7 +535,7 @@ function vlozSchovanou(tab) {
 function nalezena(x) {
   obrazovka(`<section class="stranka konec">${zpet('#/', 'Teď ne')}
     <div class="zlata-velka">${ik('zlata', 140, { podklad: false })}</div>
-    <h1>Našla jsi zlatou sušenku!</h1>
+    <h1>${H.rod('[Našel|Našla]', x)} jsi zlatou sušenku!</h1>
     <p class="hlaska">Bleskovka: 6 otázek za 40 sekund. Každá správně = 2 sušenky, všechny správně = +10 navíc.</p>
     <button class="btn velke" id="bleskovka">Jdu do toho ⚡</button></section>`, { bezListy: true });
   konfety(); zvukFanfara();
@@ -531,7 +547,7 @@ function bleskovka(x) {
   const ulohy = sestavBattle(x, x, 6);
   nastavUceni(true);
   hraj(ulohy, {
-    battle: true, limit: 40, nazev: 'Bleskovka ⚡',
+    battle: true, limit: 40, nazev: 'Bleskovka ⚡', profil: x,
     priOdpovedi: (u, ok) => { const d = S.den(x); ok ? d.ok++ : d.chyby++; },
     konec: v => {
       nastavUceni(false);

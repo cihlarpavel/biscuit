@@ -29,6 +29,10 @@ v `sw.js`, commit, `git push` (`gh` je v `~/.local/bin/gh`). Ve škole jsou na s
 - `js/ikony.js` – vlastní ikony ve stylu nálepek (`ik('nazev')`), náhled v `tools/ikony.html`.
 - `js/hlasky.js` – všechny hlášky a tituly. Tón: suchá nadsázka, slang jen střídmě (Pavel:
   nesmí působit jako dospělý, který napodobuje dítě). Neoslovovat jménem (5. pád nejde).
+  Rod: profil má `rod` ('z' holka / 'm' kluk, ptá se při založení). Text s rodem se píše
+  `[mužský|ženský]` a prožene `rod(text, profil)` – platí pro hlášky, tituly, odznaky, battle.
+- Postavička se hýbe (mrkání, hlava, vlasy, dech, pusa, obočí, ruka, mazlíček) jen od velikosti 90 px
+  (třída `hybe`, CSS `pv-*` ve styles.css), malé náhledy stojí.
 - `js/cas.js` – aktivní čas: jen na obrazovce lekce/battlu, v popředí, do 45 s od klepnutí.
 - `js/odznaky.js`, `js/store.js` (localStorage `biscuit`, profily), `js/speech.js` (en-GB hlas
   iPhonu + zvuky), `js/maskot.js` (maskotka a čmáranice na pozadí), `js/app.js` (obrazovky).

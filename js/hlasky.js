@@ -2,12 +2,14 @@
 // Tón: suchá nadsázka, slang jen střídmě. Nesnažit se znít „cool“ za každou cenu.
 
 export const nahodne = pole => pole[Math.floor(Math.random() * pole.length)];
+// Rod: v textu „[mužský|ženský]“, vybere se podle profilu (p.rod = 'm' kluk, 'z' holka; výchozí holka).
+export const rod = (text, p) => String(text).replace(/\[([^|\]]*)\|([^\]]*)\]/g, (_, m, z) => (p?.rod === 'm' ? m : z));
 export const dosad = (t, o) => t.replace(/\{(\w+)\}/g, (_, k) => o[k] ?? '');
 
 export const SPRAVNE = [
-  'Nice.', 'Slay. 💅', 'Jo, přesně tak.', 'GG.', 'Ani ses nezapotila.',
+  'Nice.', 'Slay. 💅', 'Jo, přesně tak.', 'GG.', 'Ani ses [nezapotil|nezapotila].',
   'Mozek: zapnutý ✅', 'Učitelka by brečela štěstím.', 'Tohle bylo moc easy, ne?',
-  'Správně. Samozřejmě.', 'Na tohle máš talent.', 'Nejsi hacker? 👀', 'To jsi zabil 🔥',
+  'Správně. Samozřejmě.', 'Na tohle máš talent.', 'Nejsi hacker? 👀', 'To jsi [zabil|zabila] 🔥',
 ];
 
 export const SPATNE = [
@@ -42,15 +44,15 @@ export const SERIE = [
 // Tituly podle sušenek, ukazují se u profilu a v žebříčku.
 export const TITULY = [
   [0, 'Drobeček'], [25, 'Sušenkový nováček'], [75, 'Křupavka'], [150, 'Čokoládová hvězda'],
-  [300, 'Cookie Queen 👑'], [600, 'Legenda pekárny'], [1000, 'Sušenková bohyně'],
+  [300, '[Cookie King|Cookie Queen] 👑'], [600, 'Legenda pekárny'], [1000, '[Sušenkový bůh|Sušenková bohyně]'],
 ];
-export const titul = susenky => TITULY.filter(([n]) => susenky >= n).pop()[1];
+export const titul = (susenky, p) => rod(TITULY.filter(([n]) => susenky >= n).pop()[1], p);
 
 // Souboj: vyhodnocení podle rozdílu bodů.
 export const SOUBOJ = {
   remiza: ['Remíza! Obě jste geniální. Nebo obě ne. Rozhodne odveta.', 'Přesně stejně. Tohle se nestává. Odveta?'],
-  tesne: ['{vitez} vyhrála o fous. {porazena} chce odvetu, to je jasný.', 'Těsně {vitez}! {porazena}, ještě jedno kolo?'],
-  jasne: ['{vitez} vyhrála na celé čáře. {porazena}, to chce trénink 💀', '{vitez} je v ranku. {porazena} je lehce cooked 🍳'],
+  tesne: ['{vitez} [vyhrál|vyhrála] o fous. {porazena} chce odvetu, to je jasný.', 'Těsně {vitez}! {porazena}, ještě jedno kolo?'],
+  jasne: ['{vitez} [vyhrál|vyhrála] na celé čáře. {porazena}, to chce trénink 💀', '{vitez} je v ranku. {porazena} je lehce cooked 🍳'],
 };
 
 // Na konci lekce, když už si může v Drip shopu něco koupit.

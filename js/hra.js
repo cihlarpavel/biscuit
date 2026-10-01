@@ -1,7 +1,7 @@
 // Přehrávání lekce (a jednoho kola battlu): jedna úloha za druhou.
 import { obrazovka, esc, $, $$, konfety } from './ui.js';
 import { speak, zvukSpravne, zvukSpatne } from './speech.js';
-import { nahodne, SPRAVNE, SPATNE } from './hlasky.js';
+import { nahodne, rod, SPRAVNE, SPATNE } from './hlasky.js';
 import { maskot } from './maskot.js';
 import { ik } from './ikony.js';
 
@@ -10,7 +10,7 @@ const hlaskuj = slovo => [...slovo.toUpperCase()].join(', ');
 
 // ulohy: pole úloh z lekce.js. moznosti: { battle, nazev, priOdpovedi(uloha, spravne), konec(vysledek) }
 // limit = časový limit v sekundách (Bleskovka); po vypršení hra skončí.
-export function hraj(ulohy, { battle = false, nazev = '', limit = 0, priOdpovedi = () => {}, konec }) {
+export function hraj(ulohy, { battle = false, nazev = '', limit = 0, profil = null, priOdpovedi = () => {}, konec }) {
   const fronta = [...ulohy];
   const celkem = fronta.filter(u => u.typ !== 'nove').length;
   let hotovo = 0, susenky = 0, chyby = 0, body = 0, spravne = 0;
@@ -60,7 +60,7 @@ export function hraj(ulohy, { battle = false, nazev = '', limit = 0, priOdpovedi
     const panel = document.createElement('div');
     panel.className = 'vysledek ' + (spravne ? 'ok' : 'chyba');
     panel.innerHTML = `<div class="vys-radek">${maskot(54, spravne ? 'mrk' : 'hmm')}
-      <div><b>${esc(nahodne(spravne ? SPRAVNE : SPATNE))}</b>
+      <div><b>${esc(rod(nahodne(spravne ? SPRAVNE : SPATNE), profil))}</b>
       ${spravne ? '' : `<div class="spravne">Správně: <b>${esc(spravnaOdpoved)}</b></div>`}</div></div>
       <button class="btn velke">Dál</button>`;
     $('#hra').append(panel);
