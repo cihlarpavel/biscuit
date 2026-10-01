@@ -552,7 +552,7 @@ function pozadi(id, defs) {
 }
 
 // velikost v px; vyrez: 'cela' (celá postavička) nebo 'hlava' (malý avatar v seznamech)
-export function postavicka(vzhled = VYCHOZI, velikost = 120, vyrez = 'cela') {
+export function postavicka(vzhled = VYCHOZI, velikost = 120, vyrez = 'cela', pohyb = velikost >= 90) {
   const z = { ...VYCHOZI, ...vzhled };
   const defs = [];
   const kx = vec(z.kuze) || vec('k1');
@@ -605,7 +605,7 @@ export function postavicka(vzhled = VYCHOZI, velikost = 120, vyrez = 'cela') {
 
   // Pohyb (mrkání, hlava, vlasy, dech…) jen u větších postaviček; malé náhledy stojí. Každá má jiné zpoždění,
   // aby dvě postavičky vedle sebe nemrkaly naráz.
-  const hybe = velikost >= 90 ? ` hybe" style="--d:${(-Math.random() * 6).toFixed(2)}s` : '';
+  const hybe = pohyb ? ` hybe" style="--d:${(-Math.random() * 6).toFixed(2)}s` : '';
   return `<svg class="postavicka${hybe}" width="${velikost}" height="${velikost}" viewBox="${viewBox}" aria-hidden="true">
     <clipPath id="${id}"><circle cx="60" cy="60" r="60"/></clipPath>
     <g clip-path="url(#${id})">

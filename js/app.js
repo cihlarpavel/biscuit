@@ -15,8 +15,8 @@ import { ik, maIkonu } from './ikony.js';
 
 addEventListener('pointerdown', odemkni, { once: true });
 $$('#tabs a[data-ik]').forEach(a => (a.querySelector('span').innerHTML = ik(a.dataset.ik, a.classList.contains('stred') ? 52 : 40)));
-// Na záložce Já je vlastní postavička (překreslí se při každé změně obrazovky).
-const tabJa = () => { const x = p(); $('#tabs [data-tab="ja"] span').innerHTML = x ? postavicka(x.vzhled, 34, 'hlava') : ik('ja', 32, { podklad: false }); };
+// Drip shop uprostřed lišty ukazuje aktuální vytuněnou postavičku (překreslí se při změně obrazovky a po nákupu).
+const tabJa = () => { const x = p(); $('#tabs .stred span').innerHTML = x ? postavicka(x.vzhled, 58, 'hlava', true) : ik('tab-drip', 52); };
 const ikBalicku = (b, px = 40) => maIkonu(b.id) ? ik(b.id, px) : b.ikona;
 
 const p = () => S.profil();
@@ -401,6 +401,7 @@ function obchod() {
       if (!v || maVec(x, v)) { x.vzhled = { ...x.vzhled, [kat.id]: v?.id || null }; S.uloz(); }
       const top = document.getElementById('app').scrollTop;
       vykresli();
+      tabJa();
       document.getElementById('app').scrollTop = top;
     }));
     const mix = $('#mix');
@@ -411,7 +412,7 @@ function obchod() {
         const nic = !k.povinne && Math.random() < 0.5;
         novy[k.id] = nic || !moje.length ? (k.povinne ? x.vzhled[k.id] : null) : moje[Math.floor(Math.random() * moje.length)].id;
       }
-      x.vzhled = novy; zkouska = { ...novy }; S.uloz(); vykresli();
+      x.vzhled = novy; zkouska = { ...novy }; S.uloz(); vykresli(); tabJa();
     };
     const koupit = $('#koupit');
     if (koupit) koupit.onclick = () => {
@@ -423,6 +424,7 @@ function obchod() {
       konfety(); zvukFanfara();
       toast(`${nekoupena.nazev} je tvoje! ✨`);
       vykresli();
+      tabJa();
     };
   };
   vykresli();
