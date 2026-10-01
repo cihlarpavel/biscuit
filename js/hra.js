@@ -3,29 +3,46 @@ import { obrazovka, esc, $, $$, konfety } from './ui.js';
 import { speak, zvukSpravne, zvukSpatne } from './speech.js';
 import { nahodne, SPRAVNE, SPATNE } from './hlasky.js';
 import { maskot } from './maskot.js';
+import { ik } from './ikony.js';
 
 const norm = s => s.toLowerCase().replace(/[’']/g, "'").replace(/[.,!?]/g, '').replace(/\s+/g, ' ').trim();
 const hlaskuj = slovo => [...slovo.toUpperCase()].join(', ');
 
 // ulohy: pole úloh z lekce.js. moznosti: { battle, nazev, priOdpovedi(uloha, spravne), konec(vysledek) }
-export function hraj(ulohy, { battle = false, nazev = '', priOdpovedi = () => {}, konec }) {
+// limit = časový limit v sekundách (Bleskovka); po vypršení hra skončí.
+export function hraj(ulohy, { battle = false, nazev = '', limit = 0, priOdpovedi = () => {}, konec }) {
   const fronta = [...ulohy];
   const celkem = fronta.filter(u => u.typ !== 'nove').length;
-  let hotovo = 0, susenky = 0, chyby = 0, body = 0;
+  let hotovo = 0, susenky = 0, chyby = 0, body = 0, spravne = 0;
   const opakovane = new Set();
-  let start = 0;
+  let start = 0, skoncila = false, stopky = null;
+  const konecLimitu = limit ? Date.now() + limit * 1000 : 0;
 
+  const skonci = extra => {
+    if (skoncila) return;
+    skoncila = true;
+    clearInterval(stopky);
+    konec({ susenky, chyby, body, celkem, spravne, perfekt: chyby === 0 && celkem > 0, ...extra });
+  };
   const dalsi = () => {
-    if (!fronta.length) return konec({ susenky, chyby, body, celkem, perfekt: chyby === 0 && celkem > 0 });
+    if (skoncila) return;
+    if (!fronta.length) return skonci();
     zobraz(fronta.shift());
   };
+  if (limit) stopky = setInterval(() => {
+    const zbyva = Math.max(0, Math.ceil((konecLimitu - Date.now()) / 1000));
+    const el = document.querySelector('.hra-cas');
+    if (el) { el.textContent = zbyva + ' s'; el.classList.toggle('dochazi', zbyva <= 10); }
+    if (!zbyva) skonci({ casVyprsel: true });
+  }, 250);
 
+  const this_ok = () => { spravne++; };
   function hotovaUloha(u, spravne, spravnaOdpoved) {
     const prvniPokus = !opakovane.has(u);
     if (u.typ !== 'nove') {
       if (prvniPokus) hotovo++;
       priOdpovedi(u, spravne, prvniPokus);
-      if (spravne && prvniPokus) susenky++;
+      if (spravne && prvniPokus) { susenky += u.zlata ? 5 : 1; this_ok(); }
       if (!spravne) chyby++;
       if (battle && spravne) body += 100 + Math.max(0, Math.round(50 - (Date.now() - start) / 200));
     }
@@ -34,7 +51,8 @@ export function hraj(ulohy, { battle = false, nazev = '', priOdpovedi = () => {}
     if (battle) {
       (spravne ? zvukSpravne : zvukSpatne)();
       $('#hra').classList.add(spravne ? 'flash-ok' : 'flash-chyba');
-      return setTimeout(dalsi, spravne ? 450 : 1100);
+      setTimeout(dalsi, spravne ? 450 : 1100);
+      return;
     }
     if (u.typ === 'nove') return dalsi();
     (spravne ? zvukSpravne : zvukSpatne)();
@@ -54,13 +72,15 @@ export function hraj(ulohy, { battle = false, nazev = '', priOdpovedi = () => {}
     start = Date.now();
     const pr = celkem ? hotovo / celkem : 0;
     const hlava = `<div class="hra-hlava">
-      <button class="zavrit" aria-label="Ukončit">✕</button>
+      <button class="zavrit" aria-label="Ukončit">${ik('zavrit', 26, { podklad: false })}</button>
       <div class="prubeh"><i style="width:${pr * 100}%"></i></div>
-      <div class="hra-skore">${battle ? '⚡ ' + body : '🍪 ' + susenky}</div></div>
-      ${nazev ? `<div class="hra-nazev">${esc(nazev)}</div>` : ''}`;
+      ${limit ? `<div class="hra-cas">${Math.max(0, Math.ceil((konecLimitu - Date.now()) / 1000))} s</div>` : ''}
+      <div class="hra-skore">${battle && !limit ? '⚡ ' + body : ik('susenka', 22, { podklad: false }) + ' ' + susenky}</div></div>
+      ${nazev ? `<div class="hra-nazev">${esc(nazev)}</div>` : ''}
+      ${u.zlata ? `<div class="zlata-pruh">${ik('zlata', 34, { podklad: false })}<b>Zlatá otázka!</b><span>Správně = 5 sušenek</span></div>` : ''}`;
     const p = u.polozka;
-    const poslech = (text, pomalu) => `<button class="repro" data-text="${esc(text)}" aria-label="Přehrát">🔊</button>
-      ${pomalu ? `<button class="repro maly" data-text="${esc(text)}" data-pomalu="1" aria-label="Pomalu">🐢</button>` : ''}`;
+    const poslech = (text, pomalu) => `<button class="repro" data-text="${esc(text)}" aria-label="Přehrát">${ik('repro', 34, { podklad: false })}</button>
+      ${pomalu ? `<button class="repro maly" data-text="${esc(text)}" data-pomalu="1" aria-label="Pomalu">${ik('zelva', 28, { podklad: false })}</button>` : ''}`;
     let telo = '';
 
     if (u.typ === 'nove') {
@@ -84,7 +104,7 @@ export function hraj(ulohy, { battle = false, nazev = '', priOdpovedi = () => {}
       telo = `<div class="zadani">${u.hlaskovat ? 'Poslouchej hláskování a slož slovo' : 'Slož slovo z písmenek'}</div>
         <div class="otazka">${p.obr ? `<span class="obr-maly">${esc(p.obr)}</span>` : ''}
           ${u.hlaskovat ? '' : `<span class="cz-velke">${esc(p.cz)}</span>`}
-          <button class="repro" id="hlaskuj" aria-label="Přehrát">🔊</button></div>
+          <button class="repro" id="hlaskuj" aria-label="Přehrát">${ik('repro', 34, { podklad: false })}</button></div>
         <div class="sloty">${[...p.en].map(() => '<i></i>').join('')}</div>
         <div class="dlazdice-box">${u.pismena.map((c, i) => `<button class="dlazdice" data-i="${i}">${esc(c)}</button>`).join('')}</div>`;
     } else if (u.typ === 'skladani') {
@@ -95,16 +115,17 @@ export function hraj(ulohy, { battle = false, nazev = '', priOdpovedi = () => {}
         <button class="btn velke" id="zkontroluj" disabled>Zkontrolovat</button>`;
     } else if (u.typ === 'pismeno') {
       telo = `<div class="zadani">Které písmeno slyšíš?</div>
-        <div class="repro-radek velky"><button class="repro" data-text="${esc(u.spravne)}">🔊</button></div>
+        <div class="repro-radek velky"><button class="repro" data-text="${esc(u.spravne)}" aria-label="Přehrát">${ik('repro', 50, { podklad: false })}</button></div>
         <div class="mrizka">${u.moznosti.map((m, i) => `<button class="moznost pismeno" data-i="${i}">${esc(m)}</button>`).join('')}</div>`;
     } else if (u.typ === 'cislo') {
       telo = `<div class="zadani">Které číslo slyšíš?</div>
-        <div class="repro-radek velky"><button class="repro" data-text="${u.spravne}">🔊</button></div>
+        <div class="repro-radek velky"><button class="repro" data-text="${u.spravne}" aria-label="Přehrát">${ik('repro', 50, { podklad: false })}</button></div>
         <div class="mrizka">${u.moznosti.map((m, i) => `<button class="moznost pismeno" data-i="${i}">${m}</button>`).join('')}</div>`;
     }
 
-    const a = obrazovka(`<section id="hra" class="hra">${hlava}<div class="hra-telo">${telo}</div></section>`, { bezListy: true });
-    a.querySelector('.zavrit').onclick = () => { if (confirm(battle ? 'Vzdát battle?' : 'Ukončit lekci? Sušenky z ní zůstanou.')) konec({ susenky, chyby, body, celkem, preruseno: true }); };
+    const a = obrazovka(`<section id="hra" class="hra${u.zlata ? ' zlata' : ''}">${hlava}<div class="hra-telo">${telo}</div></section>`, { bezListy: true });
+    a.querySelector('.zavrit').onclick = () => { if (confirm(battle ? 'Vzdát to?' : 'Ukončit lekci? Sušenky z ní zůstanou.')) skonci({ preruseno: true }); };
+    if (u.zlata) { konfety(); import('./speech.js').then(m => m.zvukFanfara()); }
     $$('.repro[data-text]', a).forEach(b => (b.onclick = () => speak(b.dataset.text, { pomalu: !!b.dataset.pomalu })));
 
     // Automaticky přečíst, co se má poslouchat.

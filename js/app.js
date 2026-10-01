@@ -9,10 +9,13 @@ import { odemkni, speak, zvukFanfara } from './speech.js';
 import { ODZNAKY, zkontroluj } from './odznaky.js';
 import { maskot, POZADI } from './maskot.js';
 import * as H from './hlasky.js';
-import { obrazovka, esc, $, $$, kolecko, minuty, toast, konfety } from './ui.js';
+import { obrazovka, esc, $, $$, kolecko, minuty, toast, konfety, zpet } from './ui.js';
+import { ik, maIkonu } from './ikony.js';
 
 document.documentElement.style.setProperty('--pozadi-kresby', POZADI);
 addEventListener('pointerdown', odemkni, { once: true });
+$$('#tabs a').forEach(a => (a.querySelector('span').innerHTML = ik(a.dataset.tab, 30, { podklad: false })));
+const ikBalicku = (b, px = 40) => maIkonu(b.id) ? ik(b.id, px) : b.ikona;
 
 const p = () => S.profil();
 const jmeno = x => esc(x.prezdivka);
@@ -38,7 +41,7 @@ function hlavicka(x) {
   return `<header class="hlavicka">
     <a href="#/profily" class="kdo"><span class="avatar">${av(x)}</span>
       <span><b>${jmeno(x)}</b><small>${esc(H.titul(x.susenky))}</small></span></a>
-    <span class="stat">🔥 ${S.serie(x)}</span><span class="stat">🍪 ${x.susenky}</span></header>`;
+    <span class="stat">${ik('ohen', 22, { podklad: false })} ${S.serie(x)}</span><span class="stat">${ik('susenka', 22, { podklad: false })} ${x.susenky}</span></header>`;
 }
 
 // ---------- Úvod a profily ----------
@@ -50,7 +53,7 @@ function obrazovkaVitej() {
 
 function profily() {
   const vse = S.profily();
-  obrazovka(`<section class="stranka"><h1>Kdo hraje?</h1>
+  obrazovka(`<section class="stranka">${p() ? zpet('#/') : ''}<h1>Kdo hraje?</h1>
     <div class="profily">${vse.map(x => `<button class="profil-karta" data-id="${x.id}">
       <span class="avatar velky">${av(x, 70)}</span><b>${jmeno(x)}</b><small>${esc(H.titul(x.susenky))}</small></button>`).join('')}
       <a class="profil-karta pridat" href="#/novy"><span class="avatar velky">＋</span><b>Přidat kamarádku</b><small>nebo kamaráda</small></a>
@@ -60,14 +63,14 @@ function profily() {
 
 function novy() {
   let vzhled = nahodnyVzhled();
-  obrazovka(`<section class="stranka">
+  obrazovka(`<section class="stranka">${S.profily().length ? zpet(p() ? '#/profily' : '#/profily') : ''}
     <div class="maskot-bublina">${maskot(80, 'mrk')}<div class="bublina">Jak ti mám říkat? Stačí přezdívka.</div></div>
     <input id="prezdivka" class="pole" maxlength="14" placeholder="Přezdívka" autocomplete="off">
     <div class="nova-postavicka"><div id="nahled">${postavicka(vzhled, 150)}</div>
       <button class="btn vedlejsi" id="jina">🎲 Jiná</button></div>
     <p class="drobne">Tohle je tvoje postavička. Oblečení, brýle, čepice a mazlíčky jí koupíš za sušenky v Šatníku.</p>
     <button class="btn velke" id="hotovo">Hotovo</button>
-    ${S.profily().length ? '<a class="odkaz" href="#/profily">Zpět</a>' : ''}</section>`, { bezListy: true });
+    </section>`, { bezListy: true });
   $('#jina').onclick = () => { vzhled = nahodnyVzhled(); $('#nahled').innerHTML = postavicka(vzhled, 150); };
   $('#hotovo').onclick = () => {
     const n = $('#prezdivka').value.trim();
@@ -93,7 +96,7 @@ function domu() {
       const zamceno = !otevrene.has(b.id);
       const ted = b.unit === x.nastaveni.unit;
       return `<a class="balicek${zamceno ? ' zamceno' : ''}${ted ? ' ted' : ''}" href="${zamceno ? '#/' : '#/balicek/' + b.id}" ${zamceno ? 'data-zamceno="1"' : ''}>
-        <span class="b-ikona">${zamceno ? '🔒' : b.ikona}</span>
+        <span class="b-ikona">${zamceno ? ik('zamek', 40) : ikBalicku(b)}</span>
         <span class="b-text">${b.unit ? `<small>Unit ${b.unit}${ted ? ' · teď ve škole' : ''}</small>` : ''}<b>${esc(b.nazev)}</b>
         <span class="mini-prubeh"><i style="width:${celkem ? umi / celkem * 100 : 0}%"></i></span></span></a>`;
     }).join('')}</div>`).join('');
@@ -107,6 +110,7 @@ function domu() {
         <a class="btn" href="#/lekce">${hotovo ? 'Ještě jednu' : 'Jdeme na to'} →</a></div>
     </div>
     ${skupiny}</section>`, { tab: 'domu' });
+  vlozSchovanou('domu');
   $$('[data-zamceno]').forEach(a => (a.onclick = e => { e.preventDefault(); toast('Tohle ve škole přijde později. Odemkne se v sekci Pro rodiče.'); }));
 }
 
@@ -118,8 +122,8 @@ function detailBalicku(id) {
   const v = polozky(b);
   const stav = it => { const s = x.srs[it.id]; return !s ? '' : s.b >= UMI ? 'umi' : 'uci'; };
   obrazovka(`${hlavicka(x)}<section class="stranka">
-    <a class="odkaz zpet" href="#/">← Zpět</a>
-    <div class="balicek-hlava"><span class="b-ikona velka">${b.ikona}</span>
+    ${zpet('#/')}
+    <div class="balicek-hlava"><span class="b-ikona velka">${ikBalicku(b, 64)}</span>
       <div>${b.unit ? `<small>Happy Street 2 · Unit ${b.unit}</small>` : ''}<h1>${esc(b.nazev)}</h1>
       <p class="drobne">Umíš ${umi} z ${celkem}</p></div></div>
     <a class="btn velke" href="#/lekce/${b.id}">Procvičit tenhle balíček</a>
@@ -127,6 +131,7 @@ function detailBalicku(id) {
     <div class="slovnik">${v.map(it => `<button class="slovo-radek ${stav(it)}" data-en="${esc(it.en)}">
       <span class="s-obr">${esc(it.obr || '')}</span><span class="s-en">${esc(it.en)}</span><span class="s-cz">${esc(it.cz)}</span><i></i></button>`).join('')}</div>
   </section>`, { tab: 'domu' });
+  vlozSchovanou('domu');
   $$('.slovo-radek').forEach(r => (r.onclick = () => speak(r.dataset.en)));
 }
 
@@ -142,7 +147,7 @@ function spustLekci(idBalicku) {
       if (u.polozka?.id && prvni) zapis(x, u.polozka, ok);
       const d = S.den(x);
       ok ? d.ok++ : d.chyby++;
-      if (ok && prvni) x.susenky++;
+      if (ok && prvni) x.susenky += u.zlata ? 5 : 1;
       S.uloz();
     },
     konec: v => {
@@ -166,7 +171,7 @@ function spustLekci(idBalicku) {
 function konecLekce(x, v, bonus, cilTed, nove) {
   const druh = v.perfekt ? 'perfekt' : v.chyby <= 2 ? 'dobre' : 'slabsi';
   const d = S.den(x);
-  obrazovka(`<section class="stranka konec">${maskot(150, v.perfekt ? 'mrk' : 'radost')}
+  obrazovka(`<section class="stranka konec">${zpet('#/', 'Domů')}${maskot(150, v.perfekt ? 'mrk' : 'radost')}
     <h1>${esc(H.nahodne(H.KONEC_LEKCE[druh]))}</h1>
     <div class="odmena"><span>🍪 +${v.susenky + bonus}</span><small>${v.susenky} za odpovědi, ${bonus} bonus${cilTed ? ' (vč. denního cíle!)' : ''}</small></div>
     ${kolecko(d.s / (x.nastaveni.cil * 60), `<b>${minuty(d.s)}</b><small>z ${x.nastaveni.cil} min</small>`, 110)}
@@ -195,6 +200,7 @@ function battle() {
     ${historie.length ? `<h3>Poslední battly</h3><div class="historie">${historie.map(b => `<div class="h-radek">
       <span>${jm(b.a)} <b>${b.sa}</b> : <b>${b.sb}</b> ${jm(b.b)}</span><small>${b.datum}</small></div>`).join('')}</div>` : ''}
   </section>`, { tab: 'battle' });
+  vlozSchovanou('battle');
   $$('.profil-karta[data-id]').forEach(b => (b.onclick = () => hrajBattle(x, S.profil(b.dataset.id))));
 }
 
@@ -213,7 +219,7 @@ function hrajBattle(h1, h2) {
   const puvodni = S.data().aktivni;
   const skore = [];
   const kolo = (hracka, hotovo) => {
-    obrazovka(`<section class="stranka predej"><span class="avatar obri">${postavicka(hracka.vzhled, 120)}</span>
+    obrazovka(`<section class="stranka predej">${zpet('#/battle', 'Zrušit')}<span class="avatar obri">${postavicka(hracka.vzhled, 120)}</span>
       <h1>${esc(H.dosad(H.nahodne(H.PREDEJ), { jmeno: hracka.prezdivka }))}</h1>
       <p class="drobne">${ulohy.length} otázek. Rychlost se počítá.</p>
       <button class="btn velke" id="start">Jsem ${jmeno(hracka)}, start!</button></section>`, { bezListy: true });
@@ -223,15 +229,14 @@ function hrajBattle(h1, h2) {
       hraj(ulohy, {
         battle: true, nazev: hracka.prezdivka,
         priOdpovedi: (u, ok) => { const d = S.den(hracka); ok ? d.ok++ : d.chyby++; },
-        konec: v => { nastavUceni(false); hotovo(v); },
+        konec: v => { nastavUceni(false); S.prepni(puvodni); hotovo(v); },
       });
     };
   };
   kolo(h1, v1 => {
-    if (v1.preruseno) { S.prepni(puvodni); return jdi('#/battle'); }
+    if (v1.preruseno) return jdi('#/battle');
     skore.push(v1.body);
     kolo(h2, v2 => {
-      S.prepni(puvodni);
       if (v2.preruseno) return jdi('#/battle');
       skore.push(v2.body);
       vysledekBattlu(h1, h2, skore);
@@ -258,7 +263,7 @@ function vysledekBattlu(h1, h2, [s1, s2]) {
   S.uloz();
   const karta = (h, s, vyhra) => `<div class="b-hracka${vyhra ? ' vitez' : ''}"><span class="avatar velky">${av(h, 70)}</span>
     <b>${jmeno(h)}</b><span class="b-body">${s}</span>${vyhra ? '<span class="korunka">👑</span>' : ''}</div>`;
-  obrazovka(`<section class="stranka konec">
+  obrazovka(`<section class="stranka konec">${zpet('#/battle')}
     <h1>Výsledek</h1>
     <div class="b-vysledek">${karta(h1, s1, s1 > s2)}<span class="vs">vs</span>${karta(h2, s2, s2 > s1)}</div>
     <p class="hlaska">${esc(text)}</p>
@@ -301,6 +306,7 @@ function zebricek() {
     ${vse.length < 2 ? `<div class="prazdne">${maskot(90, 'hmm')}<p>Zatím jsi tu sama. Vyhráváš všechno, ale to se nepočítá 😅</p>
       <a class="btn" href="#/novy">＋ Přidat kamarádku</a></div>` : ''}
     ${karty}</section>`, { tab: 'zebricek' });
+  vlozSchovanou('zebricek');
 }
 
 // ---------- Já ----------
@@ -315,7 +321,7 @@ function ja() {
   const zbyvajici = ODZNAKY.filter(o => !x.odznaky[o.id] && !o.id.startsWith('mistr-'));
   obrazovka(`${hlavicka(x)}<section class="stranka">
     <div class="ja-hlava"><span class="avatar obri">${postavicka(x.vzhled, 120)}</span><h1>${jmeno(x)}</h1><p class="titul">${esc(H.titul(x.susenky))}</p>
-      <a class="btn" href="#/obchod">👗 Šatník</a></div>
+      <a class="btn" href="#/obchod">${ik('satnik', 26, { podklad: false })} Šatník</a></div>
     <div class="cisla">
       <div><b>${S.serie(x)}</b><small>🔥 série</small></div>
       <div><b>${S.nejdelsiSerie(x)}</b><small>nejdelší série</small></div>
@@ -333,6 +339,7 @@ function ja() {
       <a class="btn vedlejsi" href="#/profily">Přepnout profil</a>
       <a class="odkaz" href="#/rodic">Pro rodiče</a></div>
   </section>`, { tab: 'ja' });
+  vlozSchovanou('ja');
 }
 
 // ---------- Šatník (postavička ve stylu Pou) ----------
@@ -347,7 +354,7 @@ function obchod() {
     const zkousenaVec = vec(zkouska[kat.id]);
     const nekoupena = zkousenaVec && !maVec(x, zkousenaVec) ? zkousenaVec : null;
     obrazovka(`${hlavicka(x)}<section class="stranka satnik">
-      <a class="odkaz zpet" href="#/ja">← Zpět</a>
+      ${zpet('#/ja')}
       <div class="satnik-nahled">${postavicka(zkouska, 190)}</div>
       <div class="kategorie">${KATEGORIE.map(k => `<button class="kat${k.id === kat.id ? ' on' : ''}" data-k="${k.id}"><span>${k.ikona}</span>${esc(k.nazev)}</button>`).join('')}</div>
       <div class="veci">
@@ -360,6 +367,7 @@ function obchod() {
         ? `<button class="btn velke" id="koupit">${x.susenky >= nekoupena.cena ? `Koupit ${esc(nekoupena.nazev)} za 🍪 ${nekoupena.cena}` : `Chybí ti 🍪 ${nekoupena.cena - x.susenky}`}</button>`
         : '<p class="drobne">Klepni na věc a vyzkoušej si ji. Co máš, si rovnou oblečeš.</p>'}</div>
     </section>`, { tab: 'ja' });
+  vlozSchovanou('ja');
 
     $('.kat.on')?.scrollIntoView({ inline: 'center', block: 'nearest' });
     $$('.kat').forEach(b => (b.onclick = () => { satnikKat = b.dataset.k; obchod(); }));
@@ -392,7 +400,7 @@ let rodicOdemceno = false;
 function rodic() {
   const r = S.data().rodic;
   if (!rodicOdemceno) {
-    obrazovka(`<section class="stranka"><a class="odkaz zpet" href="#/ja">← Zpět</a><h1>Pro rodiče</h1>
+    obrazovka(`<section class="stranka">${zpet('#/ja')}<h1>Pro rodiče</h1>
       <p class="drobne">${r.pin ? 'Zadej PIN.' : 'Nastav si čtyřmístný PIN, ať sem děti nechodí.'}</p>
       <input id="pin" class="pole pin" type="password" inputmode="numeric" maxlength="4" autocomplete="off">
       <button class="btn velke" id="ok">${r.pin ? 'Odemknout' : 'Nastavit PIN'}</button></section>`, { bezListy: true });
@@ -420,7 +428,7 @@ function rodic() {
       <label class="prepinac"><input type="checkbox" data-k="vsechnyUnity" ${o.nastaveni.vsechnyUnity ? 'checked' : ''}> Odemknout všechny lekce dopředu</label>
       <button class="odkaz cervene" data-smazat="${o.id}">Smazat profil</button></div>`;
   }).join('');
-  obrazovka(`<section class="stranka"><a class="odkaz zpet" href="#/ja">← Zpět</a><h1>Pro rodiče</h1>
+  obrazovka(`<section class="stranka">${zpet('#/ja')}<h1>Pro rodiče</h1>
     <p class="drobne">Čas se počítá jen při aktivním učení: po 45 s bez klepnutí nebo s aplikací na pozadí se zastaví.</p>
     ${karty}
     <h3>Záloha</h3><p class="drobne">Všechno je jen v tomhle telefonu. Zálohu si ulož třeba do Souborů.</p>
@@ -447,6 +455,64 @@ function rodic() {
     try { S.import_(await e.target.files[0].text()); toast('Obnoveno'); rodic(); } catch (err) { toast(err.message || 'Záloha nejde načíst'); }
   };
   $('#zmenapin').onclick = () => { r.pin = null; rodicOdemceno = false; S.uloz(); rodic(); };
+}
+
+// ---------- Schovaná zlatá sušenka (překvapení) ----------
+// Některé dny (asi 4 z 10) se po první lekci schová na náhodné obrazovce. Kde a kdy, je dané
+// přezdívkou a datem, takže se během dne nestěhuje. Po nalezení spustí Bleskovku.
+const hashTxt = t => [...t].reduce((h, c) => (Math.imul(h, 31) + c.charCodeAt(0)) >>> 0, 7);
+function schovanaDnes(x) {
+  if (x.bonus?.den === S.dnes() || !S.den(x).lekce) return null;
+  const h = hashTxt(x.id + S.dnes());
+  if (h % 100 >= 40) return null;
+  return { tab: ['domu', 'ja', 'zebricek', 'battle'][(h >>> 7) % 4], top: 15 + (h >>> 11) % 70, vlevo: (h >>> 17) % 2 === 0 };
+}
+function vlozSchovanou(tab) {
+  const x = p();
+  const s = x && schovanaDnes(x);
+  if (!s || s.tab !== tab) return;
+  const b = document.createElement('button');
+  b.className = 'schovana ' + (s.vlevo ? 'vlevo' : 'vpravo');
+  b.style.top = s.top + '%';
+  b.setAttribute('aria-label', 'Co to je?');
+  b.innerHTML = ik('zlata', 46, { podklad: false });
+  b.onclick = () => nalezena(x);
+  $('#app section.stranka')?.append(b);
+}
+function nalezena(x) {
+  obrazovka(`<section class="stranka konec">${zpet('#/', 'Teď ne')}
+    <div class="zlata-velka">${ik('zlata', 140, { podklad: false })}</div>
+    <h1>Našla jsi zlatou sušenku!</h1>
+    <p class="hlaska">Bleskovka: 6 otázek za 40 sekund. Každá správně = 2 sušenky, všechny správně = +10 navíc.</p>
+    <button class="btn velke" id="bleskovka">Jdu do toho ⚡</button></section>`, { bezListy: true });
+  konfety(); zvukFanfara();
+  $('#bleskovka').onclick = () => bleskovka(x);
+}
+function bleskovka(x) {
+  x.bonus = { den: S.dnes() };
+  S.uloz();
+  const ulohy = sestavBattle(x, x, 6);
+  nastavUceni(true);
+  hraj(ulohy, {
+    battle: true, limit: 40, nazev: 'Bleskovka ⚡',
+    priOdpovedi: (u, ok) => { const d = S.den(x); ok ? d.ok++ : d.chyby++; },
+    konec: v => {
+      nastavUceni(false);
+      if (v.preruseno) return jdi('#/');
+      const vse = v.spravne === ulohy.length;
+      const zisk = v.spravne * 2 + (vse ? 10 : 0);
+      x.susenky += zisk;
+      const nove = zkontroluj(x);
+      S.uloz();
+      obrazovka(`<section class="stranka konec">${zpet('#/', 'Domů')}${maskot(140, vse ? 'mrk' : 'radost')}
+        <h1>${vse ? 'Všechno správně! 🤯' : v.casVyprsel ? 'Čas vypršel!' : 'Hotovo!'}</h1>
+        <div class="odmena"><span>🍪 +${zisk}</span><small>${v.spravne} z ${ulohy.length} správně${vse ? ' + bonus 10' : ''}</small></div>
+        <p class="drobne">Zlatá sušenka se zase někdy schová. Kdy a kde, to nikdo neví 🤫</p>
+        ${nove.map(o => `<div class="novy-odznak"><span>${o.ikona}</span><div><small>Nový odznak!</small><b>${esc(o.nazev)}</b></div></div>`).join('')}
+        <a class="btn velke" href="#/">Hotovo</a></section>`, { bezListy: true });
+      konfety(); zvukFanfara();
+    },
+  });
 }
 
 route();

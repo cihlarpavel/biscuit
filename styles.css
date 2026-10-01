@@ -309,3 +309,40 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 @keyframes padej { to { top: 110%; transform: rotate(720deg) translateX(40px); } }
 .maskot { animation: dech 3s ease-in-out infinite; }
 @keyframes dech { 50% { transform: translateY(-3px); } }
+
+/* ---------- Ikony, tlačítko zpět, překvapení ---------- */
+.ik { display: block; flex: none; }
+.tabs a span { display: block; line-height: 0; }
+.stat { display: inline-flex; align-items: center; gap: 4px; }
+.b-ikona { line-height: 0; }
+.btn .ik { display: inline-block; }
+.zpet-btn {
+  display: inline-flex; align-items: center; gap: 2px; padding: 6px 14px 6px 6px; margin: 2px 0 8px;
+  background: #fff; border-radius: 999px; box-shadow: var(--stin); font-weight: 700; font-size: 15px;
+}
+.konec .zpet-btn, .predej .zpet-btn { position: absolute; top: calc(10px + env(safe-area-inset-top)); left: 16px; }
+.konec, .predej { position: relative; }
+.zavrit { display: grid; place-items: center; }
+.repro { display: inline-grid; place-items: center; }
+
+.hra.zlata { background: linear-gradient(180deg, #fff6d0, transparent 260px); }
+.zlata-pruh {
+  display: flex; align-items: center; gap: 8px; margin-top: 10px; padding: 8px 14px; border-radius: 18px;
+  background: linear-gradient(135deg, #ffe58a, #ffd34d); box-shadow: 0 4px 0 #e0a800; animation: zlataPrilet .6s cubic-bezier(.3, 1.6, .5, 1);
+}
+.zlata-pruh b { font-size: 18px; }
+.zlata-pruh span { margin-left: auto; font-size: 13px; font-weight: 700; color: #7a5a00; }
+@keyframes zlataPrilet { from { transform: scale(.3) rotate(-8deg); opacity: 0; } }
+.hra-cas { font-weight: 900; background: #fff; padding: 6px 10px; border-radius: 99px; box-shadow: var(--stin); min-width: 54px; text-align: center; }
+.hra-cas.dochazi { background: var(--cervena); color: #fff; animation: trest .5s infinite; }
+.hra-skore { display: inline-flex; align-items: center; gap: 4px; }
+
+.stranka { position: relative; }
+.schovana { position: absolute; z-index: 3; padding: 0; animation: vykuk 5s ease-in-out infinite; }
+.schovana.vlevo { left: -22px; }
+.schovana.vpravo { right: -22px; transform: scaleX(-1); }
+@keyframes vykuk { 0%, 80%, 100% { translate: 0 0; rotate: 0deg; } 85% { translate: 6px 0; rotate: 12deg; } 90% { translate: 0 0; rotate: -6deg; } }
+.schovana.vpravo { animation-name: vykukP; }
+@keyframes vykukP { 0%, 80%, 100% { translate: 0 0; rotate: 0deg; } 85% { translate: -6px 0; rotate: -12deg; } 90% { translate: 0 0; rotate: 6deg; } }
+.zlata-velka { display: grid; place-items: center; margin-top: 30px; animation: zlataPrilet .8s cubic-bezier(.3, 1.6, .5, 1); }
+.zlata-velka .ik { filter: drop-shadow(0 8px 20px rgba(224, 168, 0, .45)); }

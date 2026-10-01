@@ -1,0 +1,8 @@
+<!doctype html><meta charset="utf-8"><title>Ikony Biscuit</title>
+<style>body{font-family:system-ui;background:#fff4f8;display:flex;flex-wrap:wrap;gap:14px;padding:16px}div{display:flex;flex-direction:column;align-items:center;font-size:11px;color:#8a7891;width:76px}</style>
+<script type="module">
+import { ik } from '../js/ikony.js';
+const src = await (await fetch('../js/ikony.js')).text();
+const jmena = [...src.matchAll(/^  (\w+): `/gm)].map(m => m[1]);
+document.body.innerHTML = jmena.map(n => `<div>${ik(n, 64)}${n}</div>`).join('');
+</script>

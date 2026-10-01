@@ -1,4 +1,9 @@
 // Sdílené drobnosti rozhraní.
+import { ik } from './ikony.js';
+
+// Jednotné tlačítko zpět vlevo nahoře. V aplikaci na ploše iPhonu chybí tlačítko prohlížeče,
+// takže každá obrazovka mimo hlavní záložky ho musí mít.
+export const zpet = (kam, text = 'Zpět') => `<a class="zpet-btn" href="${kam}">${ik('zpet', 22, { podklad: false })}<span>${text}</span></a>`;
 export const $ = (s, el = document) => el.querySelector(s);
 export const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 export const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);

@@ -107,6 +107,9 @@ export function sestav(p, idBalicku = null, delka = 10) {
   if (extra) for (let i = 0; i < 2; i++) ulohy.splice(noveP.length + Math.floor(Math.random() * (procvic.length + 1)), 0, ulohaExtra(extra));
   // Úplně prázdný balíček (vše na později) – aspoň procvičit náhodné.
   if (!ulohy.length) zamichat(zdroj).slice(0, delka).forEach(x => ulohy.push(ulohaPro(x, zdroj)));
+  // Překvapení: asi v každé páté lekci se jedna otázka promění ve zlatou (5 sušenek místo 1).
+  const kandidati = ulohy.filter(u => u.typ !== 'nove');
+  if (kandidati.length && Math.random() < 0.22) kandidati[Math.floor(Math.random() * kandidati.length)].zlata = true;
   return ulohy;
 }
 
