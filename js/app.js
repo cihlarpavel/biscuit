@@ -19,6 +19,8 @@ $$('#tabs a[data-ik]').forEach(a => (a.querySelector('span').innerHTML = ik(a.da
 // Drip shop uprostřed lišty ukazuje aktuální vytuněnou postavičku (překreslí se při změně obrazovky a po nákupu).
 const tabJa = () => { const x = p(); $('#tabs .stred span').innerHTML = x ? postavicka(x.vzhled, 58, 'hlava', true) : ik('tab-drip', 52); };
 const ikBalicku = (b, px = 40) => maIkonu(b.id) ? ik(b.id, px) : b.ikona;
+const ikOdznaku = (o, px = 40) => o.ik && maIkonu(o.ik) ? ik(o.ik, px) : (o.ikona || '');
+const ikS = (n, px = 22) => ik(n, px, { podklad: false }); // malá ikona do textu
 
 const p = () => S.profil();
 const jmeno = x => esc(x.prezdivka);
@@ -192,11 +194,11 @@ function konecLekce(x, v, bonus, cilTed, nove) {
   const d = S.den(x);
   obrazovka(`<section class="stranka konec">${zpet('#/', 'Domů')}${maskot(150, v.perfekt ? 'mrk' : 'radost')}
     <h1>${esc(H.rod(H.nahodne(H.KONEC_LEKCE[druh]), x))}</h1>
-    <div class="odmena"><span>🍪 +${v.susenky + bonus}</span><small>${v.susenky} za odpovědi, ${bonus} bonus${cilTed ? ' (vč. denního cíle!)' : ''}</small></div>
+    <div class="odmena"><span>${ikS('susenka', 34)} +${v.susenky + bonus}</span><small>${v.susenky} za odpovědi, ${bonus} bonus${cilTed ? ' (vč. denního cíle!)' : ''}</small></div>
     ${kolecko(d.s / (x.nastaveni.cil * 60), `<b>${minuty(d.s)}</b><small>z ${x.nastaveni.cil} min</small>`, 110)}
     ${cilTed ? `<p class="hlaska">${esc(H.nahodne(H.CIL_SPLNEN))}</p>` : ''}
     ${VECI.some(v => !maVec(x, v) && v.cena <= x.susenky) ? `<a class="drip-ceka" href="#/obchod">${ik('tab-drip', 34)}<b>${esc(H.DRIP_CEKA)}</b></a>` : ''}
-    ${nove.map(o => `<div class="novy-odznak"><span>${o.ikona}</span><div><small>Nový odznak!</small><b>${esc(o.nazev)}</b></div></div>`).join('')}
+    ${nove.map(o => `<div class="novy-odznak"><span>${ikOdznaku(o, 48)}</span><div><small>Nový odznak!</small><b>${esc(o.nazev)}</b></div></div>`).join('')}
     <a class="btn velke" href="#/">Hotovo</a>
     <a class="odkaz" href="#/lekce">Ještě jednu lekci</a></section>`, { bezListy: true });
   if (v.perfekt || cilTed || nove.length) { konfety(); zvukFanfara(); }
@@ -209,7 +211,7 @@ function battle() {
   const historie = (S.data().battly || []).filter(b => b.a === x.id || b.b === x.id).slice(-5).reverse();
   const jm = id => esc(S.profil(id)?.prezdivka || '?');
   obrazovka(`${hlavicka(x)}<section class="stranka">
-    <h1>Battle ⚔️</h1>
+    <h1 class="s-ikonou">${ik('tab-battle', 44)} Battle</h1>
     ${x.online && O.nakonfigurovano() ? onlineSekce(x) : `<div class="prazdne"><p>Chceš hrát s kamarádkou, každá na svém mobilu? Ať ti rodič zapne <b>Kamarádi online</b> v sekci Pro rodiče.</p></div>`}
     <h2>Na jednom telefonu</h2>
     <p class="drobne">Jeden na jednoho, telefon si předáváte. Stejné otázky, rozhoduje správnost a rychlost.</p>
@@ -291,7 +293,7 @@ function vysledekBattlu(h1, h2, [s1, s2]) {
     <div class="b-vysledek">${karta(h1, s1, s1 > s2)}<span class="vs">vs</span>${karta(h2, s2, s2 > s1)}</div>
     <p class="hlaska">${esc(text)}</p>
     <p class="drobne">Výhra 🍪 +10, prohra 🍪 +3, remíza 🍪 +5</p>
-    ${nove.map(o => `<div class="novy-odznak"><span>${o.ikona}</span><div><small>${jmeno(o.kdo)} má nový odznak!</small><b>${esc(o.nazev)}</b></div></div>`).join('')}
+    ${nove.map(o => `<div class="novy-odznak"><span>${ikOdznaku(o, 48)}</span><div><small>${jmeno(o.kdo)} má nový odznak!</small><b>${esc(o.nazev)}</b></div></div>`).join('')}
     <button class="btn velke" id="odveta">Odveta ⚔️</button>
     <a class="odkaz" href="#/battle">Konec</a></section>`, { bezListy: true });
   konfety(); zvukFanfara();
@@ -303,15 +305,15 @@ function zebricek() {
   const x = p();
   const vse = [...S.profily(), ...online.kamaradky.filter(k => !S.profil(k.id))];
   const kategorie = [
-    { ikona: '🍪', nazev: 'Nejvíc sušenek celkem', hodnota: o => statistiky(o).susenkyCelkem, fmt: n => n,
+    { ikona: 'susenka', nazev: 'Nejvíc sušenek celkem', hodnota: o => statistiky(o).susenkyCelkem, fmt: n => n,
       vtip: (v, n) => `${v} vede o ${n} 🍪. Ostatní zatím jen drobí.` },
-    { ikona: '🔥', nazev: 'Nejdelší série teď', hodnota: o => statistiky(o).serie, fmt: n => `${n} dní`,
+    { ikona: 'ohen', nazev: 'Nejdelší série teď', hodnota: o => statistiky(o).serie, fmt: n => `${n} dní`,
       vtip: v => `${v} je on fire. Doslova.` },
-    { ikona: '⏱️', nazev: 'Minuty tento týden', hodnota: o => statistiky(o).tydenMin, fmt: n => `${n} min`,
+    { ikona: 'o-stopky', nazev: 'Minuty tento týden', hodnota: o => statistiky(o).tydenMin, fmt: n => `${n} min`,
       vtip: (v, n, o) => `${v} se ${H.rod('[učil|učila]', o)} o ${n} minut víc. Podezřelé. Možná je to robot 🤖` },
-    { ikona: '🧠', nazev: 'Umí slovíček', hodnota: o => statistiky(o).umiSlov, fmt: n => n,
+    { ikona: 'o-mozek', nazev: 'Umí slovíček', hodnota: o => statistiky(o).umiSlov, fmt: n => n,
       vtip: (v, n) => `${v} umí o ${n} slovíček víc. Chodící slovník.` },
-    { ikona: '⚔️', nazev: 'Výhry v battlech', hodnota: o => statistiky(o).vyhry, fmt: n => n,
+    { ikona: 'tab-battle', nazev: 'Výhry v battlech', hodnota: o => statistiky(o).vyhry, fmt: n => n,
       vtip: v => `${v} je postrach battlů.` },
   ];
   const medaile = ['🥇', '🥈', '🥉'];
@@ -320,12 +322,12 @@ function zebricek() {
     const [prvni, druha] = serazene;
     const rozdil = druha ? k.hodnota(prvni) - k.hodnota(druha) : 0;
     const vtip = vse.length > 1 && rozdil > 0 ? k.vtip(prvni.prezdivka, rozdil, prvni) : vse.length > 1 ? 'Zatím nerozhodně. Napínavé.' : '';
-    return `<div class="z-karta"><h3>${k.ikona} ${k.nazev}</h3>
+    return `<div class="z-karta"><h3 class="s-ikonou">${ik(k.ikona, 34)} ${k.nazev}</h3>
       ${serazene.map((o, i) => `<div class="z-radek${o.id === x.id ? ' ja' : ''}"><span class="z-poradi">${medaile[i] || i + 1}</span>
         <span class="avatar">${av(o, 34)}</span><span class="z-jmeno">${jmeno(o)}</span><b>${k.fmt(k.hodnota(o))}</b></div>`).join('')}
       ${vtip ? `<p class="z-vtip">${esc(vtip)}</p>` : ''}</div>`;
   }).join('');
-  obrazovka(`${hlavicka(x)}<section class="stranka"><h1>Žebříček 🏆</h1>
+  obrazovka(`${hlavicka(x)}<section class="stranka"><h1 class="s-ikonou">${ik('tab-zebricek', 44)} Žebříček</h1>
     ${vse.length < 2 ? `<div class="prazdne">${maskot(90, 'hmm')}<p>Zatím jsi tu ${H.rod('[sám|sama]', x)}. Vyhráváš všechno, ale to se nepočítá 😅</p>
       <a class="btn" href="#/novy">＋ Přidat kamarádku</a></div>` : ''}
     ${karty}</section>`, { tab: 'zebricek' });
@@ -360,8 +362,8 @@ function ja() {
     <div class="svety">${SVETY.map(s => { const ok = nasbirano(x) >= s.od; return `<button class="svet${svetPro(x).id === s.id ? ' on' : ''}${ok ? '' : ' zamceny'}" data-svet="${s.id}" ${ok ? '' : 'disabled'}
       style="background:${s.bg} ${nahledSveta(s)} center/110px"><span>${ok ? s.ikona : ik('zamek', 30, { podklad: false })}</span><b>${esc(s.nazev)}</b><small>${ok ? esc(H.rod(s.titul, x)) : `od ${s.od} 🍪 celkem`}</small></button>`; }).join('')}</div>
     <h2>Odznaky <small>${ziskane.length}</small></h2>
-    <div class="odznaky">${ziskane.map(o => `<div class="odznak"><span>${o.ikona}</span><b>${esc(o.nazev)}</b><small>${esc(H.rod(o.popis, x))}</small></div>`).join('')}
-      ${zbyvajici.map(o => `<div class="odznak zamceny"><span>${o.ikona}</span><b>${esc(o.nazev)}</b><small>${esc(H.rod(o.popis, x))}</small></div>`).join('')}</div>
+    <div class="odznaky">${ziskane.map(o => `<div class="odznak"><span>${ikOdznaku(o, 46)}</span><b>${esc(o.nazev)}</b><small>${esc(H.rod(o.popis, x))}</small></div>`).join('')}
+      ${zbyvajici.map(o => `<div class="odznak zamceny"><span>${ikOdznaku(o, 46)}</span><b>${esc(o.nazev)}</b><small>${esc(H.rod(o.popis, x))}</small></div>`).join('')}</div>
     <div class="tlacitka">
       <a class="btn vedlejsi" href="#/profily">Přepnout profil</a>
       <a class="odkaz" href="#/rodic">Pro rodiče</a></div>
@@ -384,18 +386,18 @@ function obchod() {
     obrazovka(`${hlavicka(x)}<section class="stranka satnik">
       <h1 class="drip-nadpis">Drip shop</h1>
       <div class="satnik-nahled">${postavicka(zkouska, 250)}</div>
-      <div class="kategorie">${KATEGORIE.map(k => `<button class="kat${k.id === kat.id ? ' on' : ''}" data-k="${k.id}"><span>${k.ikona}</span>${esc(k.nazev)}</button>`).join('')}</div>
+      <div class="kategorie">${KATEGORIE.map(k => `<button class="kat${k.id === kat.id ? ' on' : ''}" data-k="${k.id}"><span>${ik(k.ik, 28)}</span>${esc(k.nazev)}</button>`).join('')}</div>
       <div class="veci">
         ${kat.povinne ? '' : `<button class="vec${!zkouska[kat.id] ? ' on' : ''}" data-v=""><span class="vec-nic">✕</span><small>Nic</small></button>`}
         ${veci.map(v => `<button class="vec${zkouska[kat.id] === v.id ? ' on' : ''}${maVec(x, v) ? '' : ' cizi'}" data-v="${v.id}">
           ${postavicka({ ...x.vzhled, [kat.id]: v.id }, 74, kat.hlava ? 'hlava' : 'cela')}
           <small>${esc(v.nazev)}</small>
-          ${maVec(x, v) ? '' : `<span class="cena">🍪 ${v.cena}</span>`}
+          ${maVec(x, v) ? '' : `<span class="cena">${ikS('susenka', 16)} ${v.cena}</span>`}
           ${v.cena ? `<span class="vzacnost" style="color:${vzacnost(v.cena).barva}">${vzacnost(v.cena).nazev}</span>` : ''}</button>`).join('')}
       </div>
       <div class="satnik-lista">${nekoupena
-        ? `<button class="btn velke" id="koupit">${x.susenky >= nekoupena.cena ? `Koupit ${esc(nekoupena.nazev)} za 🍪 ${nekoupena.cena}` : `Chybí ti 🍪 ${nekoupena.cena - x.susenky}`}</button>`
-        : `<button class="btn vedlejsi" id="mix">🎲 Náhodný mix z mých věcí</button>`}</div>
+        ? `<button class="btn velke" id="koupit">${x.susenky >= nekoupena.cena ? `Koupit ${esc(nekoupena.nazev)} za ${ikS('susenka', 24)} ${nekoupena.cena}` : `Chybí ti ${ikS('susenka', 24)} ${nekoupena.cena - x.susenky}`}</button>`
+        : `<button class="btn vedlejsi" id="mix">${ik('cisla20', 28, { podklad: false })} Náhodný mix z mých věcí</button>`}</div>
     </section>`, { tab: 'drip' });
 
     $('.kat.on')?.scrollIntoView({ inline: 'center', block: 'nearest' });
@@ -753,9 +755,9 @@ function bleskovka(x) {
       S.uloz();
       obrazovka(`<section class="stranka konec">${zpet('#/', 'Domů')}${maskot(140, vse ? 'mrk' : 'radost')}
         <h1>${vse ? 'Všechno správně! 🤯' : v.casVyprsel ? 'Čas vypršel!' : 'Hotovo!'}</h1>
-        <div class="odmena"><span>🍪 +${zisk}</span><small>${v.spravne} z ${ulohy.length} správně${vse ? ' + bonus 10' : ''}</small></div>
+        <div class="odmena"><span>${ikS('susenka', 34)} +${zisk}</span><small>${v.spravne} z ${ulohy.length} správně${vse ? ' + bonus 10' : ''}</small></div>
         <p class="drobne">Zlatá sušenka se zase někdy schová. Kdy a kde, to nikdo neví 🤫</p>
-        ${nove.map(o => `<div class="novy-odznak"><span>${o.ikona}</span><div><small>Nový odznak!</small><b>${esc(o.nazev)}</b></div></div>`).join('')}
+        ${nove.map(o => `<div class="novy-odznak"><span>${ikOdznaku(o, 48)}</span><div><small>Nový odznak!</small><b>${esc(o.nazev)}</b></div></div>`).join('')}
         <a class="btn velke" href="#/">Hotovo</a></section>`, { bezListy: true });
       konfety(); zvukFanfara();
     },
