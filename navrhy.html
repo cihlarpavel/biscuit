@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Biscuit – styly postaviček</title>
+<style>
+  :root { --bg: #fff4f8; --text: #3b2a3f; --tlumene: #8a7891; --ruzova: #ff6fae; color-scheme: light; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: ui-rounded, "SF Pro Rounded", system-ui, sans-serif; background: var(--bg); color: var(--text); }
+  main { max-width: 980px; margin: 0 auto; padding: 20px 16px 40px; }
+  h1 { font-size: 28px; margin: 6px 0 4px; }
+  .uvod { color: var(--tlumene); margin: 0 0 20px; }
+  .styly { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+  .styl { background: #fff; border-radius: 24px; padding: 14px 16px 18px; box-shadow: 0 6px 18px rgba(150, 90, 140, .13); }
+  .styl svg { width: 100%; height: auto; display: block; border-radius: 18px; }
+  .pismeno { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--ruzova); color: #fff; font-weight: 800; margin-right: 8px; }
+  h2 { display: flex; align-items: center; font-size: 19px; margin: 14px 0 6px; }
+  .styl p { margin: 0; color: var(--tlumene); font-size: 14px; line-height: 1.45; }
+
+  /* Pohyb – společné */
+  .mrk { animation: mrk 4.2s infinite; transform-box: fill-box; transform-origin: center; }
+  @keyframes mrk { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(.08); } }
+  .dech { animation: dech 3.2s ease-in-out infinite; transform-box: fill-box; transform-origin: bottom center; }
+  @keyframes dech { 50% { transform: translateY(-3px); } }
+  .naklon { animation: naklon 5s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 85%; }
+  @keyframes naklon { 0%, 100% { transform: rotate(0); } 30% { transform: rotate(-4deg); } 60% { transform: rotate(3deg); } }
+  .vlaje { animation: vlaje 2.6s ease-in-out infinite; transform-box: fill-box; transform-origin: 20% 10%; }
+  @keyframes vlaje { 50% { transform: rotate(7deg); } }
+  .kyv { animation: kyv 1.2s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 100%; }
+  @keyframes kyv { 50% { transform: rotate(-5deg) translateY(1px); } }
+  .nota { animation: nota 2.4s linear infinite; opacity: 0; }
+  .nota.d2 { animation-delay: 1.2s; }
+  @keyframes nota { 0% { opacity: 0; transform: translate(0, 0); } 20% { opacity: 1; } 100% { opacity: 0; transform: translate(14px, -46px); } }
+  .trpyt { animation: trpyt 1.8s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+  .trpyt.d2 { animation-delay: .9s; }
+  @keyframes trpyt { 0%, 100% { transform: scale(.4); opacity: .3; } 50% { transform: scale(1); opacity: 1; } }
+  .skok { animation: skok 1s steps(2) infinite; }
+  @keyframes skok { 50% { transform: translateY(-10px); } }
+  .pmrk { animation: pmrk 3.6s steps(1) infinite; opacity: 0; }
+  @keyframes pmrk { 0%, 90% { opacity: 0; } 92%, 97% { opacity: 1; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Jaký styl postaviček?</h1>
+  <p class="uvod">Všechny čtyři se hýbou: mrkají, dýchají a kývou se. Ve kterémkoli stylu jde postavičku dál oblékat za sušenky. Vyber písmeno.</p>
+
+  <div class="styly">
+    <!-- A: Anime -->
+    <section class="styl">
+      <svg viewBox="0 0 200 220">
+        <defs>
+          <linearGradient id="a-duhovka" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a2470"/><stop offset=".6" stop-color="#7b5cff"/><stop offset="1" stop-color="#c5b4ff"/></linearGradient>
+          <linearGradient id="a-vlasy" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b2748"/><stop offset="1" stop-color="#6b4a86"/></linearGradient>
+        </defs>
+        <rect width="200" height="220" fill="#ece4ff"/>
+        <path class="trpyt" d="M30 40 l3 8 l8 3 l-8 3 l-3 8 l-3 -8 l-8 -3 l8 -3z" fill="#fff"/>
+        <path class="trpyt d2" d="M170 60 l2 6 l6 2 l-6 2 l-2 6 l-2 -6 l-6 -2 l6 -2z" fill="#ffd6ec"/>
+        <g class="dech">
+          <path class="vlaje" d="M58 78 q-10 60 -4 118 l30 -12 l-6 -40z" fill="url(#a-vlasy)"/>
+          <path class="vlaje" style="animation-delay:.4s" d="M142 78 q10 60 4 118 l-30 -12 l6 -40z" fill="url(#a-vlasy)"/>
+          <path d="M40 220 q4 -48 60 -52 q56 4 60 52z" fill="#ffb3d4"/>
+          <path d="M70 178 q30 18 60 0 l-6 -10 q-24 10 -48 0z" fill="#ff9cc6"/>
+          <path d="M92 186 l-2 20 M108 186 l2 20" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+          <rect x="90" y="150" width="20" height="24" fill="#f5cdb8"/>
+          <g class="naklon">
+            <path d="M62 82 q-2 52 38 76 q40 -24 38 -76 q-2 -40 -38 -42 q-36 2 -38 42z" fill="#ffe8da"/>
+            <path d="M56 86 q-6 -56 44 -58 q52 2 46 58 l-8 -18 l-6 16 l-8 -22 l-8 18 l-6 -20 l-10 22 l-6 -20 l-8 18 l-8 -18 l-6 18z" fill="url(#a-vlasy)"/>
+            <path d="M84 40 q8 -4 14 4" stroke="#9d7bb8" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <path d="M74 92 q8 -4 16 0 M110 92 q8 -4 16 0" stroke="#4a3350" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <g class="mrk">
+              <ellipse cx="82" cy="112" rx="10" ry="13" fill="url(#a-duhovka)"/>
+              <ellipse cx="118" cy="112" rx="10" ry="13" fill="url(#a-duhovka)"/>
+              <circle cx="78" cy="106" r="4" fill="#fff"/><circle cx="114" cy="106" r="4" fill="#fff"/>
+              <circle cx="86" cy="118" r="2" fill="#fff"/><circle cx="122" cy="118" r="2" fill="#fff"/>
+              <path d="M70 103 q12 -10 25 -1 M105 102 q13 -9 25 1" stroke="#2b1a3f" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+            </g>
+            <path d="M100 124 l-1 4" stroke="#e0a58c" stroke-width="1.6" stroke-linecap="round"/>
+            <path d="M94 136 q6 5 12 0" stroke="#c2416b" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+            <path d="M70 126 l4 -4 M75 127 l4 -4 M120 127 l4 -4 M125 126 l4 -4" stroke="#ff9ab8" stroke-width="2" stroke-linecap="round"/>
+          </g>
+        </g>
+      </svg>
+      <h2><span class="pismeno">A</span>Anime</h2>
+      <p>Velké lesklé oči, ostré pramínky vlasů, štíhlejší obličej. Jako z anime nebo manga.</p>
+    </section>
+
+    <!-- B: Animák (3D look) -->
+    <section class="styl">
+      <svg viewBox="0 0 200 220">
+        <defs>
+          <radialGradient id="b-kuze" cx=".45" cy=".4" r=".7"><stop offset="0" stop-color="#ffe2cf"/><stop offset="1" stop-color="#f2b896"/></radialGradient>
+          <radialGradient id="b-vlasy" cx=".4" cy=".3" r=".8"><stop offset="0" stop-color="#b8663c"/><stop offset="1" stop-color="#6b3418"/></radialGradient>
+          <radialGradient id="b-oko" cx=".5" cy=".55" r=".6"><stop offset="0" stop-color="#7ec8a8"/><stop offset=".7" stop-color="#3f8f72"/><stop offset="1" stop-color="#245a47"/></radialGradient>
+          <linearGradient id="b-mikina" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fd8ff"/><stop offset="1" stop-color="#5aa8e6"/></linearGradient>
+          <radialGradient id="b-tvar" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ff8fab" stop-opacity=".7"/><stop offset="1" stop-color="#ff8fab" stop-opacity="0"/></radialGradient>
+        </defs>
+        <rect width="200" height="220" fill="#fff0d9"/>
+        <circle cx="100" cy="112" r="86" fill="#ffe2b8"/>
+        <g class="dech">
+          <path class="vlaje" d="M140 58 q46 -6 40 46 q-4 34 -26 50 q14 -38 -6 -66z" fill="url(#b-vlasy)"/>
+          <path d="M36 220 q4 -52 64 -56 q60 4 64 56z" fill="url(#b-mikina)"/>
+          <path d="M78 166 q22 14 44 0" stroke="#4a8fcc" stroke-width="3" fill="none"/>
+          <g class="naklon">
+            <ellipse cx="100" cy="104" rx="50" ry="52" fill="url(#b-kuze)"/>
+            <path d="M48 100 q-6 -62 52 -64 q58 2 52 62 q-14 -30 -52 -34 q-28 2 -40 18 q-6 6 -12 18z" fill="url(#b-vlasy)"/>
+            <path d="M52 92 q-10 30 4 60 q2 -30 8 -52z M148 92 q10 30 -4 60 q-2 -30 -8 -52z" fill="url(#b-vlasy)"/>
+            <path d="M66 98 l-5 -4 M68 95 l-3 -6 M134 98 l5 -4 M132 95 l3 -6" stroke="#3b1d0e" stroke-width="2.4" stroke-linecap="round"/>
+            <path d="M72 50 q20 -10 40 -4" stroke="#d48a5c" stroke-width="4" fill="none" stroke-linecap="round" opacity=".7"/>
+            <circle cx="141" cy="52" r="8" fill="#ffd34d"/>
+            <g class="mrk">
+              <ellipse cx="80" cy="106" rx="13" ry="15" fill="#fff"/><ellipse cx="120" cy="106" rx="13" ry="15" fill="#fff"/>
+              <circle cx="81" cy="108" r="10" fill="url(#b-oko)"/><circle cx="121" cy="108" r="10" fill="url(#b-oko)"/>
+              <circle cx="81" cy="108" r="4.5" fill="#1b2b26"/><circle cx="121" cy="108" r="4.5" fill="#1b2b26"/>
+              <circle cx="77" cy="103" r="3.5" fill="#fff"/><circle cx="117" cy="103" r="3.5" fill="#fff"/>
+            </g>
+            <path d="M66 88 q12 -7 24 -2 M110 86 q12 -5 24 2" stroke="#6b3418" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+            <ellipse cx="100" cy="124" rx="5" ry="3.5" fill="#e8a084"/>
+            <circle cx="66" cy="126" r="11" fill="url(#b-tvar)"/><circle cx="134" cy="126" r="11" fill="url(#b-tvar)"/>
+            <path d="M86 134 q14 14 28 0 q-14 4 -28 0z" fill="#fff" stroke="#a8405e" stroke-width="2.5" stroke-linejoin="round"/>
+          </g>
+        </g>
+      </svg>
+      <h2><span class="pismeno">B</span>Animák</h2>
+      <p>Měkké stíny a lesk, skoro 3D. Jako postavičky z animovaných filmů v kině.</p>
+    </section>
+
+    <!-- C: Trendy ilustrace -->
+    <section class="styl">
+      <svg viewBox="0 0 200 220">
+        <rect width="200" height="220" fill="#ffe7dc"/>
+        <path d="M24 70 q20 -50 80 -40 q70 6 76 70 q6 70 -60 92 q-70 18 -92 -40 q-16 -44 -4 -82z" fill="#c9b8ff"/>
+        <text class="nota" x="150" y="80" font-size="18" fill="#6b4fd8">♪</text>
+        <text class="nota d2" x="40" y="90" font-size="16" fill="#ff6f61">♫</text>
+        <g class="kyv">
+          <path d="M44 220 q6 -54 56 -58 q50 4 56 58z" fill="#ff6f61"/>
+          <path d="M80 166 q20 24 40 0" fill="#ffd34d"/>
+          <rect x="91" y="132" width="18" height="34" rx="8" fill="#d99772"/>
+          <path d="M66 96 q-10 -64 34 -66 q44 2 34 66 q8 34 -2 70 l-8 -40z" fill="#26203a"/>
+          <ellipse cx="100" cy="102" rx="30" ry="38" fill="#e9a982"/>
+          <path d="M70 92 q4 -46 30 -46 q26 0 30 40 q-20 -18 -40 -20 q-10 8 -20 26z" fill="#26203a"/>
+          <path class="mrk" d="M84 104 q5 4 10 0 M106 104 q5 4 10 0" stroke="#26203a" stroke-width="2.6" fill="none" stroke-linecap="round"/>
+          <path d="M98 108 q3 8 -2 10" stroke="#b9724f" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <path d="M92 124 q8 3 16 0" stroke="#a8325a" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <circle cx="71" cy="114" r="5" fill="none" stroke="#ffd34d" stroke-width="3"/>
+          <rect x="127" y="104" width="6" height="12" rx="3" fill="#fff"/>
+          <path d="M60 50 q40 -26 80 0 l6 10 q-46 -18 -92 0z" fill="#7fd8c4"/>
+          <path d="M70 34 q30 -18 60 0 q4 10 -2 16 q-28 -10 -56 0 q-6 -6 -2 -16z" fill="#7fd8c4"/>
+        </g>
+        <g class="kyv" style="animation-delay:.1s">
+          <rect x="128" y="168" width="26" height="44" rx="6" fill="#26203a"/>
+          <rect x="131" y="172" width="20" height="34" rx="3" fill="#9fd8ff"/>
+          <circle cx="141" cy="180" r="5" fill="#ff6fae"/>
+        </g>
+      </svg>
+      <h2><span class="pismeno">C</span>Trendy ilustrace</h2>
+      <p>Ploché syté barvy, jednoduchý obličej, kloboučky, sluchátka a mobil. Jako z Instagramu nebo Spotify.</p>
+    </section>
+
+    <!-- D: Pixel art -->
+    <section class="styl">
+      <svg viewBox="0 0 200 220" id="pixel">
+        <rect width="200" height="220" fill="#d9f4ee"/>
+        <g fill="#bfe9df"><rect x="0" y="180" width="200" height="40"/></g>
+        <g class="skok" id="pixel-postava"></g>
+      </svg>
+      <h2><span class="pismeno">D</span>Pixel art</h2>
+      <p>Kostičkovaný styl jako v Minecraftu nebo Robloxu. Oblečení se dá „kreslit“ po pixelech.</p>
+    </section>
+  </div>
+</main>
+<script>
+  // Pixel art: mapa 16×18, každý znak jedna barva.
+  const MAPA = [
+    '.....HHHHHH.....',
+    '...HHHHHHHHHH...',
+    '..HHhhHHHHHHHH..',
+    '..HhHHHHHHHHHH..',
+    '..HHSSSSSSSSHH..',
+    '..HSSSSSSSSSSH..',
+    '..HSSWESSWESSH..',
+    '..HSSEESSEESSH..',
+    '..HSBSSSSSSBSH..',
+    '..HSSSSMMSSSSH..',
+    '..HHSSSSSSSSHH..',
+    '..HH..SSSS..HH..',
+    '..HPPPPPPPPPPH..',
+    '.PPPPPwPPwPPPPP.',
+    '.PPPPPwPPwPPPPP.',
+    '.PPpPPPPPPPPpPP.',
+    '.SSpPPPPPPPPpSS.',
+    '...pPPPPPPPPp...',
+  ];
+  const BARVY = { H: '#5a3a6e', h: '#8d63a8', S: '#ffd9c2', E: '#2b1a3f', W: '#ffffff', B: '#ff9ab8', M: '#c2416b', P: '#ff7eb6', p: '#e05b97', w: '#ffffff' };
+  const px = 10, x0 = 20, y0 = 2;
+  let svg = '';
+  MAPA.forEach((r, y) => [...r].forEach((c, x) => {
+    if (BARVY[c]) svg += `<rect x="${x0 + x * px}" y="${y0 + y * px}" width="${px}" height="${px}" fill="${BARVY[c]}"/>`;
+  }));
+  // Mrknutí: přes oči se na chvilku položí kůže s čárkou.
+  svg += `<g class="pmrk">${[[5, 6], [6, 6], [5, 7], [6, 7], [9, 6], [10, 6], [9, 7], [10, 7]].map(([x, y]) =>
+    `<rect x="${x0 + x * px}" y="${y0 + y * px}" width="${px}" height="${px}" fill="${y === 7 ? '#2b1a3f' : '#ffd9c2'}"/>`).join('')}</g>`;
+  document.getElementById('pixel-postava').innerHTML = svg;
+</script>
+</body>
+</html>
