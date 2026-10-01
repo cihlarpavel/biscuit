@@ -105,8 +105,10 @@ export function hraj(ulohy, { battle = false, nazev = '', limit = 0, profil = nu
         <div class="otazka">${p.obr ? `<span class="obr-maly">${esc(p.obr)}</span>` : ''}
           ${u.hlaskovat ? '' : `<span class="cz-velke">${esc(p.cz)}</span>`}
           <button class="repro" id="hlaskuj" aria-label="Přehrát">${ik('repro', 34, { podklad: false })}</button></div>
-        <div class="sloty">${[...p.en].map(() => '<i></i>').join('')}</div>
-        <div class="dlazdice-box">${u.pismena.map((c, i) => `<button class="dlazdice" data-i="${i}">${esc(c)}</button>`).join('')}</div>`;
+        <div class="sloty">${[...p.en].map((_, i) => `<i data-s="${i}"></i>`).join('')}</div>
+        <p class="napoveda">${esc(rod('[Spletl|Spletla] ses? Klepni na písmenko a vrátí se.', profil))}</p>
+        <div class="dlazdice-box">${u.pismena.map((c, i) => `<button class="dlazdice" data-i="${i}">${esc(c)}</button>`).join('')}</div>
+        <button class="btn velke" id="zkontroluj-slovo" disabled>Zkontrolovat</button>`;
     } else if (u.typ === 'skladani') {
       telo = `<div class="zadani">Slož větu anglicky</div>
         <div class="otazka"><span class="cz-velke">${esc(p.cz)}</span></div>
@@ -150,27 +152,39 @@ export function hraj(ulohy, { battle = false, nazev = '', limit = 0, profil = nu
 
     if (u.typ === 'psani') {
       const cil = p.en.toLowerCase();
-      const slozeno = [];
+      // Každé místo ve slově drží jednu dlaždici (nebo null). Klepnutím na písmenko se vrátí zpátky,
+      // další dlaždice zaplní první prázdné místo. Vyhodnotí se až tlačítkem, ať jde opravit i poslední.
+      const slozeno = new Array(cil.length).fill(null);
       const sloty = $$('.sloty i', a);
+      const btn = $('#zkontroluj-slovo');
+      let hotovo = false;
       const prehraj = () => u.hlaskovat ? speak(hlaskuj(p.en), { pomalu: true }) : speak(p.en);
       $('#hlaskuj').onclick = prehraj;
       setTimeout(prehraj, 250);
-      const prekresli = () => sloty.forEach((s, i) => (s.textContent = slozeno[i]?.c || ''));
+      const prekresli = () => {
+        sloty.forEach((s, i) => { s.textContent = slozeno[i]?.c || ''; s.classList.toggle('plne', !!slozeno[i]); });
+        btn.disabled = slozeno.some(x => !x);
+      };
       $$('.dlazdice', a).forEach(b => (b.onclick = () => {
-        slozeno.push({ c: u.pismena[+b.dataset.i], b });
+        const volne = slozeno.indexOf(null);
+        if (hotovo || volne < 0) return;
+        slozeno[volne] = { c: u.pismena[+b.dataset.i], b };
         b.disabled = true;
         prekresli();
-        if (slozeno.length === cil.length) {
-          const ok = slozeno.map(x => x.c).join('') === cil;
-          a.querySelector('.sloty').classList.add(ok ? 'ok' : 'chyba');
-          hotovaUloha(u, ok, p.en);
-        }
       }));
-      // Klepnutím na slot se poslední písmeno vrátí.
-      a.querySelector('.sloty').onclick = () => {
-        if (!slozeno.length || slozeno.length === cil.length) return;
-        slozeno.pop().b.disabled = false;
+      sloty.forEach((s, i) => (s.onclick = () => {
+        if (hotovo || !slozeno[i]) return;
+        slozeno[i].b.disabled = false;
+        slozeno[i] = null;
         prekresli();
+      }));
+      btn.onclick = () => {
+        if (slozeno.some(x => !x)) return;
+        hotovo = true;
+        btn.disabled = true;
+        const ok = slozeno.map(x => x.c).join('') === cil;
+        a.querySelector('.sloty').classList.add(ok ? 'ok' : 'chyba');
+        hotovaUloha(u, ok, p.en);
       };
     }
 
