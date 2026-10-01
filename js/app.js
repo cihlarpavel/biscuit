@@ -14,9 +14,9 @@ import { obrazovka, esc, $, $$, kolecko, minuty, toast, konfety, zpet } from './
 import { ik, maIkonu } from './ikony.js';
 
 addEventListener('pointerdown', odemkni, { once: true });
-$$('#tabs a[data-ik]').forEach(a => (a.querySelector('span').innerHTML = ik(a.dataset.ik, a.classList.contains('stred') ? 40 : 32, { podklad: false })));
+$$('#tabs a[data-ik]').forEach(a => (a.querySelector('span').innerHTML = ik(a.dataset.ik, a.classList.contains('stred') ? 52 : 40)));
 // Na záložce Já je vlastní postavička (překreslí se při každé změně obrazovky).
-const tabJa = () => { const x = p(); $('#tabs [data-tab="ja"] span').innerHTML = x ? postavicka(x.vzhled, 32, 'hlava') : ik('ja', 32, { podklad: false }); };
+const tabJa = () => { const x = p(); $('#tabs [data-tab="ja"] span').innerHTML = x ? postavicka(x.vzhled, 34, 'hlava') : ik('ja', 32, { podklad: false }); };
 const ikBalicku = (b, px = 40) => maIkonu(b.id) ? ik(b.id, px) : b.ikona;
 
 const p = () => S.profil();
@@ -186,6 +186,7 @@ function konecLekce(x, v, bonus, cilTed, nove) {
     <div class="odmena"><span>🍪 +${v.susenky + bonus}</span><small>${v.susenky} za odpovědi, ${bonus} bonus${cilTed ? ' (vč. denního cíle!)' : ''}</small></div>
     ${kolecko(d.s / (x.nastaveni.cil * 60), `<b>${minuty(d.s)}</b><small>z ${x.nastaveni.cil} min</small>`, 110)}
     ${cilTed ? `<p class="hlaska">${esc(H.nahodne(H.CIL_SPLNEN))}</p>` : ''}
+    ${VECI.some(v => !maVec(x, v) && v.cena <= x.susenky) ? `<a class="drip-ceka" href="#/obchod">${ik('tab-drip', 34)}<b>${esc(H.DRIP_CEKA)}</b></a>` : ''}
     ${nove.map(o => `<div class="novy-odznak"><span>${o.ikona}</span><div><small>Nový odznak!</small><b>${esc(o.nazev)}</b></div></div>`).join('')}
     <a class="btn velke" href="#/">Hotovo</a>
     <a class="odkaz" href="#/lekce">Ještě jednu lekci</a></section>`, { bezListy: true });

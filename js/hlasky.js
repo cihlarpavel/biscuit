@@ -7,7 +7,7 @@ export const dosad = (t, o) => t.replace(/\{(\w+)\}/g, (_, k) => o[k] ?? '');
 export const SPRAVNE = [
   'Nice.', 'Slay. 💅', 'Jo, přesně tak.', 'GG.', 'Ani ses nezapotila.',
   'Mozek: zapnutý ✅', 'Učitelka by brečela štěstím.', 'Tohle bylo moc easy, ne?',
-  'Správně. Samozřejmě.', 'Na tohle máš talent.',
+  'Správně. Samozřejmě.', 'Na tohle máš talent.', 'Nejsi hacker? 👀', 'To jsi zabil 🔥',
 ];
 
 export const SPATNE = [
@@ -19,7 +19,7 @@ export const SPATNE = [
 // Bez oslovení jménem: přezdívka se nedá spolehlivě dát do 5. pádu („Čau Šarlotka“ zní špatně).
 export const POZDRAVY = [
   '{jmeno} je zpátky 👋', 'Čau! Sušenky čekají 🍪', 'Jdeme na to?', 'Zase ty? Super 😎',
-  'Deset minut a máš klid.', 'Hej, angličtina volá.',
+  'Deset minut a máš klid.', 'Hej, angličtina volá.', 'Drip shop čeká, kámo 🛍️',
 ];
 
 export const CIL_SPLNEN = [
@@ -29,7 +29,7 @@ export const CIL_SPLNEN = [
 ];
 
 export const KONEC_LEKCE = {
-  perfekt: ['Ani jedna chyba. To se nestává. 👑', 'Perfektní lekce. Kdo jsi?', 'Bez chyby. Slay. 💅'],
+  perfekt: ['Ani jedna chyba. To se nestává. 👑', 'Perfektní lekce. Kdo jsi?', 'Bez chyby. Slay. 💅', 'Z tebe se stane trend. ✨'],
   dobre: ['Dobrá práce. Fakt.', 'Nice, většina správně!', 'Pěkný. Pár chybek, nic hrozného.'],
   slabsi: ['Tahle byla těžší. Příště to dáš líp.', 'Dneska to drhlo, ale aspoň trénuješ.'],
 };
@@ -52,5 +52,8 @@ export const SOUBOJ = {
   tesne: ['{vitez} vyhrála o fous. {porazena} chce odvetu, to je jasný.', 'Těsně {vitez}! {porazena}, ještě jedno kolo?'],
   jasne: ['{vitez} vyhrála na celé čáře. {porazena}, to chce trénink 💀', '{vitez} je v ranku. {porazena} je lehce cooked 🍳'],
 };
+
+// Na konci lekce, když už si může v Drip shopu něco koupit.
+export const DRIP_CEKA = 'Drip shop čeká, kámo 🛍️';
 
 export const PREDEJ = ['Předej telefon: {jmeno}. Žádné koukání!', 'Teď {jmeno}. Ostatní se dívají jinam 👀'];
