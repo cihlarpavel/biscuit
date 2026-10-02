@@ -245,7 +245,7 @@ function spustLekci(idBalicku) {
   hraj(ulohy, {
     nazev: idBalicku ? balicek(idBalicku)?.nazev : 'Dnešní lekce', profil: x,
     priOdpovedi: (u, ok, prvni) => {
-      if (u.polozka?.id && prvni) zapis(x, u.polozka, ok);
+      if (u.polozka?.id) zapis(x, u.polozka, ok, prvni);
       const d = S.den(x);
       ok ? d.ok++ : d.chyby++;
       if (ok && prvni) S.pridej(x, u.zlata ? 5 : 1);
@@ -253,8 +253,6 @@ function spustLekci(idBalicku) {
     },
     konec: v => {
       nastavUceni(false);
-      // Představená slovíčka se zapíšou, i když se lekce přeruší.
-      ulohy.filter(u => u.typ === 'nove' && !x.srs[u.polozka.id]).forEach(u => (x.srs[u.polozka.id] = { b: 0, due: 0, ok: 0, chyby: 0 }));
       if (v.preruseno) { S.uloz(); return jdi('#/'); }
       const d = S.den(x);
       d.lekce++;

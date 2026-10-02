@@ -13,7 +13,12 @@ v `sw.js`, commit, `git push` (`gh` je v `~/.local/bin/gh`). Ve škole jsou na s
   navíc. Slovíčka jako řádky `en | cz | obrázek`. Id položky = `balíček:en` (u vět `balíček:v:en`),
   podle něj se pamatuje postup – **přejmenování anglického slova smaže postup u něj**.
 - `js/lekce.js` – skládání lekcí a opakování v intervalech (přihrádky 0–6, „umí“ od 3).
-  Dnešní lekce = opakování + 3 nová z aktuální Unit + kousek „do šířky“ z jiného balíčku.
+  Dnešní lekce (od 3. 10. 2026, Pavel): ~20 úloh, **rovnou cvičení bez představování slovíček**.
+  Pořadí výběru: dnešní neopravené chyby → na řadě podle přihrádek → nová z aktuální Unit (5) → nová
+  „do šířky“ z různých balíčků (nejvýš 8) → známé, které dnes ještě neviděla → další nová. Nové slovo
+  dostane jen úlohu, ze které se dá naučit (en→cz, poslech, výběr věty). Chyba se v lekci vrátí za 3–4
+  úlohy jako jiný typ (`obmena`), neopravené chyby jdou i do dalších dnešních lekcí (`srs.chybaDne`).
+  Pavel chce bohatou slovní zásobu i nad rámec 4. třídy a co nejméně opakování toho, co umí.
 - `js/hra.js` – přehrávání úloh (nové slovíčko, poslech s obrázky, en→cz, cz→en, skládání slova
   z písmen, hláskování, skládání věty, písmena abecedy, čísla). Stejný kód hraje i battle.
 - Pozadí avatara se LOSUJE (12 vtipných čmáranic, vždy jen 1–2 kresby – Pavel chce méně a „crazy“, `pozadi(z)`): podle `vzhled.seminko` + dnešního data, každý den jiné. Kategorie Pozadí v Drip shopu není.

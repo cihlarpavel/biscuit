@@ -4,7 +4,8 @@ import { cisloDne } from './store.js';
 
 // Po kolika dnech se položka zopakuje podle přihrádky (0 = právě představená).
 const INTERVAL = [0, 1, 2, 4, 7, 14, 30];
-export const UMI = 3; // od této přihrádky se slovíčko počítá jako „umím“
+export const UMI = 3;
+const NOVYCH_SIROKE = 8; // nových slovíček „do šířky“ v jedné lekci (víc až když není co jiného) // od této přihrádky se slovíčko počítá jako „umím“
 
 export const zamichat = a => { const b = [...a]; for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
 
@@ -13,11 +14,16 @@ export function odemcene(p) {
   return BALICKY.filter(b => b.skupina !== 'hs2' || !b.unit || p.nastaveni.vsechnyUnity || b.unit <= p.nastaveni.unit);
 }
 
-export function zapis(p, polozka, spravne) {
+// prvni = první pokus o tuhle položku v lekci (mění přihrádku). Opakovaný pokus po chybě jen zaznamená,
+// že ji dnes už opravila – pak se do dalších dnešních lekcí nevrací.
+// s.den = kdy ji naposledy procvičovala, s.chybaDne / s.opravaDne = dnešní chyba a její oprava.
+export function zapis(p, polozka, spravne, prvni = true) {
   const s = (p.srs[polozka.id] ||= { b: 0, due: 0, ok: 0, chyby: 0 });
   const d = cisloDne();
-  if (spravne) { s.ok++; s.b = Math.min(6, s.b + 1); }
-  else { s.chyby++; s.b = Math.max(1, s.b - 2); }
+  s.den = d;
+  if (!prvni) { if (spravne) s.opravaDne = d; return; }
+  if (spravne) { s.ok++; s.b = Math.min(6, s.b + 1); if (s.chybaDne === d) s.opravaDne = d; }
+  else { s.chyby++; s.b = Math.max(1, s.b - 2); s.chybaDne = d; }
   s.due = d + INTERVAL[s.b];
 }
 
@@ -29,7 +35,9 @@ const kOpakovani = (p, bal) => {
 };
 
 // ---------- Úlohy ----------
-// Každá úloha: { typ, polozka?, ... }. Typy: nove, poslech, en-cz, cz-en, psani, skladani, vyber-vetu, pismeno, cislo.
+// Každá úloha: { typ, polozka?, obmena?, ... }. Typy: poslech, en-cz, cz-en, psani, skladani, vyber-vetu, pismeno, cislo.
+// (Typ „nove“ = představení slovíčka s překladem se od 3. 10. nepoužívá – lekce jde rovnou do cvičení.)
+// obmena() = jiná úloha na tutéž položku; přehrávač ji po chybě vloží o pár úloh dál.
 
 function moznosti(cil, zdroj, pole, n = 4) {
   const jine = zamichat(zdroj.filter(x => x[pole] && x[pole] !== cil[pole] && x.druh === cil.druh));
@@ -38,17 +46,26 @@ function moznosti(cil, zdroj, pole, n = 4) {
   return zamichat([cil, ...vyber]);
 }
 
-function ulohaPro(polozka, zdroj) {
+// nova = položku vidí poprvé: jen úlohy, ze kterých se dá naučit (výběr z možností, poslech s obrázkem),
+// psaní a skládání až u známých. jinyNez = typ, který se má vynechat (obměna po chybě).
+function ulohaPro(polozka, zdroj, { nova = false, jinyNez = null } = {}) {
+  const u = ulohaTypu(polozka, zdroj, nova, jinyNez);
+  u.obmena = () => ulohaPro(polozka, zdroj, { jinyNez: u.typ });
+  return u;
+}
+function ulohaTypu(polozka, zdroj, nova, jinyNez) {
   if (polozka.druh === 'veta') {
     const slov = polozka.en.split(' ').length;
-    return Math.random() < 0.6 && slov >= 2 && slov <= 9
+    const skladat = !nova && slov >= 2 && slov <= 9 && (jinyNez === 'vyber-vetu' || (jinyNez !== 'skladani' && Math.random() < 0.6));
+    return skladat
       ? { typ: 'skladani', polozka, dlazdice: zamichat(polozka.en.split(' ')) }
       : { typ: 'vyber-vetu', polozka, moznosti: moznosti(polozka, zdroj, 'cz', 3) };
   }
-  const typy = ['en-cz', 'cz-en'];
+  let typy = nova ? ['en-cz'] : ['en-cz', 'cz-en'];
   const sObr = zdroj.filter(x => x.obr && x.druh === 'slovo');
   if (polozka.obr && sObr.length >= 4) typy.push('poslech', 'poslech');
-  if (/^[a-z]{3,8}$/i.test(polozka.en)) typy.push('psani');
+  if (!nova && /^[a-z]{3,8}$/i.test(polozka.en)) typy.push('psani');
+  if (jinyNez && typy.length > 1) typy = typy.filter(t => t !== jinyNez);
   const typ = typy[Math.floor(Math.random() * typy.length)];
   if (typ === 'poslech') return { typ, polozka, moznosti: moznosti(polozka, sObr, 'obr') };
   if (typ === 'psani') return { typ, polozka, pismena: zamichat([...polozka.en.toLowerCase()]) };
@@ -74,42 +91,42 @@ function ulohaExtra(extra) {
   return { typ: 'cislo', spravne: n, moznosti: zamichat([...blizko]) };
 }
 
-// Dnešní lekce: opakování toho, co je na řadě, nová slovíčka z aktuální lekce ve škole a kousek „do šířky“.
+// Dnešní lekce (asi 20 úloh, rovnou cvičení bez představování):
+//  1. co dnes pokazila a ještě neopravila (opakuje se v kontextu dne),
+//  2. co je podle přihrádek na řadě,
+//  3. nová slovíčka z aktuální lekce ve škole,
+//  4. zbytek nová slovíčka „do šířky“ z několika různých balíčků – ať je lekce bohatá a neopakuje se,
+//  5. teprve když nové dojdou, už známé – přednostně ty, které dnes ještě neviděla.
 // Jeden balíček: totéž, ale jen z něj.
-export function sestav(p, idBalicku = null, delka = 10) {
+export function sestav(p, idBalicku = null, delka = 20) {
   const bal = idBalicku ? [balicek(idBalicku)] : odemcene(p);
   const zdroj = bal.flatMap(polozky);
-  const opak = kOpakovani(p, bal).slice(0, idBalicku ? 6 : 5);
+  const d = cisloDne();
+  const srs = id => p.srs[id];
+  const vybrane = [];
+  const pridej = (xs, n) => { for (const x of xs) { if (n <= 0 || vybrane.length >= delka) break; if (!vybrane.includes(x)) { vybrane.push(x); n--; } } };
 
-  let noveP = [];
-  if (idBalicku) noveP = nova(p, bal[0]).slice(0, 4);
+  pridej(zamichat(zdroj.filter(x => srs(x.id)?.chybaDne === d && srs(x.id).opravaDne !== d)), 5);
+  pridej(kOpakovani(p, bal).filter(x => srs(x.id).den !== d), idBalicku ? 8 : 6);
+  if (idBalicku) pridej(nova(p, bal[0]), delka);
   else {
     const skola = bal.filter(b => b.skupina === 'hs2' && b.unit).sort((a, b) => b.unit - a.unit);
-    noveP = skola.flatMap(b => nova(p, b)).slice(0, 3);
-    // Do šířky: jeden nový kousek z opakování nebo z „Něco navíc“, každý den odjinud.
-    const siroke = bal.filter(b => b.skupina !== 'hs2' && nova(p, b).length);
-    if (siroke.length) noveP.push(...nova(p, siroke[cisloDne() % siroke.length]).slice(0, noveP.length < 3 ? 3 : 1));
+    pridej(skola.flatMap(b => nova(p, b)), 5);
+    // Do šířky: po 2–3 nových z různých balíčků (náhodné pořadí), nejvýš NOVYCH_SIROKE na lekci.
+    const siroke = zamichat(bal.filter(b => b.skupina !== 'hs2' && nova(p, b).length));
+    const pred = vybrane.length;
+    for (const b of siroke) pridej(zamichat(nova(p, b)), Math.min(2 + Math.floor(Math.random() * 2), NOVYCH_SIROKE - (vybrane.length - pred)));
   }
+  const znamePred = zamichat(zdroj.filter(x => srs(x.id) && !vybrane.includes(x)));
+  pridej(znamePred.filter(x => srs(x.id).den !== d), delka); // známé, které dnes ještě neviděla
+  pridej(zamichat(zdroj.filter(x => !srs(x.id))), delka);     // pak další nová
+  pridej(znamePred, delka);
 
-  const ulohy = [];
-  for (const x of noveP) ulohy.push({ typ: 'nove', polozka: x });
-  const kProcviceni = [...noveP, ...opak];
-  // Když je málo na řadě, doplní se náhodně už známé položky.
-  if (kProcviceni.length < delka - noveP.length) {
-    const zname = zamichat(zdroj.filter(x => p.srs[x.id] && !kProcviceni.includes(x)));
-    kProcviceni.push(...zname.slice(0, delka - noveP.length - kProcviceni.length));
-  }
-  const procvic = zamichat(kProcviceni).map(x => ulohaPro(x, zdroj));
-  // Nová slovíčka se nejdřív představí, procvičí se až po nich.
-  ulohy.push(...procvic);
-
+  const ulohy = zamichat(vybrane).map(x => ulohaPro(x, zdroj, { nova: !srs(x.id) }));
   const extra = bal.find(b => b.extra && (idBalicku || b.unit === p.nastaveni.unit || Math.random() < 0.3))?.extra;
-  if (extra) for (let i = 0; i < 2; i++) ulohy.splice(noveP.length + Math.floor(Math.random() * (procvic.length + 1)), 0, ulohaExtra(extra));
-  // Úplně prázdný balíček (vše na později) – aspoň procvičit náhodné.
-  if (!ulohy.length) zamichat(zdroj).slice(0, delka).forEach(x => ulohy.push(ulohaPro(x, zdroj)));
+  if (extra) for (let i = 0; i < 2; i++) ulohy.splice(Math.floor(Math.random() * (ulohy.length + 1)), 0, ulohaExtra(extra));
   // Překvapení: asi v každé páté lekci se jedna otázka promění ve zlatou (5 sušenek místo 1).
-  const kandidati = ulohy.filter(u => u.typ !== 'nove');
-  if (kandidati.length && Math.random() < 0.22) kandidati[Math.floor(Math.random() * kandidati.length)].zlata = true;
+  if (ulohy.length && Math.random() < 0.22) ulohy[Math.floor(Math.random() * ulohy.length)].zlata = true;
   return ulohy;
 }
 

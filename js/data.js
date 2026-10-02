@@ -696,6 +696,256 @@ crush | někdo, kdo se ti líbí | 💘`), vety: [
     ['Well done!', 'Výborně!'],
     ['See you tomorrow!', 'Uvidíme se zítra!'],
   ] },
+  // ---------- Něco navíc: rozšíření 3. 10. 2026 (víc slov „nad rámec“ 4. třídy) ----------
+  { id: 'divoka', skupina: 'navic', nazev: 'Divoká zvířata', ikona: '🦊', slova: radky(`
+fox | liška | 🦊
+wolf | vlk | 🐺
+bear | medvěd | 🐻
+polar bear | lední medvěd | 🐻‍❄️
+deer | jelen | 🦌
+squirrel | veverka | 🐿️
+owl | sova | 🦉
+bat | netopýr | 🦇
+zebra | zebra | 🦓
+crocodile | krokodýl | 🐊
+camel | velbloud | 🐫
+rhino | nosorožec | 🦏
+gorilla | gorila | 🦍
+koala | koala | 🐨
+panda | panda | 🐼
+eagle | orel | 🦅
+peacock | páv | 🦚
+flamingo | plameňák | 🦩
+butterfly | motýl | 🦋
+bee | včela | 🐝
+ant | mravenec | 🐜
+ladybird | beruška | 🐞
+snail | šnek | 🐌`), vety: [
+    ['Foxes are clever.', 'Lišky jsou chytré.'],
+    ['Owls can see at night.', 'Sovy v noci vidí.'],
+    ['Bees make honey.', 'Včely dělají med.'],
+    ['Bears sleep in winter.', 'Medvědi v zimě spí.'],
+  ] },
+  { id: 'sport', skupina: 'navic', nazev: 'Sport a hry', ikona: '⚽', slova: radky(`
+football | fotbal | ⚽
+volleyball | volejbal | 🏐
+hockey | hokej | 🏒
+ice skating | bruslení | ⛸️
+gymnastics | gymnastika | 🤸
+climbing | lezení | 🧗
+horse riding | jízda na koni | 🏇
+team | tým
+match | zápas
+goal | gól | 🥅
+score | skóre
+player | hráč, hráčka
+winner | vítěz, vítězka | 🏆
+medal | medaile | 🏅
+coach | trenér, trenérka
+referee | rozhodčí
+whistle | píšťalka
+helmet | helma`), vety: [
+    ['We won the match!', 'Vyhráli jsme zápas!'],
+    ['What a goal!', 'To byl ale gól!'],
+    ['Pass me the ball!', 'Přihraj mi míč!'],
+    ['Our team is the best.', 'Náš tým je nejlepší.'],
+  ] },
+  { id: 'mesto', skupina: 'navic', nazev: 'Ve městě', ikona: '🏙️', slova: radky(`
+town | město
+city | velkoměsto | 🏙️
+road | silnice | 🛣️
+pavement | chodník
+crossroads | křižovatka
+traffic lights | semafor | 🚦
+bridge | most | 🌉
+castle | hrad | 🏰
+museum | muzeum | 🏛️
+post office | pošta | 🏤
+bakery | pekárna | 🥖
+bank | banka | 🏦
+hotel | hotel | 🏨
+airport | letiště | 🛫
+tram | tramvaj | 🚋
+motorbike | motorka | 🏍️
+police car | policejní auto | 🚓
+ambulance | sanitka | 🚑
+map | mapa | 🗺️
+go straight on | jít rovně | ⬆️`), vety: [
+    ['Where is the museum?', 'Kde je muzeum?'],
+    ['Go straight on and turn right.', 'Jdi rovně a pak odboč doprava.'],
+    ['The bank is next to the hotel.', 'Banka je vedle hotelu.'],
+    ['Can you show me on the map?', 'Můžeš mi to ukázat na mapě?'],
+  ] },
+  { id: 'priroda', skupina: 'navic', nazev: 'Příroda', ikona: '🌲', slova: radky(`
+forest | les | 🌲
+tree | strom
+hill | kopec
+field | pole | 🌾
+waterfall | vodopád
+rainbow | duha | 🌈
+cloud | mrak
+sky | obloha
+grass | tráva
+stone | kámen | 🪨
+desert | poušť | 🏜️
+volcano | sopka | 🌋
+jungle | džungle
+sunset | západ slunce | 🌇
+shadow | stín`), vety: [
+    ['Let\'s go to the forest.', 'Pojďme do lesa.'],
+    ['Look at the rainbow!', 'Podívej se na duhu!'],
+    ['This river is very long.', 'Tahle řeka je hodně dlouhá.'],
+    ['There are lots of trees here.', 'Je tu spousta stromů.'],
+  ] },
+  { id: 'kuchyne', skupina: 'navic', nazev: 'V kuchyni', ikona: '🍳', slova: radky(`
+fridge | lednice
+cooker | sporák
+sink | dřez
+plate | talíř
+bowl | miska
+cup | hrnek, šálek
+glass | sklenice
+knife | nůž | 🔪
+fork | vidlička | 🍴
+spoon | lžíce | 🥄
+pan | pánev | 🍳
+kettle | rychlovarná konvice
+salt | sůl | 🧂
+pepper | pepř
+flour | mouka
+honey | med | 🍯
+cook | vařit
+bake | péct
+cut | krájet
+mix | míchat`), vety: [
+    ['Can you pass the salt, please?', 'Podáš mi prosím sůl?'],
+    ['Wash your hands before lunch.', 'Umyj si ruce před obědem.'],
+    ['Let\'s bake a cake!', 'Pojďme upéct dort!'],
+    ['The soup is too hot.', 'Ta polévka je moc horká.'],
+    ['Lay the table, please.', 'Prostři prosím stůl.'],
+  ] },
+  { id: 'slovesa', skupina: 'navic', nazev: 'Co děláme', ikona: '🏃', slova: radky(`
+run | běhat
+jump | skákat
+throw | házet
+catch | chytat
+kick | kopat
+push | tlačit
+pull | táhnout
+laugh | smát se | 🤣
+cry | plakat | 😭
+shout | křičet | 📢
+whisper | šeptat | 🤫
+hide | schovat se | 🙈
+find | najít | 🔍
+lose | ztratit
+build | stavět | 🧱
+open | otevřít
+close | zavřít
+carry | nést
+wait | čekat | ⏳
+help | pomáhat | 🤝`), vety: [
+    ['Don\'t shout, please.', 'Nekřič, prosím.'],
+    ['I can\'t find my phone.', 'Nemůžu najít svůj telefon.'],
+    ['Wait for me!', 'Počkej na mě!'],
+    ['Let\'s build a tower!', 'Pojďme postavit věž!'],
+    ['Can you catch the ball?', 'Chytíš ten míč?'],
+  ] },
+  { id: 'protiklady', skupina: 'navic', nazev: 'Protiklady', ikona: '↔️', slova: radky(`
+fast | rychlý | 🐆
+loud | hlasitý | 🔊
+quiet | tichý | 🔈
+easy | snadný
+difficult | obtížný
+heavy | těžký | 🏋️
+light | lehký | 🪶
+full | plný
+empty | prázdný
+clean | čistý | 🧼
+dirty | špinavý
+dry | suchý
+new | nový | 🆕
+old | starý
+young | mladý
+long | dlouhý
+rich | bohatý | 💰
+poor | chudý
+weak | slabý
+brave | statečný | 🦸
+dangerous | nebezpečný | ⚠️
+boring | nudný | 🥱
+interesting | zajímavý`), vety: [
+    ['This box is very heavy.', 'Tahle krabice je hodně těžká.'],
+    ['My room is clean now.', 'Můj pokoj je teď čistý.'],
+    ['English isn\'t difficult!', 'Angličtina není obtížná!'],
+    ['My glass is empty.', 'Moje sklenice je prázdná.'],
+  ] },
+  { id: 'spojeni', skupina: 'navic', nazev: 'Slovní spojení', ikona: '🧩', slova: radky(`
+brush your teeth | čistit si zuby | 🪥
+make your bed | ustlat si postel
+have a bath | vykoupat se
+get up early | vstávat brzy | 🌅
+take a photo | vyfotit | 📸
+go shopping | jít nakupovat
+walk the dog | venčit psa | 🦮
+feed the cat | nakrmit kočku
+do the washing-up | umýt nádobí | 🧽
+catch a cold | nachladit se | 🤧
+have fun | bavit se
+make friends | najít si kamarády
+keep a secret | udržet tajemství | 🤐
+tell a joke | říct vtip
+go on holiday | jet na prázdniny
+play hide and seek | hrát na schovávanou
+pay attention | dávat pozor
+make a mistake | udělat chybu`), vety: [
+    ['Have fun at the party!', 'Bav se dobře na párty!'],
+    ['Don\'t forget to brush your teeth.', 'Nezapomeň si vyčistit zuby.'],
+    ['We\'re going on holiday tomorrow.', 'Zítra jedeme na prázdniny.'],
+    ['Everyone makes mistakes.', 'Každý dělá chyby.'],
+  ] },
+  { id: 'barvy2', skupina: 'navic', nazev: 'Barvy a vzory', ikona: '🌈', slova: radky(`
+light blue | světle modrá | 🩵
+gold | zlatá | 🥇
+silver | stříbrná | 🥈
+turquoise | tyrkysová
+beige | béžová
+navy | tmavě modrá
+lilac | šeříková
+colourful | barevný
+striped | pruhovaný
+spotted | puntíkovaný
+checked | kostkovaný
+plain | jednobarevný
+shiny | lesklý
+bright | zářivý
+dark | tmavý | 🌑
+pale | bledý`), vety: [
+    ['My new dress is spotted.', 'Moje nové šaty jsou puntíkované.'],
+    ['He\'s wearing a striped T-shirt.', 'Má na sobě pruhované tričko.'],
+    ['Gold is my favourite colour.', 'Zlatá je moje nejoblíbenější barva.'],
+    ['The sky is dark.', 'Obloha je tmavá.'],
+  ] },
+  { id: 'kamaradi', skupina: 'navic', nazev: 'Povídání s kamarády', ikona: '🗨️', slova: [], vety: [
+    ['What\'s up?', 'Co je nového?'],
+    ['Are you OK?', 'Jsi v pohodě?'],
+    ['Never mind.', 'To nevadí.'],
+    ['Good luck!', 'Hodně štěstí!'],
+    ['Have a nice day!', 'Hezký den!'],
+    ['Hurry up!', 'Pospěš si!'],
+    ['Be careful!', 'Dej pozor!'],
+    ['Don\'t worry.', 'Neboj se.'],
+    ['Me too!', 'Já taky!'],
+    ['I\'ve got an idea!', 'Mám nápad!'],
+    ['That\'s not fair!', 'To není fér!'],
+    ['Can I borrow your pencil?', 'Můžu si půjčit tvoji tužku?'],
+    ['What time is it?', 'Kolik je hodin?'],
+    ['I\'m sorry I\'m late.', 'Promiň, že jdu pozdě.'],
+    ['Whose turn is it?', 'Kdo je na řadě?'],
+    ['I agree.', 'Souhlasím.'],
+    ['No way!', 'To snad ne!'],
+    ['Guess what!', 'Hádej co!'],
+  ] },
 ];
 
 // Abeceda (Unit 1): anglické názvy písmen čte hlas, dítě vybírá písmeno.

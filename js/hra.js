@@ -59,8 +59,12 @@ export function hraj(ulohy, { battle = false, nazev = '', limit = 0, profil = nu
       if (battle && spravne) body += 100 + Math.max(0, Math.round(50 - (Date.now() - start) / 200));
       priOdpovedi(u, spravne, prvniPokus, { body, odpovezeno: hotovo, celkem, spravne: pocetSpravne() });
     }
-    // Špatně zodpovězenou úlohu v lekci dá ještě jednou na konec (jen jednou).
-    if (!spravne && !battle && prvniPokus) { opakovane.add(u); fronta.push(u); }
+    // Špatně zodpovězenou položku v lekci zopakuje za 3–4 úlohy jinou úlohou (jen jednou).
+    if (!spravne && !battle && prvniPokus) {
+      const znovu = u.obmena ? u.obmena() : u;
+      opakovane.add(znovu);
+      fronta.splice(Math.min(fronta.length, 3 + Math.floor(Math.random() * 2)), 0, znovu);
+    }
     if (battle) {
       (spravne ? zvukSpravne : zvukSpatne)();
       $('#hra').classList.add(spravne ? 'flash-ok' : 'flash-chyba');
