@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Biscuit – kostičkové postavičky</title>
+<style>
+  body { margin: 0; font-family: ui-rounded, "SF Pro Rounded", system-ui, sans-serif; color: #3b2a3f; background: #fff4f8; text-align: center; }
+  h1 { margin: 22px 0 4px; font-size: 26px; } p { margin: 0 16px 14px; color: #8a7891; }
+  .hlavni { display: inline-block; background: #fff; border-radius: 50%; width: 260px; height: 260px; overflow: hidden; box-shadow: 0 8px 22px rgba(150, 90, 140, .18); margin: 8px 0 18px; }
+  .hlavni img { animation: hop 2.6s ease-in-out infinite; }
+  @keyframes hop { 50% { transform: translateY(-4px); } }
+  .mrizka { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; max-width: 720px; margin: 0 auto 40px; padding: 0 14px; }
+  .mrizka div { background: #fff; border-radius: 20px; padding: 8px 4px 10px; box-shadow: 0 6px 16px rgba(150, 90, 140, .12); font-weight: 700; font-size: 14px; }
+  .mrizka img { display: block; margin: 0 auto 4px; }
+</style>
+</head>
+<body>
+  <h1>Kostičková Šarlotka</h1>
+  <p>Návrh stylu. Každá věc z Drip shopu by byla další vrstva kostiček.</p>
+  <div class="hlavni" id="hlavni"></div>
+  <div class="mrizka" id="mrizka"></div>
+<script type="module">
+  import { voxel } from './js/voxel.js';
+  const lotka = { kuze: 'k1', uces: 'culik', barva: 'hneda', srdce: true, batoh: true };
+  document.getElementById('hlavni').innerHTML = voxel(lotka, 260);
+  const varianty = [
+    ['S brýlemi', { ...lotka, bryle: 'kulate' }],
+    ['Korunka', { ...lotka, hlava: 'korunka', nausnice: true }],
+    ['Kočičí ouška, růžové vlasy', { ...lotka, barva: 'ruzova', hlava: 'ousko' }],
+    ['Sluneční brýle, blond', { ...lotka, barva: 'blond', bryle: 'slunecni', uces: 'dlouhe' }],
+    ['Kšiltovka, kniha', { ...lotka, hlava: 'ksiltovka', ruka: 'kniha', batoh: false }],
+    ['Pablo', { kuze: 'k2', uces: 'kratke', barva: 'hneda', vousy: 'knir', triko: '#5f93e6' }],
+    ['Tmavá pleť, lila', { kuze: 'k4', uces: 'dlouhe', barva: 'lila', triko: '#f4c6d6', srdce: true }],
+    ['Zrzka', { kuze: 'k1', uces: 'culik', barva: 'zrzava', triko: '#a9d8c4', bryle: 'kulate' }],
+  ];
+  document.getElementById('mrizka').innerHTML = varianty.map(([n, v]) => `<div>${voxel(v, 140)}${n}</div>`).join('');
+</script>
+</body>
+</html>
