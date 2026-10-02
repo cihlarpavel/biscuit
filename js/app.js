@@ -47,6 +47,8 @@ function route() {
   if (x0 && x0.vzhled.verze !== 2) prevedNaSusenku(x0);
   // Holka/kluk se kreslí z vzhled.rod (řasy, tvářičky) – vzhled odchází i kamarádkám online.
   if (x0 && x0.rod && x0.vzhled.rod !== x0.rod) { x0.vzhled.rod = x0.rod; S.uloz(); }
+  // Zasněné oči (koukají nahoru) byly první den zdarma a losovaly se – kdo si je nekoupil, kouká zase na tebe.
+  if (x0 && x0.vzhled.oci === 'o-nahoru' && !x0.koupeno.includes('o-nahoru')) { x0.vzhled.oci = 'o-koukaci'; S.uloz(); }
   nastavSvet(x0);
   nastavNoc();
   if (x0 && !x0.rod) return otazkaRod(x0);

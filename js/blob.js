@@ -52,13 +52,14 @@ const OBLECENI = {
 };
 
 // ---------- oči ----------
-const oko = (x, y, r, px, py, extra = '') => `<circle cx="${x}" cy="${y}" r="${r}" fill="#fff" ${T2}/><circle cx="${x + px}" cy="${y + py}" r="${r * .42}" fill="${OB}"/>${extra}`;
+// Zornice s odleskem; trida pv-zl / pv-zr = levá / pravá zornice, CSS s nimi občas mrkne stranou nebo zašilhá.
+const oko = (x, y, r, px, py, trida = '') => `<circle cx="${x}" cy="${y}" r="${r}" fill="#fff" ${T2}/><g class="${trida}"><circle cx="${x + px}" cy="${y + py}" r="${r * .42}" fill="${OB}"/><circle cx="${x + px + r * .16}" cy="${y + py - r * .16}" r="${r * .13}" fill="#fff"/></g>`;
 const OCI = {
-  koukaci: oko(46, 48, 11, 2.5, 2.5) + oko(73, 46, 12, 2.5, 2.5),
+  koukaci: oko(46, 48, 11, 0, .5, 'pv-zl') + oko(73, 46, 12, 0, .5, 'pv-zr'),
   nahoru: oko(46, 46, 11, 1, -5) + oko(73, 44, 12, 1, -5.5),
   silene: oko(44, 48, 9, -2, 3) + oko(72, 44, 14, 4, -3),
   ospale: `<circle cx="46" cy="48" r="11" fill="#fff" ${T2}/><circle cx="73" cy="46" r="12" fill="#fff" ${T2}/><path d="M35 46 a11 11 0 0 1 22 0z M61 44 a12 12 0 0 1 24 0z" fill="currentColor" ${T2}/><circle cx="47" cy="51" r="3.5" fill="${OB}"/><circle cx="74" cy="50" r="3.8" fill="${OB}"/>`,
-  kyklop: oko(60, 46, 15, 3, 3),
+  kyklop: oko(60, 46, 15, 0, .5, 'pv-zl'),
   hvezdy: [[46, 48, 11], [73, 46, 12]].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#fff" ${T2}/><path d="M${x} ${y - 6} l1.8 4 l4.2 .4 l-3.2 2.8 l1 4.2 l-3.8 -2.2 l-3.8 2.2 l1 -4.2 l-3.2 -2.8 l4.2 -.4z" fill="#ffc21a" stroke="${OB}" stroke-width="1"/>`).join(''),
   spiralky: [[46, 48, 11], [73, 46, 12]].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#fff" ${T2}/><path d="M${x} ${y} m0 -1.5 a1.5 1.5 0 1 1 -1.5 1.5 a3.5 3.5 0 1 1 3.5 3.5 a5.5 5.5 0 1 1 5.5 -5.5 a7.5 7.5 0 0 1 -7.5 7.5" fill="none" stroke="${OB}" stroke-width="1.8" stroke-linecap="round"/>`).join(''),
   zamilovane: [[46, 48, 11], [73, 46, 12]].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#fff" ${T2}/><path d="M${x} ${y + 5} l-5 -5 c-3 -3 1 -7 5 -3 c4 -4 8 0 5 3z" fill="#ff3b6b"/>`).join(''),

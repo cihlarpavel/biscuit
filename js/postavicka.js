@@ -60,7 +60,7 @@ export const VECI = [
   v('barva', 'b-bila', 'Bílá', 150, { c: '#f4f1f7' }), v('barva', 'b-duha', 'Duhová', 800, { c: 'duha' }),
 
   // Oči
-  v('oci', 'o-koukaci', 'Koukací', 0, { b: 'koukaci' }), v('oci', 'o-nahoru', 'Zasněné', 0, { b: 'nahoru' }),
+  v('oci', 'o-koukaci', 'Koukací', 0, { b: 'koukaci' }), v('oci', 'o-nahoru', 'Zasněné', 25, { b: 'nahoru' }),
   v('oci', 'o-silene', 'Šilhavé', 30, { b: 'silene' }), v('oci', 'o-ospale', 'Ospalé', 30, { b: 'ospale' }),
   v('oci', 'o-zamilovane', 'Zamilované', 80, { b: 'zamilovane' }), v('oci', 'o-hvezdy', 'Hvězdičky', 150, { b: 'hvezdy' }),
   v('oci', 'o-kyklop', 'Kyklop', 300, { b: 'kyklop' }), v('oci', 'o-spiralky', 'Hypnóza', 500, { b: 'spiralky' }),
