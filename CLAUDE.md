@@ -60,7 +60,7 @@ v `sw.js`, commit, `git push` (`gh` je v `~/.local/bin/gh`). Ve škole jsou na s
   (třída `hybe`, CSS `pv-*` ve styles.css), malé náhledy stojí.
 - `js/cas.js` – aktivní čas: jen na obrazovce lekce/battlu, v popředí, do 45 s od klepnutí.
 - `js/odznaky.js`, `js/store.js` (localStorage `biscuit`, profily), `js/speech.js` (en-GB hlas
-  iPhonu + zvuky), `js/maskot.js` (maskotka a čmáranice na pozadí), `js/app.js` (obrazovky).
+  iPhonu + zvuky), `js/maskot.js` (maskot = sušenka Biscuit z ikony, nálady radost/mrk/hmm), `js/app.js` (obrazovky).
 - `sw.js` „nejdřív síť“; po změně souborů zvýšit `CACHE`. `tools/ikona.py` generuje ikony,
   `tools/server.py` je lokální server bez mezipaměti (port 8777).
 - `podklady/` je v `.gitignore` (fotky a přepisy učebnice nesmí do veřejného repa).

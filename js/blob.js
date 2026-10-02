@@ -75,6 +75,8 @@ const OCI = {
   kyklop: oko(60, 46, 15, 0, .5, 'pv-zl'),
   hvezdy: [[46, 48, 11], [73, 46, 12]].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#fff" ${T2}/><path d="M${x} ${y - 6} l1.8 4 l4.2 .4 l-3.2 2.8 l1 4.2 l-3.8 -2.2 l-3.8 2.2 l1 -4.2 l-3.2 -2.8 l4.2 -.4z" fill="#ffc21a" stroke="${OB}" stroke-width="1"/>`).join(''),
   spiralky: [[46, 48, 11], [73, 46, 12]].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#fff" ${T2}/><path d="M${x} ${y} m0 -1.5 a1.5 1.5 0 1 1 -1.5 1.5 a3.5 3.5 0 1 1 3.5 3.5 a5.5 5.5 0 1 1 5.5 -5.5 a7.5 7.5 0 0 1 -7.5 7.5" fill="none" stroke="${OB}" stroke-width="1.5" stroke-linecap="round"/>`).join(''),
+  mrk: oko(46, 48, 11, 0, .5, 'pv-zl') + `<path d="M62 47 q11 -7 22 0" fill="none" ${T}/>`,
+  hmm: oko(46, 48, 11, -3, -4) + oko(73, 46, 12, -3, -4.5),
   zamilovane: [[46, 48, 11], [73, 46, 12]].map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#fff" ${T2}/><path d="M${x} ${y + 5} l-5 -5 c-3 -3 1 -7 5 -3 c4 -4 8 0 5 3z" fill="#ff3b6b"/>`).join(''),
 };
 
@@ -85,6 +87,7 @@ const PUSY = {
   jazyk: `<path d="M48 72 q12 8 24 0" fill="none" ${T}/><path d="M56 76 q4 10 8 0" fill="#ff6f8f" ${T2}/>`,
   zuby: `<path d="M44 70 h32 q-2 12 -16 12 q-14 0 -16 -12z" fill="#fff" ${T2}/><path d="M52 70 v6 M60 70 v7 M68 70 v6" stroke="${OB}" stroke-width="1.6"/>`,
   vampir: `<path d="M46 70 q14 10 28 0" fill="none" ${T}/><path d="M50 72 l2.5 7 l2.5 -5.4z M65 74 l2.5 5.4 l2.5 -7z" fill="#fff" stroke="${OB}" stroke-width="1.3" stroke-linejoin="round"/>`,
+  hmm: `<path d="M50 74 q5 -4 10 0 t10 0" fill="none" ${T}/>`,
   zobak: `<path d="M50 66 l10 8 l10 -8z" fill="#ffae2b" ${T2}/>`,
 };
 const KNIR = `<path d="M60 66 q-8 -6 -16 0 q-6 4 -12 -2 q4 10 14 8 q8 -2 14 -4 q6 2 14 4 q10 2 14 -8 q-6 6 -12 2 q-8 -6 -16 0z" fill="${OB}"/>`;
@@ -157,7 +160,7 @@ export function susenkaObsah(v) {
   const vl = VLASY[v.vlasy];
   let cv = v.barvaVlasu || '#5b3424', defs = '';
   if (cv === 'duha') { cv = `url(#${id}d)`; defs = `<linearGradient id="${id}d" x1="0" y1="0" x2="1" y2="1">${['#ff6b7a', '#ffa94d', '#ffe066', '#69db7c', '#4dabf7', '#9775fa'].map((c, i) => `<stop offset="${i / 5}" stop-color="${c}"/>`).join('')}</linearGradient>`; }
-  const tela = !!(v.rod || vl);
+  const tela = !!(v.rod || vl || v.ruce);
   const predVlasy = vl ? vl.pred(cv) : '';
   const ki = Math.abs(v.kousnuti | 0) % KOUSNUTI.length, KOUS = KOUSNUTI[ki];
   const kousMaska = s => `<mask id="${id}${s}"><rect x="-20" y="-20" width="160" height="160" fill="#fff"/>${KOUS.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#000"/>`).join('')}</mask>`;
@@ -192,6 +195,6 @@ export function susenkaObsah(v) {
 
 // Samostatná postavička (náhledová stránka susenka.html, ikona aplikace).
 export function blob(v, px = 160) {
-  const tela = !!(v.rod || VLASY[v.vlasy]);
+  const tela = !!(v.rod || VLASY[v.vlasy] || v.ruce);
   return `<svg width="${px}" height="${px}" viewBox="${tela ? SUSENKA_VIEWBOX : '0 -12 120 132'}" aria-hidden="true">${susenkaObsah(v)}</svg>`;
 }
