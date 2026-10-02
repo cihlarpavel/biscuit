@@ -61,8 +61,8 @@ export const SVETY = [
 
 export const nasbirano = p => Math.max(p.susenkyCelkem || 0, p.susenky || 0);
 export const odemcene = p => SVETY.filter(s => nasbirano(p) >= s.od);
-// Zvolený svět, nebo automaticky ten nejnovější odemčený.
-export const svetPro = p => (p && odemcene(p).find(s => s.id === p.svet)) || (p ? odemcene(p).pop() : SVETY[0]);
+// Světy se 2. 10. 2026 zrušily (Pavel): aplikace má jedno pozadí, Cukrárnu. Tituly za sušenky zůstávají.
+export const svetPro = () => SVETY[0];
 
 const cache = new Map();
 export function nastavSvet(p) {

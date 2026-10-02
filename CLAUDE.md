@@ -34,7 +34,9 @@ v `sw.js`, commit, `git push` (`gh` je v `~/.local/bin/gh`). Ve škole jsou na s
 - Ikona aplikace (`icons/`) je základní sušenka na růžovém pozadí. Headless Chrome kreslí ve špatném měřítku;
   vykresleno přes canvas v prohlížeči z `blob({})`, 192 a 180 zmenšené `sips -z` z 512.
 - Šatník se v aplikaci jmenuje **Drip shop** (vystouplé tlačítko uprostřed lišty, route `#/obchod`), na tlačítku je aktuální postavička (`tabJa()` po každé změně vzhledu). První záložka je Domů.
-- `js/svety.js` – pozadí aplikace („světy“) se odemyká podle sušenek nasbíraných **celkem**
+- **Světy zrušeny 2. 10. 2026 (Pavel): aplikace má jedno pozadí (Cukrárna, `svetPro` vrací vždy první).**
+  Oslava nového světa i výběr v Já jsou pryč; tituly za sušenky zůstávají.
+- `js/svety.js` – (dříve) pozadí aplikace („světy“) se odemykalo podle sušenek nasbíraných **celkem**
   (`susenkyCelkem`, utrácení ho nesnižuje; tituly i žebříček jedou podle něj). Sušenky přidávat jen
   přes `S.pridej(p, n)`, jinak se celkový součet nepohne.
 - Hlavní karta na úvodní obrazovce: scénka podle světa (`scena()` v svety.js, v noci noční) a postavička bez kulatého pozadí (`postavicka(..., { bezPozadi: true })`).

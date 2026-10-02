@@ -10,7 +10,7 @@ import { nastavUceni } from './cas.js';
 import { odemkni, speak, zvukFanfara, zvukSpatne } from './speech.js';
 import { ODZNAKY, zkontroluj } from './odznaky.js';
 import { maskot } from './maskot.js';
-import { SVETY, nastavSvet, odemcene as odemceneSvety, svetPro, nasbirano, nahledSveta, scena } from './svety.js';
+import { nastavSvet, nasbirano, scena } from './svety.js';
 import * as H from './hlasky.js';
 import { obrazovka, esc, $, $$, kolecko, minuty, toast, konfety, zpet } from './ui.js';
 import { ik, maIkonu, barvaIkony } from './ikony.js';
@@ -54,11 +54,6 @@ function route() {
   if (x0 && !x0.rod) return otazkaRod(x0);
   spustOnline();
   zverejniPozdeji();
-  if (x0) {
-    const nejnovejsi = odemceneSvety(x0).pop();
-    if (x0.svetVidel === undefined) x0.svetVidel = nejnovejsi.id; // stávající profily oslavu nedostanou zpětně
-    if (x0.svetVidel !== nejnovejsi.id) { x0.svetVidel = nejnovejsi.id; S.uloz(); return novySvet(nejnovejsi); }
-  }
   const [cesta, arg] = location.hash.replace(/^#\/?/, '').split('/');
   if (!S.profily().length && cesta !== 'novy') return obrazovkaVitej();
   (TRASY[cesta] || domu)(arg && decodeURIComponent(arg));
@@ -357,10 +352,6 @@ function ja() {
     <div class="graf">${dny.map(k => { const m = minuty(x.dny[k.k]?.s || 0); return `<div class="sloupec${m >= x.nastaveni.cil ? ' splneno' : ''}">
       <span>${m || ''}</span><i style="height:${m / maxMin * 100}%"></i><small>${k.nazev}</small></div>`; }).join('')}
       <div class="cil-cara" style="bottom:calc(${x.nastaveni.cil / maxMin} * (100% - 34px) + 20px)"></div></div>
-    <h2>Moje světy <small>${odemceneSvety(x).length} z ${SVETY.length}</small></h2>
-    <p class="drobne">Nový svět se odemkne s dalším titulem. Klepnutím si vybereš pozadí.</p>
-    <div class="svety">${SVETY.map(s => { const ok = nasbirano(x) >= s.od; return `<button class="svet${svetPro(x).id === s.id ? ' on' : ''}${ok ? '' : ' zamceny'}" data-svet="${s.id}" ${ok ? '' : 'disabled'}
-      style="background:${s.bg} ${nahledSveta(s)} center/110px"><span>${ok ? s.ikona : ik('zamek', 30, { podklad: false })}</span><b>${esc(s.nazev)}</b><small>${ok ? esc(H.rod(s.titul, x)) : `od ${s.od} 🍪 celkem`}</small></button>`; }).join('')}</div>
     <h2>Noční režim</h2>
     <div class="delky noc-volba">${[['auto', 'Automaticky', 'večer od 20:00'], ['on', 'Vždy tmavý', '🌙'], ['off', 'Vždy světlý', '☀️']].map(([k, t, m]) =>
       `<button class="delka${(x.nastaveni.noc || 'auto') === k ? ' on' : ''}" data-noc="${k}"><b>${t}</b><small>${m}</small></button>`).join('')}</div>
@@ -370,7 +361,6 @@ function ja() {
     <div class="tlacitka">
       <a class="odkaz" href="#/rodic">Pro rodiče</a></div>
   </section>`, { tab: 'ja' });
-  $$('.svet[data-svet]').forEach(b => (b.onclick = () => { x.svet = b.dataset.svet; S.uloz(); nastavSvet(x); ja(); }));
   $$('[data-noc]').forEach(b => (b.onclick = () => { x.nastaveni.noc = b.dataset.noc; S.uloz(); nastavSvet(x); nastavNoc(); ja(); }));
   vlozSchovanou('ja');
 }
@@ -770,16 +760,6 @@ function otazkaRod(x) {
     <h1>Ještě jedna věc 🙂</h1><p class="hlaska">Jsi holka, nebo kluk? Ať ti aplikace píše správně.</p>
     <div class="rod-volba velka"><button data-rod="z">👧 Holka</button><button data-rod="m">👦 Kluk</button></div></section>`, { bezListy: true });
   $$('.rod-volba button').forEach(b => (b.onclick = () => { x.rod = b.dataset.rod; S.uloz(); route(); }));
-}
-
-// ---------- Nový svět ----------
-function novySvet(s) {
-  obrazovka(`<section class="stranka konec">
-    <div class="svet-velky" style="background:${s.bg} ${nahledSveta(s)}"><span>${s.ikona}</span></div>
-    <h1>Nový svět: ${esc(s.nazev)}!</h1>
-    <p class="hlaska">Máš titul ${esc(H.rod(s.titul, p()))}. Aplikace se ti právě přestěhovala.</p>
-    <a class="btn velke" href="#/">Jdu se podívat</a></section>`, { bezListy: true });
-  konfety(); zvukFanfara();
 }
 
 // ---------- Schovaná zlatá sušenka (překvapení) ----------
