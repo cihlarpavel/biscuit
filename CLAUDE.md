@@ -106,7 +106,10 @@ Učebnice **Happy Street 2, 3. vydání (Oxford, české vydání)**, Units 1–
 
 ## Gamifikace (přání Pavla)
 
-- Sušenky 🍪 za správné odpovědi, bonus za lekci, bez chyby a splněný denní cíl.
+- Sušenky 🍪 jsou **úsporné** (Pavel 3. 10. 2026 – postavička se má měnit za odměnu): každá 4. správná
+  odpověď na první pokus = 1 🍪 (`ZA_KOLIK_SPRAVNYCH` v hra.js), zlatá otázka +3, lekce +2, bez chyby +3,
+  denní cíl +5 (`ODMENY` v app.js), battle 8/11/15 za výhru, hra za odměnu 25 bodů = 1 🍪 (max 6/den).
+  Ceny v Drip shopu i hranice vzácnosti ×2. Tlačítko „Náhodný mix“ v Drip shopu zrušeno.
 - Drip shop: za sušenky těsta, účesy, barvy vlasů, oči, pusy, oblečení, klobouky, brýle, boty, mazlíčci.
 - Battle 1:1 na jednom telefonu (stejné otázky, body za správnost + rychlost, vtipné vyhodnocení,
   odveta). Žebříček kamarádek s vtipnými komentáři. Tituly podle sušenek, odznaky.

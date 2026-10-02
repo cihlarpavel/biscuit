@@ -729,7 +729,7 @@ snail | šnek | 🐌`), vety: [
   { id: 'sport', skupina: 'navic', nazev: 'Sport a hry', ikona: '⚽', slova: radky(`
 football | fotbal | ⚽
 volleyball | volejbal | 🏐
-hockey | hokej | 🏒
+ice hockey | lední hokej | 🏒
 ice skating | bruslení | ⛸️
 gymnastics | gymnastika | 🤸
 climbing | lezení | 🧗
@@ -752,7 +752,7 @@ helmet | helma`), vety: [
   ] },
   { id: 'mesto', skupina: 'navic', nazev: 'Ve městě', ikona: '🏙️', slova: radky(`
 town | město
-city | velkoměsto | 🏙️
+city | velké město | 🏙️
 road | silnice | 🛣️
 pavement | chodník
 crossroads | křižovatka
@@ -772,7 +772,7 @@ ambulance | sanitka | 🚑
 map | mapa | 🗺️
 go straight on | jít rovně | ⬆️`), vety: [
     ['Where is the museum?', 'Kde je muzeum?'],
-    ['Go straight on and turn right.', 'Jdi rovně a pak odboč doprava.'],
+    ['Go straight on and turn right.', 'Jdi rovně a zahni doprava.'],
     ['The bank is next to the hotel.', 'Banka je vedle hotelu.'],
     ['Can you show me on the map?', 'Můžeš mi to ukázat na mapě?'],
   ] },
@@ -803,10 +803,10 @@ cooker | sporák
 sink | dřez
 plate | talíř
 bowl | miska
-cup | hrnek, šálek
+cup | šálek
 glass | sklenice
 knife | nůž | 🔪
-fork | vidlička | 🍴
+fork | vidlička
 spoon | lžíce | 🥄
 pan | pánev | 🍳
 kettle | rychlovarná konvice
@@ -814,7 +814,7 @@ salt | sůl | 🧂
 pepper | pepř
 flour | mouka
 honey | med | 🍯
-cook | vařit
+cook | vařit (jídlo)
 bake | péct
 cut | krájet
 mix | míchat`), vety: [
@@ -832,8 +832,8 @@ catch | chytat
 kick | kopat
 push | tlačit
 pull | táhnout
-laugh | smát se | 🤣
-cry | plakat | 😭
+laugh | smát se
+cry | plakat
 shout | křičet | 📢
 whisper | šeptat | 🤫
 hide | schovat se | 🙈
@@ -844,7 +844,7 @@ open | otevřít
 close | zavřít
 carry | nést
 wait | čekat | ⏳
-help | pomáhat | 🤝`), vety: [
+help | pomáhat`), vety: [
     ['Don\'t shout, please.', 'Nekřič, prosím.'],
     ['I can\'t find my phone.', 'Nemůžu najít svůj telefon.'],
     ['Wait for me!', 'Počkej na mě!'],
@@ -857,8 +857,8 @@ loud | hlasitý | 🔊
 quiet | tichý | 🔈
 easy | snadný
 difficult | obtížný
-heavy | těžký | 🏋️
-light | lehký | 🪶
+heavy | těžký (na váhu)
+light | lehký (na váhu) | 🪶
 full | plný
 empty | prázdný
 clean | čistý | 🧼
@@ -873,7 +873,7 @@ poor | chudý
 weak | slabý
 brave | statečný | 🦸
 dangerous | nebezpečný | ⚠️
-boring | nudný | 🥱
+boring | nudný
 interesting | zajímavý`), vety: [
     ['This box is very heavy.', 'Tahle krabice je hodně těžká.'],
     ['My room is clean now.', 'Můj pokoj je teď čistý.'],
@@ -884,10 +884,10 @@ interesting | zajímavý`), vety: [
 brush your teeth | čistit si zuby | 🪥
 make your bed | ustlat si postel
 have a bath | vykoupat se
-get up early | vstávat brzy | 🌅
-take a photo | vyfotit | 📸
+get up early | vstávat brzy
+take a photo | vyfotit
 go shopping | jít nakupovat
-walk the dog | venčit psa | 🦮
+walk the dog | venčit psa
 feed the cat | nakrmit kočku
 do the washing-up | umýt nádobí | 🧽
 catch a cold | nachladit se | 🤧
@@ -906,12 +906,12 @@ make a mistake | udělat chybu`), vety: [
   ] },
   { id: 'barvy2', skupina: 'navic', nazev: 'Barvy a vzory', ikona: '🌈', slova: radky(`
 light blue | světle modrá | 🩵
-gold | zlatá | 🥇
-silver | stříbrná | 🥈
+gold | zlatá
+silver | stříbrná
 turquoise | tyrkysová
 beige | béžová
 navy | tmavě modrá
-lilac | šeříková
+lilac | šeříková (světle fialová)
 colourful | barevný
 striped | pruhovaný
 spotted | puntíkovaný
@@ -919,21 +919,21 @@ checked | kostkovaný
 plain | jednobarevný
 shiny | lesklý
 bright | zářivý
-dark | tmavý | 🌑
+dark | tmavý
 pale | bledý`), vety: [
-    ['My new dress is spotted.', 'Moje nové šaty jsou puntíkované.'],
+    ['I\'ve got a spotted dress.', 'Mám puntíkované šaty.'],
     ['He\'s wearing a striped T-shirt.', 'Má na sobě pruhované tričko.'],
     ['Gold is my favourite colour.', 'Zlatá je moje nejoblíbenější barva.'],
     ['The sky is dark.', 'Obloha je tmavá.'],
   ] },
   { id: 'kamaradi', skupina: 'navic', nazev: 'Povídání s kamarády', ikona: '🗨️', slova: [], vety: [
-    ['What\'s up?', 'Co je nového?'],
+    ['What\'s up?', 'Co se děje?'],
     ['Are you OK?', 'Jsi v pohodě?'],
     ['Never mind.', 'To nevadí.'],
     ['Good luck!', 'Hodně štěstí!'],
     ['Have a nice day!', 'Hezký den!'],
     ['Hurry up!', 'Pospěš si!'],
-    ['Be careful!', 'Dej pozor!'],
+    ['Be careful!', 'Opatrně! / Dej si pozor!'],
     ['Don\'t worry.', 'Neboj se.'],
     ['Me too!', 'Já taky!'],
     ['I\'ve got an idea!', 'Mám nápad!'],

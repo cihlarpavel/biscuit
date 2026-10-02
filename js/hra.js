@@ -5,6 +5,9 @@ import { nahodne, rod, SPRAVNE, SPATNE } from './hlasky.js';
 import { maskot } from './maskot.js';
 import { ik } from './ikony.js';
 
+// Sušenky za odpovědi: každá ZA_KOLIK_SPRAVNYCH-tá správná na první pokus = 1 🍪, zlatá otázka navíc.
+const ZA_KOLIK_SPRAVNYCH = 4, ZLATA_OTAZKA = 3;
+
 const norm = s => s.toLowerCase().replace(/[’']/g, "'").replace(/[.,!?]/g, '').replace(/\s+/g, ' ').trim();
 const hlaskuj = slovo => [...slovo.toUpperCase()].join(', ');
 
@@ -54,10 +57,11 @@ export function hraj(ulohy, { battle = false, nazev = '', limit = 0, profil = nu
     const prvniPokus = !opakovane.has(u);
     if (u.typ !== 'nove') {
       if (prvniPokus) hotovo++;
-      if (spravne && prvniPokus) { susenky += u.zlata ? 5 : 1; zapocitejSpravne(); }
+      let zisk = 0;
+      if (spravne && prvniPokus) { zapocitejSpravne(); zisk = (pocetSpravne() % ZA_KOLIK_SPRAVNYCH === 0 ? 1 : 0) + (u.zlata ? ZLATA_OTAZKA : 0); susenky += zisk; }
       if (!spravne) chyby++;
       if (battle && spravne) body += 100 + Math.max(0, Math.round(50 - (Date.now() - start) / 200));
-      priOdpovedi(u, spravne, prvniPokus, { body, odpovezeno: hotovo, celkem, spravne: pocetSpravne() });
+      priOdpovedi(u, spravne, prvniPokus, { body, odpovezeno: hotovo, celkem, spravne: pocetSpravne(), zisk });
     }
     // Špatně zodpovězenou položku v lekci zopakuje za 3–4 úlohy jinou úlohou (jen jednou).
     if (!spravne && !battle && prvniPokus) {
@@ -95,7 +99,7 @@ export function hraj(ulohy, { battle = false, nazev = '', limit = 0, profil = nu
       <div class="hra-skore">${battle && !limit ? '⚡ ' + body : ik('susenka', 22, { podklad: false }) + ' ' + susenky}</div></div>
       ${nazev ? `<div class="hra-nazev">${esc(nazev)}</div>` : ''}
       ${souper ? souperHtml() : ''}
-      ${u.zlata ? `<div class="zlata-pruh">${ik('zlata', 34, { podklad: false })}<b>Zlatá otázka!</b><span>Správně = 5 sušenek</span></div>` : ''}`;
+      ${u.zlata ? `<div class="zlata-pruh">${ik('zlata', 34, { podklad: false })}<b>Zlatá otázka!</b><span>Správně = ${ZLATA_OTAZKA} sušenky navíc</span></div>` : ''}`;
     const p = u.polozka;
     const poslech = (text, pomalu) => `<button class="repro" data-text="${esc(text)}" aria-label="Přehrát">${ik('repro', 34, { podklad: false })}</button>
       ${pomalu ? `<button class="repro maly" data-text="${esc(text)}" data-pomalu="1" aria-label="Pomalu">${ik('zelva', 28, { podklad: false })}</button>` : ''}`;

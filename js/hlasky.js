@@ -10,6 +10,20 @@ export const SPRAVNE = [
   'Nice.', 'Slay. 💅', 'Jo, přesně tak.', 'GG.', 'Ani ses [nezapotil|nezapotila].',
   'Mozek: zapnutý ✅', 'Učitelka by brečela štěstím.', 'Tohle bylo moc easy, ne?',
   'Správně. Samozřejmě.', 'Na tohle máš talent.', 'Nejsi hacker? 👀', 'To jsi [zabil|zabila] 🔥',
+  // Hlášky od Pavla (3. 10. 2026)
+  'Brooo, to bylo actually good.', 'Okay, slay! 💅', 'Wait… ty to fakt umíš?!', 'Big W. 🏆',
+  'No way, zase správně?!', 'Okayyy, I see you. 👀', 'Tohle bylo lowkey easy, ne?', '+1000 aura ✨',
+  'English level: unlocked. 🔓', 'Bro is cooking. 🔥', 'Nech něco taky pro ostatní 😭', 'That was clean.',
+  'Okay genius, chill.', 'Ty jedeš jak NPC na speedrunu.', 'W answer.', 'Sheeesh, nice one.',
+  'Not bad. Actually… very good.', 'Brain = online. 🧠', 'Easy W.', 'Tohle bylo suspiciously good. 👀',
+  'Bro understood the assignment.', 'Angličtina se tě začíná bát.', 'Main character moment. ✨', 'You cooked. 👨‍🍳',
+  'Okay, flex.', 'Another one?! Chill 😭', 'To bylo smooth.', 'Certified English moment. ✅',
+  'Tenhle streak je wild.', 'Stop being so good at this.', 'Excuse me?! ZASE správně?', 'Your English is Englishing.',
+  'Brainrot OFF. Brain ON. 🧠', 'Achievement unlocked: BIG BRAIN.', 'Tohle má aura.', 'W move, kámo.',
+  'Okay Shakespeare. 📖', 'British mode activated. 🇬🇧', 'Very demure. Very English.', 'Bro casually speaks English now.',
+  'Plot twist: bylo to správně.', 'Chat, máme tady génia?', 'That answer kinda ate.', 'Zero hesitation. Respect.',
+  'English teacher would be proud.', 'Okay, that was kinda fire. 🔥', 'Vocabulary goes brrrrr.', 'Bro gained +10 English XP.',
+  'We take those. W.', 'Another W for the collection.',
 ];
 
 export const SPATNE = [

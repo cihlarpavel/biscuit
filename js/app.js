@@ -145,8 +145,8 @@ function domu() {
 }
 
 // ---------- Hra za odměnu: Chytej sušenky ----------
-// Odemkne se po splnění denního cíle učení. Dohromady 20 minut hraní denně, za každých 10 bodů 1 🍪 (max 20 🍪 za den).
-const HRA_LIMIT = 20 * 60, HRA_MAX_SUSENEK = 20;
+// Odemkne se po splnění denního cíle učení. Dohromady 20 minut hraní denně, za každých HRA_BODU_NA_SUSENKU bodů 1 🍪 (max HRA_MAX_SUSENEK za den).
+const HRA_LIMIT = 20 * 60, HRA_MAX_SUSENEK = 6, HRA_BODU_NA_SUSENKU = 25;
 function hraDnes(x) {
   if (x.hra?.den !== S.dnes()) x.hra = { den: S.dnes(), s: 0, susenky: 0, rekord: x.hra?.rekord || 0 };
   return x.hra;
@@ -177,7 +177,7 @@ function hraZaOdmenu() {
   obrazovka(`<section class="stranka konec">${zpet('#/')}<div class="hra-logo">${ik('hra', 120)}</div><h1>Chytej sušenky</h1>
     <p class="hlaska">Posouvej krabičku prstem a chytej sušenky. Zlatá = 5 bodů, ale když spadne na zem, přijdeš o půl srdíčka. Brokolice bere celé srdíčko 🥦, šnek 🐌 všechno na chvíli zpomalí. A když hodně vzácně spadne srdíčko ❤️, chyť ho – je to život navíc!</p>
     <div class="hra-info"><span>⏱️ Zbývá ${Math.ceil(zbyva / 60)} min</span><span>🏆 Rekord ${h.rekord}</span><span>🍪 Dnes ${h.susenky}/${HRA_MAX_SUSENEK}</span></div>
-    <p class="drobne">Každých 10 bodů = 1 sušenka do aplikace (nejvýš ${HRA_MAX_SUSENEK} za den).</p>
+    <p class="drobne">Každých ${HRA_BODU_NA_SUSENKU} bodů = 1 sušenka do aplikace (nejvýš ${HRA_MAX_SUSENEK} za den).</p>
     <button class="btn velke" id="hraj">Hrát ▶</button></section>`, { bezListy: true });
   $('#hraj').onclick = () => hrajHru(x);
 }
@@ -196,7 +196,7 @@ function hrajHru(x) {
       if (h.s - ulozeno > 5) { ulozeno = h.s; S.uloz(); }
     },
     konec: v => {
-      const nove = Math.min(Math.floor(v.body / 10), HRA_MAX_SUSENEK - h.susenky);
+      const nove = Math.min(Math.floor(v.body / HRA_BODU_NA_SUSENKU), HRA_MAX_SUSENEK - h.susenky);
       if (nove > 0) { h.susenky += nove; S.pridej(x, nove); }
       const rekord = v.body > h.rekord;
       if (rekord) h.rekord = v.body;
@@ -205,7 +205,7 @@ function hrajHru(x) {
       obrazovka(`<section class="stranka konec">${zpet('#/')}<div class="hra-logo">${ik('hra', 100)}</div>
         <h1>${v.limit ? 'Čas na dnes vypršel ⏱️' : rekord ? 'Nový rekord! 🏆' : 'Konec hry!'}</h1>
         <div class="odmena"><span>${v.body} bodů</span><small>level ${v.level}${v.zlate ? ` · ${v.zlate}× zlatá sušenka` : ''}</small></div>
-        <p class="hlaska">${nove > 0 ? `Do aplikace: ${ikS('susenka', 22)} +${nove}` : h.susenky >= HRA_MAX_SUSENEK ? 'Dnešní sušenky ze hry máš vybrané, ale rekord se počítá!' : 'Na sušenku do aplikace potřebuješ 10 bodů.'}</p>
+        <p class="hlaska">${nove > 0 ? `Do aplikace: ${ikS('susenka', 22)} +${nove}` : h.susenky >= HRA_MAX_SUSENEK ? 'Dnešní sušenky ze hry máš vybrané, ale rekord se počítá!' : `Na sušenku do aplikace potřebuješ ${HRA_BODU_NA_SUSENKU} bodů.`}</p>
         ${zbyva > 0 ? `<button class="btn velke" id="znovu">Ještě jednou ▶</button><p class="drobne">Zbývá ${Math.ceil(zbyva / 60)} min hraní.</p>` : '<p class="drobne">Hra se odemkne zase zítra po učení. 🌙</p>'}
         <a class="odkaz" href="#/">Domů</a></section>`, { bezListy: true });
       if (rekord || nove > 0) { konfety(); zvukFanfara(); }
@@ -237,6 +237,9 @@ function detailBalicku(id) {
 }
 
 // ---------- Lekce ----------
+// Sušenky jsou schválně úsporné (Pavel 3. 10. 2026): postavička se má měnit za odměnu, ne po pár cvičeních.
+// Za odpovědi: každá 4. správná na první pokus = 1 🍪 (počítá hra.js), zlatá otázka +3.
+const ODMENY = { lekce: 2, perfekt: 3, cil: 5, bleskovkaVse: 4 };
 function spustLekci(idBalicku) {
   const x = p();
   const ulohy = sestav(x, idBalicku || null);
@@ -244,11 +247,11 @@ function spustLekci(idBalicku) {
   nastavUceni(true);
   hraj(ulohy, {
     nazev: idBalicku ? balicek(idBalicku)?.nazev : 'Dnešní lekce', profil: x,
-    priOdpovedi: (u, ok, prvni) => {
+    priOdpovedi: (u, ok, prvni, info) => {
       if (u.polozka?.id) zapis(x, u.polozka, ok, prvni);
       const d = S.den(x);
       ok ? d.ok++ : d.chyby++;
-      if (ok && prvni) S.pridej(x, u.zlata ? 5 : 1);
+      if (info.zisk) S.pridej(x, info.zisk);
       S.uloz();
     },
     konec: v => {
@@ -256,9 +259,9 @@ function spustLekci(idBalicku) {
       if (v.preruseno) { S.uloz(); return jdi('#/'); }
       const d = S.den(x);
       d.lekce++;
-      let bonus = 5 + (v.perfekt ? 5 : 0);
+      let bonus = ODMENY.lekce + (v.perfekt ? ODMENY.perfekt : 0);
       const cilTed = !cilPred && d.s >= x.nastaveni.cil * 60;
-      if (cilTed) bonus += 10;
+      if (cilTed) bonus += ODMENY.cil;
       S.pridej(x, bonus);
       const nove = zkontroluj(x, { perfekt: v.perfekt, hodina: new Date().getHours() });
       S.uloz();
@@ -405,9 +408,7 @@ function obchod() {
           ${maVec(x, v) ? '' : `<span class="cena">${ikS('susenka', 16)} ${v.cena}</span>`}
           ${v.cena ? `<span class="vzacnost" style="color:${vzacnost(v.cena).barva}">${vzacnost(v.cena).nazev}</span>` : ''}</button>`).join('')}
       </div>
-      <div class="satnik-lista">${nekoupena
-        ? `<button class="btn velke" id="koupit">${x.susenky >= nekoupena.cena ? `Koupit ${esc(nekoupena.nazev)} za ${ikS('susenka', 24)} ${nekoupena.cena}` : `Chybí ti ${ikS('susenka', 24)} ${nekoupena.cena - x.susenky}`}</button>`
-        : `<button class="btn vedlejsi" id="mix">${ik('cisla20', 28, { podklad: false })} Náhodný mix z mých věcí</button>`}</div>
+      ${nekoupena ? `<div class="satnik-lista"><button class="btn velke" id="koupit">${x.susenky >= nekoupena.cena ? `Koupit ${esc(nekoupena.nazev)} za ${ikS('susenka', 24)} ${nekoupena.cena}` : `Chybí ti ${ikS('susenka', 24)} ${nekoupena.cena - x.susenky}`}</button></div>` : ''}
     </section>`, { tab: 'drip' });
 
     $('.kat.on')?.scrollIntoView({ inline: 'center', block: 'nearest' });
@@ -422,17 +423,6 @@ function obchod() {
       tabJa();
       document.getElementById('app').scrollTop = top;
     }));
-    const mix = $('#mix');
-    if (mix) mix.onclick = () => {
-      const novy = {};
-      for (const k of KATEGORIE) {
-        const moje = VECI.filter(v => v.kat === k.id && maVec(x, v));
-        const nic = !k.povinne && Math.random() < 0.5;
-        novy[k.id] = nic || !moje.length ? (k.povinne ? x.vzhled[k.id] : null) : moje[Math.floor(Math.random() * moje.length)].id;
-      }
-      Object.assign(novy, { seminko: x.vzhled.seminko, rod: x.vzhled.rod, verze: 2 });
-      x.vzhled = novy; zkouska = { ...novy }; S.uloz(); vykresli(); tabJa();
-    };
     const koupit = $('#koupit');
     if (koupit) koupit.onclick = () => {
       if (x.susenky < nekoupena.cena) return toast('Ještě pár lekcí a je to tvoje 💪');
@@ -526,9 +516,9 @@ function rodic() {
 
 // ---------- Délka battlu a odměny ----------
 const DELKY = [
-  { n: 20, nazev: 'Rychlovka', popis: '20 otázek', odmena: { v: 25, r: 12, p: 6 } },
-  { n: 30, nazev: 'Klasika', popis: '30 otázek', odmena: { v: 35, r: 17, p: 8 } },
-  { n: 40, nazev: 'Maraton', popis: '40 otázek', odmena: { v: 50, r: 25, p: 12 } },
+  { n: 20, nazev: 'Rychlovka', popis: '20 otázek', odmena: { v: 8, r: 4, p: 2 } },
+  { n: 30, nazev: 'Klasika', popis: '30 otázek', odmena: { v: 11, r: 6, p: 3 } },
+  { n: 40, nazev: 'Maraton', popis: '40 otázek', odmena: { v: 15, r: 8, p: 4 } },
 ];
 let zvolenaDelka = 30;
 const odmenaBattlu = n => (DELKY.find(d => d.n === n) || DELKY[0]).odmena;
@@ -822,13 +812,13 @@ function bleskovka(x) {
       nastavUceni(false);
       if (v.preruseno) return jdi('#/');
       const vse = v.spravne === ulohy.length;
-      const zisk = v.spravne * 2 + (vse ? 10 : 0);
+      const zisk = Math.floor(v.spravne / 2) + (vse ? ODMENY.bleskovkaVse : 0);
       S.pridej(x, zisk);
       const nove = zkontroluj(x);
       S.uloz();
       obrazovka(`<section class="stranka konec">${zpet('#/', 'Domů')}${maskot(140, vse ? 'mrk' : 'radost')}
         <h1>${vse ? 'Všechno správně! 🤯' : v.casVyprsel ? 'Čas vypršel!' : 'Hotovo!'}</h1>
-        <div class="odmena"><span>${ikS('susenka', 34)} +${zisk}</span><small>${v.spravne} z ${ulohy.length} správně${vse ? ' + bonus 10' : ''}</small></div>
+        <div class="odmena"><span>${ikS('susenka', 34)} +${zisk}</span><small>${v.spravne} z ${ulohy.length} správně${vse ? ` + bonus ${ODMENY.bleskovkaVse}` : ''}</small></div>
         <p class="drobne">Zlatá sušenka se zase někdy schová. Kdy a kde, to nikdo neví 🤫</p>
         ${nove.map(o => `<div class="novy-odznak"><span>${ikOdznaku(o, 48)}</span><div><small>Nový odznak!</small><b>${esc(o.nazev)}</b></div></div>`).join('')}
         <a class="btn velke" href="#/">Hotovo</a></section>`, { bezListy: true });
