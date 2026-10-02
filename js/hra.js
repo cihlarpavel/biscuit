@@ -139,6 +139,8 @@ export function hraj(ulohy, { battle = false, nazev = '', limit = 0, profil = nu
         <div class="mrizka">${u.moznosti.map((m, i) => `<button class="moznost pismeno" data-i="${i}">${m}</button>`).join('')}</div>`;
     }
 
+    // Zadání říká maskotka v bublině.
+    telo = telo.replace(/<div class="zadani">(.*?)<\/div>/, (_, t) => `<div class="zadani-radek">${maskot(56, 'radost')}<div class="zadani">${t}</div></div>`);
     const a = obrazovka(`<section id="hra" class="hra${u.zlata ? ' zlata' : ''}">${hlava}<div class="hra-telo">${telo}</div></section>`, { bezListy: true });
     a.querySelector('.zavrit').onclick = () => { if (confirm(battle ? 'Vzdát to?' : 'Ukončit lekci? Sušenky z ní zůstanou.')) skonci({ preruseno: true }); };
     if (u.zlata) { konfety(); import('./speech.js').then(m => m.zvukFanfara()); }

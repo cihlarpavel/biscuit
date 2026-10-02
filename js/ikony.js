@@ -199,3 +199,4 @@ export function ik(nazev, velikost = 40, { podklad = true } = {}) {
 }
 
 export const maIkonu = nazev => nazev in KRESBY;
+export const barvaIkony = nazev => PODKLAD[nazev] || '#ffd6e8';

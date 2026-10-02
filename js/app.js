@@ -12,7 +12,7 @@ import { maskot } from './maskot.js';
 import { SVETY, nastavSvet, odemcene as odemceneSvety, svetPro, nasbirano, nahledSveta } from './svety.js';
 import * as H from './hlasky.js';
 import { obrazovka, esc, $, $$, kolecko, minuty, toast, konfety, zpet } from './ui.js';
-import { ik, maIkonu } from './ikony.js';
+import { ik, maIkonu, barvaIkony } from './ikony.js';
 
 addEventListener('pointerdown', odemkni, { once: true });
 $$('#tabs a[data-ik]').forEach(a => (a.querySelector('span').innerHTML = ik(a.dataset.ik, a.classList.contains('stred') ? 52 : 40)));
@@ -108,21 +108,38 @@ function domu() {
   const pozdrav = hotovo ? H.nahodne(H.CIL_SPLNEN) : S.serie(x) >= 2 ? H.dosad(H.nahodne(H.SERIE), { n: S.serie(x) }) : H.rod(H.dosad(H.nahodne(H.POZDRAVY), { jmeno: x.prezdivka }), x);
   const otevrene = new Set(odemcene(x).map(b => b.id));
 
-  const skupiny = SKUPINY.map(g => `<h2>${esc(g.nazev)}</h2><p class="drobne">${esc(g.popis)}</p>
+  // Úroveň: kolik sušenek (nasbíraných celkem) chybí do dalšího titulu.
+  const n = nasbirano(x);
+  const dalsi = H.TITULY.find(([od]) => od > n);
+  const tenhle = [...H.TITULY].reverse().find(([od]) => od <= n);
+  const podilUrovne = dalsi ? (n - tenhle[0]) / (dalsi[0] - tenhle[0]) : 1;
+  const IKONA_SKUPINY = { opakovani: 'o-kniha', hs2: 'tab-uceni', navic: 'k-tvar' };
+
+  const skupiny = SKUPINY.map(g => `<div class="sekce-hlava">${ik(IKONA_SKUPINY[g.id], 46)}<div><h2>${esc(g.nazev)}</h2><p>${esc(g.popis)}</p></div></div>
     <div class="balicky">${BALICKY.filter(b => b.skupina === g.id).map(b => {
       const { umi, celkem } = postupBalicku(x, b);
       const zamceno = !otevrene.has(b.id);
       const ted = b.unit === x.nastaveni.unit;
-      return `<a class="balicek${zamceno ? ' zamceno' : ''}${ted ? ' ted' : ''}" href="${zamceno ? '#/' : '#/balicek/' + b.id}" ${zamceno ? 'data-zamceno="1"' : ''}>
-        <span class="b-ikona">${zamceno ? ik('zamek', 40) : ikBalicku(b)}</span>
-        <span class="b-text">${b.unit ? `<small>Unit ${b.unit}${ted ? ' · teď ve škole' : ''}</small>` : ''}<b>${esc(b.nazev)}</b>
-        <span class="mini-prubeh"><i style="width:${celkem ? umi / celkem * 100 : 0}%"></i></span></span></a>`;
+      return `<a class="balicek${zamceno ? ' zamceno' : ''}${ted ? ' ted' : ''}" style="--akc:${barvaIkony(b.id)}" href="${zamceno ? '#/' : '#/balicek/' + b.id}" ${zamceno ? 'data-zamceno="1"' : ''}>
+        ${ted ? '<span class="stitek-ted">Teď ve škole</span>' : ''}
+        <span class="b-ikona">${zamceno ? ik('zamek', 44) : ikBalicku(b, 44)}</span>
+        <span class="b-text">${b.unit ? `<small>Unit ${b.unit}</small>` : ''}<b>${esc(b.nazev)}</b>
+        <span class="mini-prubeh"><i style="width:${celkem ? umi / celkem * 100 : 0}%"></i></span><span class="b-pocet">${umi}/${celkem}</span></span></a>`;
     }).join('')}</div>`).join('');
 
   obrazovka(`${hlavicka(x)}<section class="stranka domu">
-    <div class="maskot-bublina">${maskot(84, hotovo ? 'mrk' : 'radost')}<div class="bublina">${esc(pozdrav)}</div></div>
+    <div class="hero">
+      <div class="hero-postava">${postavicka(x.vzhled, 124, 'cela', true)}</div>
+      <div class="hero-text">
+        <div class="bublina">${esc(pozdrav)}</div>
+        <div class="uroven"><div class="uroven-radek"><b>${esc(H.titul(n, x))}</b>
+          <span>${dalsi ? `${ikS('susenka', 16)} ${n} / ${dalsi[0]}` : 'Nejvyšší titul!'}</span></div>
+          <div class="xp"><i style="width:${Math.round(podilUrovne * 100)}%"></i></div>
+          ${dalsi ? `<small>Ještě ${dalsi[0] - n} 🍪 a budeš ${esc(H.rod(dalsi[1], x))}</small>` : ''}</div>
+      </div>
+    </div>
     <div class="dnes-karta">
-      ${kolecko(d.s / (cil * 60), `<b>${minuty(d.s)}</b><small>z ${cil} min</small>`)}
+      ${kolecko(d.s / (cil * 60), `<b>${minuty(d.s)}</b><small>z ${cil} min</small>`, 118)}
       <div class="dnes-text"><h3>Dnešní lekce</h3>
         <p>${unitTed ? `Nová slovíčka z Unit ${unitTed.unit} + opakování + něco navíc` : 'Opakování a něco navíc'}</p>
         <a class="btn" href="#/lekce">${hotovo ? 'Ještě jednu' : 'Jdeme na to'} →</a></div>
@@ -257,13 +274,13 @@ function ja() {
   const ziskane = ODZNAKY.filter(o => x.odznaky[o.id]);
   const zbyvajici = ODZNAKY.filter(o => !x.odznaky[o.id] && !o.id.startsWith('mistr-'));
   obrazovka(`${hlavicka(x)}<section class="stranka">
-    <div class="ja-hlava"><span class="avatar obri">${postavicka(x.vzhled, 120)}</span><h1>${jmeno(x)}</h1><p class="titul">${esc(H.titul(nasbirano(x), x))}</p>
+    <div class="ja-hlava hero-ja"><span class="avatar obri">${postavicka(x.vzhled, 150)}</span><h1>${jmeno(x)}</h1><p class="titul">${esc(H.titul(nasbirano(x), x))}</p>
       <a class="btn" href="#/obchod">${ik('tab-drip', 28, { podklad: false })} Drip shop</a></div>
     <div class="cisla">
-      <div><b>${S.serie(x)}</b><small>🔥 série</small></div>
-      <div><b>${S.nejdelsiSerie(x)}</b><small>nejdelší série</small></div>
-      <div><b>${S.umiSlov(x)}</b><small>umím slovíček</small></div>
-      <div><b>${Math.round(S.celkemSekund(x) / 60)}</b><small>minut celkem</small></div>
+      <div style="--akc:#ffe3d6">${ik('ohen', 34, { podklad: false })}<b>${S.serie(x)}</b><small>série teď</small></div>
+      <div style="--akc:#fff1c2">${ik('o-sopka', 34, { podklad: false })}<b>${S.nejdelsiSerie(x)}</b><small>nejdelší série</small></div>
+      <div style="--akc:#ffd6e8">${ik('o-mozek', 34, { podklad: false })}<b>${S.umiSlov(x)}</b><small>umím slovíček</small></div>
+      <div style="--akc:#e3d9ff">${ik('o-stopky', 34, { podklad: false })}<b>${Math.round(S.celkemSekund(x) / 60)}</b><small>minut celkem</small></div>
     </div>
     <h2>Tenhle týden</h2>
     <div class="graf">${dny.map(k => { const m = minuty(x.dny[k.k]?.s || 0); return `<div class="sloupec${m >= x.nastaveni.cil ? ' splneno' : ''}">
