@@ -172,7 +172,7 @@ spell | hláskovat | 🔤
 street | ulice | 🏘️`), vety: [
     ['Where\'s Flossy?', 'Kde je Flossy?'],
     ['She isn\'t in the flat!', 'Není v bytě!'],
-    ['What are these?', 'Co je tohle?'],
+    ['What are these?', 'Co jsou tyhle věci?'],
     ['They\'re footprints.', 'To jsou stopy.'],
     ['She\'s in the garage!', 'Je v garáži!'],
     ['Flossy\'s got three puppies!', 'Flossy má tři štěňátka!'],
