@@ -273,6 +273,9 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 /* ---------- Já ---------- */
 .ja-hlava { text-align: center; }
 .ja-hlava h1 { margin: 0; }
+.ja-hlava h1 { line-height: 1.15; }
+/* Tlačítko Drip shop má stín 5 px pod sebou – bez odstupu sahalo do čísel pod ním. */
+.ja-hlava .btn { margin-bottom: 22px; }
 .titul { color: var(--ruzova); font-weight: 800; margin: 2px 0 12px; }
 .cisla { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 .cisla div { background: #fff; border-radius: 16px; padding: 10px 4px; text-align: center; box-shadow: var(--stin); }
