@@ -33,6 +33,9 @@ body {
 #app {
   position: fixed; inset: 0; bottom: var(--lista);
   overflow-y: auto; -webkit-overflow-scrolling: touch;
+  /* Jen svisle: s overflow-y: auto by šel obsah na iPhonu posunout i do stran, jakmile cokoli
+     (schovaná sušenka, konfety, animace) přečnívá přes okraj. */
+  overflow-x: hidden; overscroll-behavior-x: none;
   padding-top: env(safe-area-inset-top);
 }
 body.bez-listy #app { bottom: 0; }
