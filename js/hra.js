@@ -78,7 +78,8 @@ export function hraj(ulohy, { battle = false, nazev = '', limit = 0, profil = nu
     }
     if (u.typ === 'nove') return dalsi();
     (spravne ? zvukSpravne : zvukSpatne)();
-    if (u.polozka && u.polozka.druh !== 'extra') speak(u.polozka.en);
+    // Po odpovědi zazní angličtina jen tam, kde na začátku nezazněla (psaní, skládání, cz→en). Jinak jen na repro.
+    if (u.polozka && u.polozka.druh !== 'extra' && !['nove', 'poslech', 'en-cz', 'vyber-vetu'].includes(u.typ)) speak(u.polozka.en);
     const panel = document.createElement('div');
     panel.className = 'vysledek ' + (spravne ? 'ok' : 'chyba');
     panel.innerHTML = `<div class="vys-radek">${maskot(54, spravne ? 'mrk' : 'hmm')}

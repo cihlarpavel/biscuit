@@ -7,7 +7,7 @@ import { hraj, nastavSoupere } from './hra.js';
 import * as O from './online.js';
 import * as HRA from './hra-susenky.js';
 import { nastavUceni } from './cas.js';
-import { odemkni, speak, zvukFanfara, zvukSpatne } from './speech.js';
+import { odemkni, speak, zvukFanfara, zvukSpatne, seznamHlasu, zvolenyHlas, nastavHlas, priHlasech } from './speech.js';
 import { ODZNAKY, zkontroluj } from './odznaky.js';
 import { maskot } from './maskot.js';
 import { nastavSvet, nasbirano, scena } from './svety.js';
@@ -516,10 +516,16 @@ function rodic() {
     ${karty}
     <a class="btn vedlejsi" href="#/novy">＋ Založit další profil</a>
     <p class="drobne">Jen výjimečně (třeba pro sourozence). Mezi profily se přepíná tady tlačítkem „Používat tento profil“.</p>
+    <h3>Hlas</h3><p class="drobne">Britské hlasy, které má tenhle telefon. Další (třeba ženské Kate nebo Serena) se dají stáhnout v Nastavení → Zpřístupnění → Předčítaný obsah → Hlasy → Angličtina (Spojené království).</p>
+    <div class="hlas-volba"><select id="hlas">${seznamHlasu().map(n => `<option ${n === zvolenyHlas() ? 'selected' : ''}>${esc(n)}</option>`).join('') || '<option>Výchozí hlas</option>'}</select>
+      <button class="btn vedlejsi" id="hlas-ukazka">▶ Ukázka</button></div>
     <h3>Záloha</h3><p class="drobne">Všechno je jen v tomhle telefonu. Zálohu si ulož třeba do Souborů.</p>
     <div class="tlacitka"><button class="btn vedlejsi" id="zaloha">Stáhnout zálohu</button>
       <label class="btn vedlejsi">Obnovit ze zálohy<input type="file" id="obnova" accept=".json,application/json" hidden></label>
       <button class="btn vedlejsi" id="zmenapin">Změnit PIN</button></div></section>`, { bezListy: true });
+  $('#hlas').onchange = e => { nastavHlas(e.target.value); speak('Hello! I\'m your new voice.'); };
+  $('#hlas-ukazka').onclick = () => speak('Hello! How are you today?');
+  if (!seznamHlasu().length) priHlasech(() => { if (location.hash.startsWith('#/rodic') && seznamHlasu().length && !$('#hlas option + option')) rodic(); });
   $$('.r-karta select, .r-karta input').forEach(el => (el.onchange = () => {
     const o = S.profil(el.closest('.r-karta').dataset.id);
     if (el.dataset.rod !== undefined) { o.rod = el.value; S.uloz(); return toast('Uloženo'); }

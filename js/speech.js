@@ -3,13 +3,21 @@
 
 const synth = window.speechSynthesis;
 let hlasy = [];
+// Hlas: přednostně ženský britský (Pavel 3. 10. 2026), mezi nimi kvalitnější. Rodič může v Pro rodiče vybrat
+// konkrétní hlas – uloží se jen v tomhle telefonu (localStorage „biscuit-hlas“).
+// Jen kvalitní ženské hlasy; robotické Flo/Sandy/Shelley (Eloquence) se automaticky nevybírají – výslovnost.
+const ZENSKE = /martha|kate|serena|stephanie|catherine/i;
+const ULOZENY = 'biscuit-hlas';
 const nactiHlasy = () => {
   hlasy = synth ? synth.getVoices().filter(v => v.lang.replace('_', '-') === 'en-GB') : [];
-  // Kvalitnější hlasy dopředu.
-  const skore = v => (/premium|prémiov/i.test(v.name) ? 4 : 0) + (/enhanced|vylepšen/i.test(v.name) ? 2 : 0)
-    + (/serena|kate|stephanie|martha|daniel|arthur/i.test(v.name) ? 1 : 0);
+  const skore = v => (ZENSKE.test(v.name) ? 10 : 0) + (/premium|prémiov/i.test(v.name) ? 4 : 0) + (/enhanced|vylepšen/i.test(v.name) ? 2 : 0);
   hlasy.sort((a, b) => skore(b) - skore(a));
 };
+const ulozeny = () => { try { return localStorage.getItem(ULOZENY); } catch { return null; } };
+export const seznamHlasu = () => hlasy.map(v => v.name);
+export const zvolenyHlas = () => (hlasy.find(v => v.name === ulozeny()) || hlasy[0])?.name || '';
+export function nastavHlas(jmeno) { try { localStorage.setItem(ULOZENY, jmeno); } catch { /* jen pro tuto chvíli */ } }
+export const priHlasech = fn => synth?.addEventListener?.('voiceschanged', fn);
 if (synth) { nactiHlasy(); synth.addEventListener?.('voiceschanged', nactiHlasy); }
 
 const posluchaci = new Set();
@@ -21,8 +29,9 @@ export function speak(text, { pomalu = false } = {}) {
     synth.cancel();
     const u = new SpeechSynthesisUtterance(text);
     u.lang = 'en-GB';
-    if (hlasy[0]) u.voice = hlasy[0];
-    u.rate = pomalu ? 0.55 : 0.85;
+    const h = hlasy.find(v => v.name === ulozeny()) || hlasy[0];
+    if (h) u.voice = h;
+    u.rate = pomalu ? 0.32 : 0.85; // želva: hodně pomalu
     u.onstart = () => posluchaci.forEach(f => f());
     u.onend = u.onerror = () => resolve();
     synth.speak(u);
