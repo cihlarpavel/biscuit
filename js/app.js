@@ -1,7 +1,7 @@
 // Biscuit – obrazovky a navigace.
 import * as S from './store.js';
 import { SKUPINY, BALICKY, balicek, polozky } from './data.js';
-import { postavicka, KATEGORIE, VECI, vec, maVec, nahodnyVzhled, vzacnost } from './postavicka.js';
+import { postavicka, KATEGORIE, VECI, vec, maVec, nahodnyVzhled, vzacnost, noveSeminko } from './postavicka.js';
 import { sestav, sestavBattle, odemcene, zapis, postupBalicku, slabiny, UMI } from './lekce.js';
 import { hraj, nastavSoupere } from './hra.js';
 import * as O from './online.js';
@@ -42,6 +42,8 @@ function route() {
   if (!p() && S.profily().length) S.prepni(S.profily()[0].id);
   tabJa();
   const x0 = p();
+  // Semínko pro losování pozadí avatara (nastaví se jednou, odejde i kamarádkám online).
+  if (x0 && !x0.vzhled.seminko) { x0.vzhled.seminko = noveSeminko(); S.uloz(); }
   nastavSvet(x0);
   nastavNoc();
   if (x0 && !x0.rod) return otazkaRod(x0);
@@ -413,6 +415,7 @@ function obchod() {
         const nic = !k.povinne && Math.random() < 0.5;
         novy[k.id] = nic || !moje.length ? (k.povinne ? x.vzhled[k.id] : null) : moje[Math.floor(Math.random() * moje.length)].id;
       }
+      novy.seminko = x.vzhled.seminko;
       x.vzhled = novy; zkouska = { ...novy }; S.uloz(); vykresli(); tabJa();
     };
     const koupit = $('#koupit');

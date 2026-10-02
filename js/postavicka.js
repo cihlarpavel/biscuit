@@ -34,7 +34,6 @@ export const KATEGORIE = [
   { id: 'maska', nazev: 'Masky a kostýmy', ik: 'k-maska', hlava: true },
   { id: 'ruka', nazev: 'V ruce', ik: 'k-ruka' },
   { id: 'mazlicek', nazev: 'Mazlíček', ik: 'u1' },
-  { id: 'pozadi', nazev: 'Pozadí', ik: 'k-pozadi', povinne: true },
 ];
 
 // ---------- Katalog ----------
@@ -538,7 +537,7 @@ function maska(x, kuze, c) {
 
 // Pozadí avatara: bílý „pokoj“ nakreslený jen tenkými jemnými čarami (okno, květina, knihovna…).
 // Kresba zalézá pod okraj kruhu a za postavičku – barevná je jen postavička.
-const CARA = 'fill="none" stroke="#cbc2d4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"';
+const CARA = 'fill="none" stroke="#8f86a0" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"';
 const hv = (x, y, r) => `<path d="M${x} ${y - r} l${r * .3} ${r * .7} l${r * .7} ${r * .3} l${-r * .7} ${r * .3} l${-r * .3} ${r * .7} l${-r * .3} ${-r * .7} l${-r * .7} ${-r * .3} l${r * .7} ${-r * .3}z"/>`;
 const SCENY_POZADI = {
   'p-ruzove': `<path d="M72 8 H120 M75 8 q6 22 0 46 M117 8 q-6 22 0 46"/><rect x="79" y="12" width="32" height="38" rx="2"/><path d="M95 12 V50 M79 31 H111"/>
@@ -578,10 +577,16 @@ const SCENY_POZADI = {
     <rect x="6" y="26" width="22" height="28" rx="11"/><rect x="92" y="26" width="22" height="28" rx="11"/>
     <path d="M10 112 V64 M24 112 V64 M7 64 h20 M96 112 V64 M110 112 V64 M93 64 h20"/><path d="M10 50 q7 -10 14 0 M96 50 q7 -10 14 0"/>`,
 };
-function pozadi(id) {
-  const x = vec(id) || vec('p-ruzove');
-  return `<rect width="120" height="120" fill="#fff"/><g ${CARA}>${SCENY_POZADI[x.id] || SCENY_POZADI['p-ruzove']}</g>`;
+// Scénka se losuje: podle „semínka“ postavičky (vzhled.seminko, nastaví se jednou) a dnešního data.
+// Během dne je stejná (v Drip shopu neposkakuje), další den jiná; každá postavička má jinou.
+const SCENY_KLICE = Object.keys(SCENY_POZADI);
+function pozadi(z) {
+  const den = new Date().toDateString();
+  const zdroj = (z.seminko || JSON.stringify([z.kuze, z.uces, z.barva, z.duhovka])) + den;
+  const h = [...zdroj].reduce((a, c) => (Math.imul(a, 31) + c.charCodeAt(0)) >>> 0, 11);
+  return `<rect width="120" height="120" fill="#fff"/><g ${CARA}>${SCENY_POZADI[SCENY_KLICE[h % SCENY_KLICE.length]]}</g>`;
 }
+export const noveSeminko = () => Math.random().toString(36).slice(2, 10);
 
 // velikost v px; vyrez: 'cela' (celá postavička) nebo 'hlava' (malý avatar v seznamech)
 // 5. parametr (volby bezPozadi / papir z pozdějších návrhů vzhledu) se ignoruje.
@@ -642,7 +647,7 @@ export function postavicka(vzhled = VYCHOZI, velikost = 120, vyrez = 'cela', poh
   return `<svg class="postavicka${hybe}" width="${velikost}" height="${velikost}" viewBox="${viewBox}" aria-hidden="true">
     <clipPath id="${id}"><circle cx="60" cy="60" r="60"/></clipPath>
     <g clip-path="url(#${id})">
-    ${pozadi(z.pozadi, defs)}
+    ${pozadi(z)}
     <g class="pv-telo">
     <g transform="translate(60 120) scale(.86 .9) translate(-60 -120)">
     ${obleceni(z.obleceni, defs)}
