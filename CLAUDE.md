@@ -26,6 +26,12 @@ v `sw.js`, commit, `git push` (`gh` je v `~/.local/bin/gh`). Ve škole jsou na s
   (`susenkyCelkem`, utrácení ho nesnižuje; tituly i žebříček jedou podle něj). Sušenky přidávat jen
   přes `S.pridej(p, n)`, jinak se celkový součet nepohne.
 - Postavička má obrysy (`OBRYS`), stínování pleti a oblečení, oči s duhovkou (kategorie Barva očí) a obočí.
+- Vzhled: písmo Fredoka (nadpisy, tlačítka) + Nunito z Google Fonts, papírové karty (`--papir`),
+  plastická tlačítka, barevné karty balíčků (`--akc` = barva podkladu ikony, `barvaIkony()`).
+- Noční režim: `body.noc`, automaticky 20:00–6:30, nebo volba v Já (`nastaveni.noc`). Nové světlé
+  prvky (bílé pozadí) je potřeba doplnit i do bloku `body.noc` ve styles.css.
+- Výsledek online battlu je vyskakovací okno (`ukazVysledek`, fronta `frontaVysledku`), ukáže se,
+  jakmile dohrají obě, a během lekce počká.
 - `js/ikony.js` – vlastní ikony ve stylu nálepek (`ik('nazev')`), náhled v `tools/ikony.html`.
 - `js/hlasky.js` – všechny hlášky a tituly. Tón: suchá nadsázka, slang jen střídmě (Pavel:
   nesmí působit jako dospělý, který napodobuje dítě). Neoslovovat jménem (5. pád nejde).

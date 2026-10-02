@@ -6,7 +6,7 @@ import { sestav, sestavBattle, odemcene, zapis, postupBalicku, slabiny, UMI } fr
 import { hraj, nastavSoupere } from './hra.js';
 import * as O from './online.js';
 import { nastavUceni } from './cas.js';
-import { odemkni, speak, zvukFanfara } from './speech.js';
+import { odemkni, speak, zvukFanfara, zvukSpatne } from './speech.js';
 import { ODZNAKY, zkontroluj } from './odznaky.js';
 import { maskot } from './maskot.js';
 import { SVETY, nastavSvet, odemcene as odemceneSvety, svetPro, nasbirano, nahledSveta } from './svety.js';
@@ -33,11 +33,13 @@ const TRASY = {
 };
 function route() {
   nastavUceni(false);
+  setTimeout(ukazVysledek, 400);
   // Jeden telefon = jeden profil. Kdyby jich tu bylo víc (starší verze), použije se aktivní, jinak první.
   if (!p() && S.profily().length) S.prepni(S.profily()[0].id);
   tabJa();
   const x0 = p();
   nastavSvet(x0);
+  nastavNoc();
   if (x0 && !x0.rod) return otazkaRod(x0);
   spustOnline();
   zverejniPozdeji();
@@ -290,6 +292,9 @@ function ja() {
     <p class="drobne">Nový svět se odemkne s dalším titulem. Klepnutím si vybereš pozadí.</p>
     <div class="svety">${SVETY.map(s => { const ok = nasbirano(x) >= s.od; return `<button class="svet${svetPro(x).id === s.id ? ' on' : ''}${ok ? '' : ' zamceny'}" data-svet="${s.id}" ${ok ? '' : 'disabled'}
       style="background:${s.bg} ${nahledSveta(s)} center/110px"><span>${ok ? s.ikona : ik('zamek', 30, { podklad: false })}</span><b>${esc(s.nazev)}</b><small>${ok ? esc(H.rod(s.titul, x)) : `od ${s.od} 🍪 celkem`}</small></button>`; }).join('')}</div>
+    <h2>Noční režim</h2>
+    <div class="delky noc-volba">${[['auto', 'Automaticky', 'večer od 20:00'], ['on', 'Vždy tmavý', '🌙'], ['off', 'Vždy světlý', '☀️']].map(([k, t, m]) =>
+      `<button class="delka${(x.nastaveni.noc || 'auto') === k ? ' on' : ''}" data-noc="${k}"><b>${t}</b><small>${m}</small></button>`).join('')}</div>
     <h2>Odznaky <small>${ziskane.length}</small></h2>
     <div class="odznaky">${ziskane.map(o => `<div class="odznak"><span>${ikOdznaku(o, 46)}</span><b>${esc(o.nazev)}</b><small>${esc(H.rod(o.popis, x))}</small></div>`).join('')}
       ${zbyvajici.map(o => `<div class="odznak zamceny"><span>${ikOdznaku(o, 46)}</span><b>${esc(o.nazev)}</b><small>${esc(H.rod(o.popis, x))}</small></div>`).join('')}</div>
@@ -297,6 +302,7 @@ function ja() {
       <a class="odkaz" href="#/rodic">Pro rodiče</a></div>
   </section>`, { tab: 'ja' });
   $$('.svet[data-svet]').forEach(b => (b.onclick = () => { x.svet = b.dataset.svet; S.uloz(); nastavSvet(x); ja(); }));
+  $$('[data-noc]').forEach(b => (b.onclick = () => { x.nastaveni.noc = b.dataset.noc; S.uloz(); nastavSvet(x); nastavNoc(); ja(); }));
   vlozSchovanou('ja');
 }
 
@@ -513,9 +519,63 @@ function zpracujBattly(x) {
     const od = odmenaBattlu(b.ulohy.length);
     if (ja > ona) { x.souboje.vyhry++; S.pridej(x, od.v); } else if (ja < ona) { x.souboje.prohry++; S.pridej(x, od.p); } else { x.souboje.remizy++; S.pridej(x, od.r); }
     x.zpracovano.push(b.id);
+    // Vyskakovací výsledek jen u čerstvých battlů (ne u starých při prvním zapnutí online).
+    if (Date.now() - b.vytvoreno < 3 * 864e5) frontaVysledku.push(b);
     zmena = true;
   }
   if (zmena) { x.zpracovano = x.zpracovano.slice(-300); zkontroluj(x); S.uloz(); posledniZverejneni = 0; zverejniPozdeji(); }
+  ukazVysledek();
+}
+
+// ---------- Noční režim ----------
+// Automaticky od 20:00 do 6:30, nebo podle volby v záložce Já (nastaveni.noc: 'auto' | 'on' | 'off').
+function jeNoc() {
+  const r = p()?.nastaveni?.noc || 'auto';
+  if (r !== 'auto') return r === 'on';
+  const d = new Date(), h = d.getHours() + d.getMinutes() / 60;
+  return h >= 20 || h < 6.5;
+}
+function nastavNoc() {
+  const noc = jeNoc();
+  document.body.classList.toggle('noc', noc);
+  if (noc) document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#1d1733');
+}
+setInterval(() => { const pred = document.body.classList.contains('noc'); nastavNoc(); if (pred !== jeNoc() && !jeNoc()) nastavSvet(p()); }, 60000);
+
+// ---------- Vyskakovací výsledek battlu ----------
+const frontaVysledku = [];
+function ukazVysledek() {
+  const x = p();
+  if (!x || !frontaVysledku.length || document.querySelector('#hra') || document.querySelector('.popup-pozadi')) return;
+  const b = frontaVysledku[0];
+  // Počkat, až se načtou kamarádky (jinak by místo jména bylo „Kamarádka“), nejdéle ~4 s.
+  if (!online.kamaradky.some(k => k.id === souperkaId(b, x.id)) && (b._cekal = (b._cekal || 0) + 1) < 8) return void setTimeout(ukazVysledek, 500);
+  frontaVysledku.shift();
+  const k = kamaradka(souperkaId(b, x.id));
+  const a = mojeVysl(b, x.id).body || 0, o = mojeVysl(b, k.id).body || 0;
+  const od = odmenaBattlu(b.ulohy.length);
+  const stav = a > o ? 'vyhra' : a < o ? 'prohra' : 'remiza';
+  const nadpis = { vyhra: H.rod('[Vyhrál|Vyhrála] jsi! 👑', x), prohra: H.rod(`Tentokrát [vyhrál|vyhrála] ${k.prezdivka}`, k), remiza: 'Remíza!' }[stav];
+  const text = stav === 'remiza' ? H.nahodne(H.SOUBOJ.remiza)
+    : H.rod(H.dosad(H.nahodne(Math.abs(a - o) <= 150 ? H.SOUBOJ.tesne : H.SOUBOJ.jasne), { vitez: (stav === 'vyhra' ? x : k).prezdivka, porazena: (stav === 'vyhra' ? k : x).prezdivka }), stav === 'vyhra' ? x : k);
+  const zisk = { vyhra: od.v, prohra: od.p, remiza: od.r }[stav];
+  const karta = (h, sc, vitez) => `<div class="b-hracka${vitez ? ' vitez' : ''}">${vitez ? '<span class="korunka">👑</span>' : ''}<span class="avatar velky">${postavicka(h.vzhled, 86, 'hlava', true)}</span><b>${jmeno(h)}</b><span class="b-body">${sc}</span></div>`;
+  const okno = document.createElement('div');
+  okno.className = 'popup-pozadi';
+  okno.innerHTML = `<div class="popup-karta ${stav}">
+    <div class="popup-stuha">Výsledek battlu</div>
+    <h1>${esc(nadpis)}</h1>
+    <div class="b-vysledek">${karta(x, a, a > o)}<span class="vs">vs</span>${karta(k, o, o > a)}</div>
+    <p class="hlaska">${esc(text)}</p>
+    <div class="odmena"><span>${ikS('susenka', 30)} +${zisk}</span><small>${{ vyhra: 'za výhru', prohra: 'i prohra se počítá', remiza: 'za remízu' }[stav]}</small></div>
+    <button class="btn velke" data-a="odveta">Odveta ⚔️</button>
+    <button class="odkaz" data-a="zavrit">Zavřít</button></div>`;
+  document.body.append(okno);
+  if (stav === 'prohra') zvukSpatne(); else { konfety(); zvukFanfara(); }
+  const zavri = () => { okno.classList.add('pryc'); setTimeout(() => { okno.remove(); ukazVysledek(); }, 250); };
+  okno.querySelector('[data-a="zavrit"]').onclick = zavri;
+  okno.querySelector('[data-a="odveta"]').onclick = () => { zvolenaDelka = b.ulohy.length; zavri(); vybratVyzvu(x, k); };
+  okno.onclick = e => { if (e.target === okno) zavri(); };
 }
 
 function onlineSekce(x) {
@@ -605,7 +665,7 @@ function hrajOnline(x, b) {
 function cekaniNaVysledek(x, id, k, stopHra) {
   stopHra();
   const vykresli = b => {
-    if (b && oboHotovo(b)) { stop(); return vysledekOnline(x, b, k); }
+    if (b && oboHotovo(b)) { stop(); return jdi('#/battle'); } // výsledek ukáže vyskakovací okno
     const st = b ? mojeVysl(b, k.id) : {};
     obrazovka(`<section class="stranka konec cekani">${zpet('#/battle')}<span class="avatar obri">${postavicka(k.vzhled, 120)}</span>
       <h1>${st.odpovezeno ? `${jmeno(k)} právě hraje 🔥` : `Čeká se, až zahraje ${jmeno(k)}`}</h1>
@@ -617,22 +677,6 @@ function cekaniNaVysledek(x, id, k, stopHra) {
   const stop = O.sledujBattle(id, b => { if (location.hash.startsWith('#/lekce')) return; if (document.querySelector('.cekani')) vykresli(b); });
 }
 
-function vysledekOnline(x, b, k) {
-  const a = mojeVysl(b, x.id).body || 0, o = mojeVysl(b, k.id).body || 0;
-  let text;
-  if (a === o) text = H.nahodne(H.SOUBOJ.remiza);
-  else { const [v, pr] = a > o ? [x, k] : [k, x]; text = H.rod(H.dosad(H.nahodne(Math.abs(a - o) <= 150 ? H.SOUBOJ.tesne : H.SOUBOJ.jasne), { vitez: v.prezdivka, porazena: pr.prezdivka }), v); }
-  const karta = (h, sc, vyhra) => `<div class="b-hracka${vyhra ? ' vitez' : ''}"><span class="avatar velky">${av(h, 70)}</span><b>${jmeno(h)}</b><span class="b-body">${sc}</span>${vyhra ? '<span class="korunka">👑</span>' : ''}</div>`;
-  obrazovka(`<section class="stranka konec">${zpet('#/battle')}
-    <h1>Výsledek</h1>
-    <div class="b-vysledek">${karta(x, a, a > o)}<span class="vs">vs</span>${karta(k, o, o > a)}</div>
-    <p class="hlaska">${esc(text)}</p>
-    <p class="drobne">${(od => a > o ? `Výhra 🍪 +${od.v}` : a < o ? `Prohra 🍪 +${od.p}` : `Remíza 🍪 +${od.r}`)(odmenaBattlu(b.ulohy.length))}</p>
-    <button class="btn velke" id="odveta">Odveta ⚔️</button>
-    <a class="odkaz" href="#/battle">Konec</a></section>`, { bezListy: true });
-  konfety(); zvukFanfara();
-  $('#odveta').onclick = () => vybratVyzvu(x, k);
-}
 
 // ---------- Holka, nebo kluk (jednou u profilů založených dřív) ----------
 function otazkaRod(x) {

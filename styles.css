@@ -659,3 +659,85 @@ h2, h3 { font-weight: 600; }
 .cisla div { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px 4px;
   background-image: var(--papir), linear-gradient(180deg, #fff 45%, var(--akc, #fff)); }
 .cisla b { font-size: 24px; }
+
+/* ---------- Vyskakovací výsledek battlu ---------- */
+.popup-pozadi { position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; padding: 20px 16px;
+  background: rgba(59, 42, 63, .45); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); animation: popupPozadi .25s both; }
+.popup-pozadi.pryc { animation: popupPryc .25s both; }
+@keyframes popupPozadi { from { opacity: 0; } }
+@keyframes popupPryc { to { opacity: 0; } }
+.popup-karta { position: relative; width: 100%; max-width: 400px; text-align: center; padding: 34px 18px 14px; border-radius: 32px; border: 4px solid #fff;
+  background: #fff var(--papir); box-shadow: 6px 8px 0 rgba(150, 90, 140, .3), 0 24px 50px rgba(59, 42, 63, .35);
+  animation: popupKarta .55s cubic-bezier(.3, 1.6, .5, 1) both; }
+@keyframes popupKarta { from { transform: scale(.4) rotate(-6deg); opacity: 0; } }
+.popup-karta.vyhra { background-image: var(--papir), radial-gradient(circle at 50% 0%, #fff3b8 0 35%, #fff 65%); }
+.popup-karta.prohra { background-image: var(--papir), radial-gradient(circle at 50% 0%, #e3e9ff 0 35%, #fff 65%); }
+.popup-karta.remiza { background-image: var(--papir), radial-gradient(circle at 50% 0%, #e3d9ff 0 35%, #fff 65%); }
+.popup-stuha { position: absolute; top: -18px; left: 50%; translate: -50% 0; rotate: -2deg; white-space: nowrap;
+  font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 15px; color: #fff; padding: 6px 18px; border-radius: 10px; border: 3px solid #fff;
+  background: linear-gradient(180deg, #ff9fcc, #ff6fae); box-shadow: 0 4px 0 #d94a8c; }
+.popup-karta h1 { font-size: 32px; margin: 4px 0 8px; }
+.popup-karta.vyhra h1 { color: #e08a00; text-shadow: 0 2px 0 #fff3b8; }
+.popup-karta.prohra h1 { font-size: 26px; }
+.popup-karta .b-vysledek { margin: 14px 0 6px; }
+.popup-karta .b-hracka { padding-top: 22px; }
+.popup-karta .b-hracka.vitez { outline: none; border-color: #ffc94d; box-shadow: 0 0 0 3px #ffc94d, 4px 6px 0 rgba(224, 168, 0, .3); animation: radost 1s .4s; }
+.popup-karta .korunka { top: -26px; font-size: 40px; }
+.popup-karta .odmena { margin: 6px 0 4px; }
+.popup-karta .btn.velke { margin: 12px 0 2px; }
+.popup-karta .odkaz { width: 100%; }
+
+/* =========================================================================
+   Noční režim (body.noc): tmavě fialová noc, karty jako tmavý papír.
+   ========================================================================= */
+body.noc {
+  --bg: #1d1733; --text: #f4ecff; --tlumene: #b9aad8; --karta: #2b2348;
+  --ruzova-svetla: #45325f; --lila-svetla: #3a2f63; --mata-svetla: #1f4a43;
+  --stin: 0 6px 18px rgba(0, 0, 0, .35);
+  --stin-papir: 0 1px 0 rgba(255, 255, 255, .06) inset, 3px 4px 0 rgba(0, 0, 0, .38), 0 8px 18px rgba(0, 0, 0, .28);
+  color-scheme: dark;
+}
+body.noc :is(.balicek, .dnes-karta, .profil-karta, .z-karta, .vec, .odznak, .bublina, .otazka, .karta-nova, .slovo-radek, .cisla div, .graf,
+  .historie, .prazdne, .r-karta, .vyzva, .delka, .svet, .odmena, .novy-odznak, .b-hracka, .moznost, .stat, .kat, .zpet-btn, .hra-skore,
+  .hra-cas, .souper, .uroven, .popup-karta, .zadani-radek .zadani, .avatar, .avatar-volba, .zbozi, .dlazdice.slovo, .rod-volba button) {
+  background-color: var(--karta); background-image: var(--papir); border-color: rgba(255, 255, 255, .13); color: var(--text);
+}
+body.noc .balicek { background-image: var(--papir), linear-gradient(160deg, #2b2348 40%, color-mix(in srgb, var(--akc, #ffd6e8) 32%, #2b2348)); }
+body.noc .balicek .b-ikona { background: #352c58; }
+body.noc .moznost { background-image: var(--papir), linear-gradient(180deg, #2b2348 50%, color-mix(in srgb, var(--m) 30%, #2b2348));
+  box-shadow: 0 5px 0 color-mix(in srgb, var(--m) 35%, #120d24), 0 8px 14px rgba(0, 0, 0, .3); }
+body.noc .spravne-volba { --m: #3fbf9a !important; }
+body.noc .spatne-volba { --m: #ff6b7a !important; }
+body.noc .cisla div { background-image: var(--papir), linear-gradient(180deg, #2b2348 45%, color-mix(in srgb, var(--akc, #fff) 28%, #2b2348)); }
+body.noc .dnes-karta { background-image: var(--papir), linear-gradient(135deg, #2b2348, #3a2f63); }
+body.noc :is(.hero, .hero-ja) {
+  background: radial-gradient(circle at 12% 18%, rgba(255, 255, 255, .9) 0 1.5px, transparent 2px), radial-gradient(circle at 70% 12%, rgba(255, 255, 255, .8) 0 1.2px, transparent 2px),
+    radial-gradient(circle at 88% 70%, rgba(255, 255, 255, .7) 0 1.5px, transparent 2px), radial-gradient(circle at 40% 85%, rgba(255, 255, 255, .6) 0 1px, transparent 2px),
+    radial-gradient(circle at 85% 18%, #fff6c9 0 9%, transparent 9.5%), linear-gradient(135deg, #4b2f8f 0%, #6b3fa8 50%, #23507e 100%);
+  border-color: rgba(255, 255, 255, .25); box-shadow: 4px 6px 0 rgba(0, 0, 0, .35), 0 14px 28px rgba(0, 0, 0, .3);
+}
+body.noc .uroven { background: rgba(43, 35, 72, .9); }
+body.noc .uroven-radek b { color: #d6bcff; }
+body.noc .xp { background: #3a2f63; }
+body.noc .hero-ja .titul { background: var(--karta); }
+body.noc .tabs { background: rgba(29, 23, 51, .95) var(--papir); border-top-color: rgba(255, 255, 255, .1); box-shadow: 0 -8px 20px rgba(0, 0, 0, .35); }
+body.noc .tabs a.stred span { background: var(--karta); }
+body.noc .kol-pozadi { stroke: #3a2f63; }
+body.noc .sloty i { background: rgba(255, 255, 255, .06); border-color: #6b58b8; }
+body.noc .sloty i.plne { background: #fff4dc; }
+body.noc .veta-radek { background: rgba(255, 255, 255, .05); border-color: #6b58b8; }
+body.noc .btn.vedlejsi { background: linear-gradient(180deg, #4a3d7e, #3a2f63); color: #e2d6ff; box-shadow: 0 5px 0 #231b45, 0 9px 16px rgba(0, 0, 0, .3); }
+body.noc .repro { background: linear-gradient(180deg, #4a3d7e, #3a2f63); box-shadow: 0 4px 0 #231b45; }
+body.noc .muj-kod { background-color: #3a2f63; }
+body.noc .muj-kod b { color: #d6bcff; }
+body.noc .pole { background: var(--karta); color: var(--text); border-color: #4a3d7e; }
+body.noc .vysledek.ok { background: #1f4a43 var(--papir); }
+body.noc .vysledek.chyba { background: #5a2534 var(--papir); }
+body.noc .popup-karta.vyhra { background-image: var(--papir), radial-gradient(circle at 50% 0%, #6b5410 0 35%, #2b2348 65%); }
+body.noc .popup-karta.prohra, body.noc .popup-karta.remiza { background-image: var(--papir), radial-gradient(circle at 50% 0%, #3a2f63 0 35%, #2b2348 65%); }
+body.noc .popup-karta.vyhra h1 { color: #ffd34d; text-shadow: none; }
+body.noc .toast { background: #f4ecff; color: #1d1733; }
+body.noc .zlata-pruh span { color: #7a5a00; }
+body.noc .drip-nadpis { background: linear-gradient(90deg, #ff9fcc, #c4a3ff, #8fd3ff); -webkit-background-clip: text; background-clip: text; }
+body.noc .sekce-hlava h2 { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='8'%3E%3Cpath d='M0 4 q5 -4 10 0 t10 0 t10 0 t10 0' fill='none' stroke='%23c4a3ff' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E"); }
+body.noc .balicek .mini-prubeh, body.noc .xp { background: rgba(255, 255, 255, .12); }
