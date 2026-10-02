@@ -17,16 +17,23 @@ v `sw.js`, commit, `git push` (`gh` je v `~/.local/bin/gh`). Ve škole jsou na s
 - `js/hra.js` – přehrávání úloh (nové slovíčko, poslech s obrázky, en→cz, cz→en, skládání slova
   z písmen, hláskování, skládání věty, písmena abecedy, čísla). Stejný kód hraje i battle.
 - Pozadí avatara se LOSUJE (12 vtipných čmáranic, vždy jen 1–2 kresby – Pavel chce méně a „crazy“, `pozadi(z)`): podle `vzhled.seminko` + dnešního data, každý den jiné. Kategorie Pozadí v Drip shopu není.
-- `js/postavicka.js` – postavička ve stylu Pou (Lotka chtěla zůstat u původního stylu, jen víc
-  detailů): 18 kategorií, ~220 věcí, vzácnost podle ceny (Běžné → Cool → Epické → Legendární →
-  Bizár, masky a kostýmy až 3 000 🍪). Kreslení vrstev do SVG. Nová věc = položka ve `VECI` +
-  větev v kreslicí funkci. **Id věcí neměnit a nesmí se opakovat** (jsou v `koupeno`).
-  Náhled všech věcí: `tools/satnik.html?k=<kategorie>`. Masky jen obecné, žádné cizí postavy (autorská práva).
+- **Postavička = ukousnutá sušenka** (od 2. 10. 2026; Pou styl Pavel zamítl jako kopírování, kostičky a
+  dřívější chibi taky). Kulatá sušenka je hlava i tělo, má vlasy, ručičky (jednou mává), nožičky s botami;
+  holka (`vzhled.rod === 'z'`) má řasy a tvářičky. Ukousnutí je vlevo dole (nahoře se pletlo s vlasy a klobouky).
+  - `js/blob.js` kreslí (`susenkaObsah(v)` s klíči kreslení, `blob(v, px)` samostatně – náhled `susenka.html`).
+  - `js/postavicka.js` je katalog Drip shopu (12 kategorií, id s předponou `t-`, `u-`, `b-`, `o-`…, vzácnost
+    podle ceny) a rámeček s pozadím; `proKresleni()` převádí id věcí na klíče blob.js. Nová věc = položka
+    ve `VECI` (+ kresba v blob.js). **Id věcí neměnit a nesmí se opakovat** (jsou v `koupeno`).
+  - `vzhled.rod` synchronizuje `route()` z `profil.rod` (vzhled odchází i kamarádkám online).
+  - Profily se starou postavičkou (`vzhled.verze !== 2`) převede `prevedNaSusenku()`: za staré věci vrátí
+    sušenky podle `STARE_CENY` (bez `susenkyCelkem`) a oblékne věci zdarma. `tools/satnik.html` a
+    `tools/ikona.py` jsou ze staré postavičky.
+- Ikona aplikace (`icons/`) je základní sušenka na růžovém pozadí. Headless Chrome kreslí ve špatném měřítku;
+  vykresleno přes canvas v prohlížeči z `blob({})`, 192 a 180 zmenšené `sips -z` z 512.
 - Šatník se v aplikaci jmenuje **Drip shop** (vystouplé tlačítko uprostřed lišty, route `#/obchod`), na tlačítku je aktuální postavička (`tabJa()` po každé změně vzhledu). První záložka je Domů.
 - `js/svety.js` – pozadí aplikace („světy“) se odemyká podle sušenek nasbíraných **celkem**
   (`susenkyCelkem`, utrácení ho nesnižuje; tituly i žebříček jedou podle něj). Sušenky přidávat jen
   přes `S.pridej(p, n)`, jinak se celkový součet nepohne.
-- Postavička má obrysy (`OBRYS`), stínování pleti a oblečení, oválné oči v barvě duhovky (bez bělma – s bělmem působily vykuleně) a obočí. Věc v ruce bez ruky; ruka jen s náramkem.
 - Hlavní karta na úvodní obrazovce: scénka podle světa (`scena()` v svety.js, v noci noční) a postavička bez kulatého pozadí (`postavicka(..., { bezPozadi: true })`).
 - Písmo je systémové (ui-rounded). Kdyby se přidávalo webové písmo: Fredoka NEPOUŽÍVAT – nemá české háčky ě č ř.
 - **Vzhled = stav z 1. 10. 2026 večer (commit c01a673), vrácený na Pavlovo přání 2. 10.** Návrhy „vymazlený“
@@ -46,7 +53,7 @@ v `sw.js`, commit, `git push` (`gh` je v `~/.local/bin/gh`). Ve škole jsou na s
   nesmí působit jako dospělý, který napodobuje dítě). Neoslovovat jménem (5. pád nejde).
   Rod: profil má `rod` ('z' holka / 'm' kluk, ptá se při založení). Text s rodem se píše
   `[mužský|ženský]` a prožene `rod(text, profil)` – platí pro hlášky, tituly, odznaky, battle.
-- Postavička se hýbe (mrkání, hlava, vlasy, dech, pusa, obočí, ruka, mazlíček) jen od velikosti 90 px
+- Postavička se hýbe (mrkání, kývání, vlasy, pusa, mávání, mazlíček) jen od velikosti 90 px
   (třída `hybe`, CSS `pv-*` ve styles.css), malé náhledy stojí.
 - `js/cas.js` – aktivní čas: jen na obrazovce lekce/battlu, v popředí, do 45 s od klepnutí.
 - `js/odznaky.js`, `js/store.js` (localStorage `biscuit`, profily), `js/speech.js` (en-GB hlas
@@ -90,7 +97,7 @@ Učebnice **Happy Street 2, 3. vydání (Oxford, české vydání)**, Units 1–
 ## Gamifikace (přání Pavla)
 
 - Sušenky 🍪 za správné odpovědi, bonus za lekci, bez chyby a splněný denní cíl.
-- Šatník ve stylu Pou: za sušenky oblečení, účesy, barvy vlasů, brýle, čepice, mazlíčci, pozadí.
+- Drip shop: za sušenky těsta, účesy, barvy vlasů, oči, pusy, oblečení, klobouky, brýle, boty, mazlíčci.
 - Battle 1:1 na jednom telefonu (stejné otázky, body za správnost + rychlost, vtipné vyhodnocení,
   odveta). Žebříček kamarádek s vtipnými komentáři. Tituly podle sušenek, odznaky.
 - Vzhled: dívčí, pastelový, kreslené čmáranice na pozadí, věk ~10 let (začínající puberťačka).

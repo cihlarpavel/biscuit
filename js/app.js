@@ -1,7 +1,7 @@
 // Biscuit – obrazovky a navigace.
 import * as S from './store.js';
 import { SKUPINY, BALICKY, balicek, polozky } from './data.js';
-import { postavicka, KATEGORIE, VECI, vec, maVec, nahodnyVzhled, vzacnost, noveSeminko } from './postavicka.js';
+import { postavicka, KATEGORIE, VECI, vec, maVec, nahodnyVzhled, vzacnost, noveSeminko, STARE_CENY } from './postavicka.js';
 import { sestav, sestavBattle, odemcene, zapis, postupBalicku, slabiny, UMI } from './lekce.js';
 import { hraj, nastavSoupere } from './hra.js';
 import * as O from './online.js';
@@ -44,6 +44,9 @@ function route() {
   const x0 = p();
   // Semínko pro losování pozadí avatara (nastaví se jednou, odejde i kamarádkám online).
   if (x0 && !x0.vzhled.seminko) { x0.vzhled.seminko = noveSeminko(); S.uloz(); }
+  if (x0 && x0.vzhled.verze !== 2) prevedNaSusenku(x0);
+  // Holka/kluk se kreslí z vzhled.rod (řasy, tvářičky) – vzhled odchází i kamarádkám online.
+  if (x0 && x0.rod && x0.vzhled.rod !== x0.rod) { x0.vzhled.rod = x0.rod; S.uloz(); }
   nastavSvet(x0);
   nastavNoc();
   if (x0 && !x0.rod) return otazkaRod(x0);
@@ -90,12 +93,15 @@ function novy() {
     <div class="rod-volba"><button data-rod="z">👧 Holka</button><button data-rod="m">👦 Kluk</button></div>
     <div class="nova-postavicka"><div id="nahled">${postavicka(vzhled, 150)}</div>
       <button class="btn vedlejsi" id="jina">🎲 Jiná</button></div>
-    <p class="drobne">Tohle je tvoje postavička. Oblečení, brýle, čepice a mazlíčky jí koupíš za sušenky v Drip shopu.</p>
+    <p class="drobne">Tohle je tvoje sušenka. Účesy, oblečení, brýle, klobouky a mazlíčky jí koupíš za sušenky v Drip shopu.</p>
     <button class="btn velke" id="hotovo">Hotovo</button>
     </section>`, { bezListy: true });
   let rodNovy = null;
-  $$('.rod-volba button').forEach(b => (b.onclick = () => { rodNovy = b.dataset.rod; $$('.rod-volba button').forEach(x => x.classList.toggle('on', x === b)); }));
-  $('#jina').onclick = () => { vzhled = nahodnyVzhled(); $('#nahled').innerHTML = postavicka(vzhled, 150); };
+  $$('.rod-volba button').forEach(b => (b.onclick = () => {
+    rodNovy = b.dataset.rod; $$('.rod-volba button').forEach(x => x.classList.toggle('on', x === b));
+    vzhled = nahodnyVzhled(rodNovy); $('#nahled').innerHTML = postavicka(vzhled, 150);
+  }));
+  $('#jina').onclick = () => { vzhled = nahodnyVzhled(rodNovy); $('#nahled').innerHTML = postavicka(vzhled, 150); };
   $('#hotovo').onclick = () => {
     const n = $('#prezdivka').value.trim();
     if (!n) return toast('Napiš přezdívku 🙂');
@@ -367,7 +373,7 @@ function ja() {
   vlozSchovanou('ja');
 }
 
-// ---------- Drip shop (šatník postavičky ve stylu Pou) ----------
+// ---------- Drip shop (šatník postavičky sušenky) ----------
 let satnikKat = 'obleceni';
 function obchod() {
   const x = p();
@@ -415,7 +421,7 @@ function obchod() {
         const nic = !k.povinne && Math.random() < 0.5;
         novy[k.id] = nic || !moje.length ? (k.povinne ? x.vzhled[k.id] : null) : moje[Math.floor(Math.random() * moje.length)].id;
       }
-      novy.seminko = x.vzhled.seminko;
+      Object.assign(novy, { seminko: x.vzhled.seminko, rod: x.vzhled.rod, verze: 2 });
       x.vzhled = novy; zkouska = { ...novy }; S.uloz(); vykresli(); tabJa();
     };
     const koupit = $('#koupit');
@@ -746,6 +752,17 @@ function cekaniNaVysledek(x, id, k, stopHra) {
 
 
 // ---------- Holka, nebo kluk (jednou u profilů založených dřív) ----------
+// Postavička je od 2. 10. sušenka. Staré věci z Drip shopu na ni nepasují, takže se za ně vrátí sušenky
+// (bez navýšení susenkyCelkem – nejsou nově vydělané) a postavička se oblékne do věcí zdarma.
+function prevedNaSusenku(x) {
+  const vraceno = x.koupeno.reduce((s, id) => s + (STARE_CENY[id] || 0), 0);
+  x.susenky += vraceno;
+  x.koupeno = [];
+  x.vzhled = { ...nahodnyVzhled(x.rod), seminko: x.vzhled.seminko || noveSeminko() };
+  S.uloz();
+  setTimeout(() => toast(vraceno ? `Drip shop má nový sortiment! Za staré věci ti vracím ${vraceno} 🍪` : 'Drip shop má nový sortiment 🍪'), 900);
+}
+
 function otazkaRod(x) {
   obrazovka(`<section class="stranka konec"><span class="avatar obri">${postavicka(x.vzhled, 120)}</span>
     <h1>Ještě jedna věc 🙂</h1><p class="hlaska">Jsi holka, nebo kluk? Ať ti aplikace píše správně.</p>
