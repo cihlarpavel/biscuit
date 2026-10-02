@@ -1,10 +1,15 @@
 // „Chytej sušenky“ – hra za odměnu. Krabička dole se ovládá prstem, shora padají sušenky.
-// Sušenka 1 bod, zlatá 5 bodů, brokolice bere život, srdíčko život vrací. Každých 15 bodů nový level.
+// Sušenka 1 bod, zlatá 5 bodů (když spadne na dno, bere půl života), brokolice bere celý život,
+// vzácné srdíčko dá život navíc (i nad 3, nejvýš ZIVOTY_MAX), šnek na chvíli všechno zpomalí. Každých 15 bodů nový level.
+// Ztráta života je vidět i koutkem oka: červené okraje obrazovky, velké „−1 💗“ a zatřesení srdíček.
 // Hra běží na <canvas> v rozlišení displeje (ostrá i na Retině).
 //
 // spust(platno, { zbyva: sekund do denního limitu, priTiku(sekund), konec({ body, zlate, level, limit }) })
 
 const LEVEL_PO = 15;
+const ZIVOTY_MAX = 5;       // srdíčko může přidat i 4. a 5. život
+const ZPOMALENI_S = 5;      // jak dlouho šnek zpomaluje
+const ZPOMALENI_NA = .45;   // rychlost během zpomalení
 
 function sprite(velikost, kresli) {
   const c = document.createElement('canvas');
@@ -46,7 +51,8 @@ export function spust(platno, { zbyva, priTiku = () => {}, konec }) {
   addEventListener('resize', velikost);
 
   const S = Math.max(40, Math.min(58, W / 8));
-  const SPR = { susenka: sprite(S, (c, s) => susenka(c, s, false)), zlata: sprite(S, (c, s) => susenka(c, s, true)) };
+  const SZ = S * 1.2; // zlaté jsou větší
+  const SPR = { susenka: sprite(S, (c, s) => susenka(c, s, false)), zlata: sprite(SZ, (c, s) => susenka(c, s, true)) };
 
   const krab = { x: W / 2, sirka: Math.min(130, W * .32), vyska: 56 };
   let cil = krab.x;
@@ -57,16 +63,30 @@ export function spust(platno, { zbyva, priTiku = () => {}, konec }) {
 
   let body = 0, zlate = 0, zivoty = 3, serie = 0, level = 1, bezi = true, zbyvaS = zbyva;
   const veci = [], efekty = [];
-  let posledni = performance.now(), doDalsi = 600, otres = 0;
+  let posledni = performance.now(), doDalsi = 600, otres = 0, zasah = 0, zpomaleni = 0;
 
   function pridej() {
     const r = Math.random();
     const brokolice = Math.min(.12 + level * .03, .32);
-    const druh = r < .06 ? 'zlata' : r < .06 + brokolice ? 'brokolice' : (r > .985 && zivoty < 3) ? 'srdce' : 'susenka';
+    // srdíčko opravdu vzácně (asi 1 ze 125 padajících věcí)
+    const druh = r < .06 ? 'zlata' : r < .06 + brokolice ? 'brokolice' : (r > .992 && zivoty < ZIVOTY_MAX) ? 'srdce'
+      : (r > .962 && r <= .992 && !zpomaleni) ? 'snek' : 'susenka';
     veci.push({ druh, x: S / 2 + Math.random() * (W - S), y: -S, v: 140 + level * 28 + Math.random() * 60, rot: Math.random() * 6, vr: (Math.random() - .5) * 3 });
   }
 
-  function text(t, x, y, barva) { efekty.push({ t, x, y, barva, zivot: 1 }); }
+  function text(t, x, y, barva, velky = false) { efekty.push({ t, x, y, barva, zivot: velky ? 1.4 : 1, velky }); }
+
+  // Ztráta života: červené okraje, velký nápis uprostřed, zatřesení srdíček v liště. Vrací true, když je konec.
+  function uber(kolik, x, y, duvod) {
+    zivoty = Math.max(0, zivoty - kolik);
+    serie = 0; zasah = .7; otres = .35;
+    text(duvod, x, y, kolik >= 1 ? '#3fa34d' : '#e0a800');
+    text(kolik >= 1 ? '−1 💗' : '−½ 💗', W / 2, H * .45, '#ff3b5c', true);
+    const hud = platno.parentElement.querySelector('.hra-hud .zivoty');
+    if (hud) { hud.classList.remove('au'); void hud.offsetWidth; hud.classList.add('au'); }
+    if (navigator.vibrate) navigator.vibrate(kolik >= 1 ? 120 : 60);
+    return zivoty <= 0;
+  }
 
   function krok(ted) {
     if (!bezi) return;
@@ -81,17 +101,25 @@ export function spust(platno, { zbyva, priTiku = () => {}, konec }) {
     krab.x += (cil - krab.x) * Math.min(1, dt * 14);
     krab.x = Math.max(krab.sirka / 2, Math.min(W - krab.sirka / 2, krab.x));
     // nové věci – s levelem častěji
-    doDalsi -= dt * 1000;
+    zpomaleni = Math.max(0, zpomaleni - dt);
+    const tempo = zpomaleni ? ZPOMALENI_NA : 1;
+    doDalsi -= dt * 1000 * tempo; // při zpomalení padají i méně často
     if (doDalsi <= 0) { pridej(); doDalsi = Math.max(260, 900 - level * 70) * (.6 + Math.random() * .7); }
     const kY = H - 26 - krab.vyska;
     for (let i = veci.length - 1; i >= 0; i--) {
       const v = veci[i];
-      v.y += v.v * dt; v.rot += v.vr * dt;
+      v.y += v.v * dt * tempo; v.rot += v.vr * dt * tempo;
       const chycena = v.y + S * .35 > kY && v.y < kY + 20 && Math.abs(v.x - krab.x) < krab.sirka / 2 + S * .15;
       if (chycena) {
         veci.splice(i, 1);
-        if (v.druh === 'brokolice') { zivoty--; serie = 0; otres = .35; text('Fuj! 🥦', v.x, kY - 10, '#3fa34d'); if (navigator.vibrate) navigator.vibrate(80); if (zivoty <= 0) return skonci(false); }
-        else if (v.druh === 'srdce') { zivoty = Math.min(3, zivoty + 1); text('+💗', v.x, kY - 10, '#ff4f8b'); }
+        if (v.druh === 'brokolice') { if (uber(1, v.x, kY - 10, 'Fuj! 🥦')) return skonci(false); }
+        else if (v.druh === 'snek') { zpomaleni = ZPOMALENI_S; text('Zpomalení 🐌', W / 2, H * .4, '#3b8fd9', true); }
+        else if (v.druh === 'srdce') {
+          zivoty = Math.min(ZIVOTY_MAX, zivoty + 1);
+          text('+1 💗', W / 2, H * .45, '#ff4f8b', true);
+          const zv = platno.parentElement.querySelector('.hra-hud .zivoty');
+          if (zv) { zv.classList.remove('jupi'); void zv.offsetWidth; zv.classList.add('jupi'); }
+        }
         else {
           serie++;
           const zisk = (v.druh === 'zlata' ? 5 : 1) + (serie > 0 && serie % 10 === 0 ? 5 : 0);
@@ -103,11 +131,13 @@ export function spust(platno, { zbyva, priTiku = () => {}, konec }) {
         }
       } else if (v.y > H + S) {
         veci.splice(i, 1);
-        if (v.druh === 'susenka' || v.druh === 'zlata') serie = 0;
+        if (v.druh === 'zlata') { if (uber(.5, v.x, H - 40, 'Zlatá utekla!')) return skonci(false); }
+        else if (v.druh === 'susenka') serie = 0;
       }
     }
     for (let i = efekty.length - 1; i >= 0; i--) { const e = efekty[i]; e.y -= 50 * dt; e.zivot -= dt * 1.1; if (e.zivot <= 0) efekty.splice(i, 1); }
     otres = Math.max(0, otres - dt);
+    zasah = Math.max(0, zasah - dt);
     kresli();
     requestAnimationFrame(krok);
   }
@@ -119,9 +149,10 @@ export function spust(platno, { zbyva, priTiku = () => {}, konec }) {
     // padající věci
     for (const v of veci) {
       g.save(); g.translate(v.x, v.y); g.rotate(v.rot);
-      if (v.druh === 'susenka' || v.druh === 'zlata') g.drawImage(SPR[v.druh], -S / 2, -S / 2, S, S);
-      else { g.font = `${S * .85}px system-ui`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(v.druh === 'brokolice' ? '🥦' : '💗', 0, 0); }
-      if (v.druh === 'zlata') { g.strokeStyle = 'rgba(255,211,77,.7)'; g.lineWidth = 3; g.beginPath(); g.arc(0, 0, S * .62, 0, Math.PI * 2); g.stroke(); }
+      if (v.druh === 'susenka') g.drawImage(SPR.susenka, -S / 2, -S / 2, S, S);
+      else if (v.druh === 'zlata') g.drawImage(SPR.zlata, -SZ / 2, -SZ / 2, SZ, SZ);
+      else { g.font = `${S * .85}px system-ui`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText({ brokolice: '🥦', srdce: '💗', snek: '🐌' }[v.druh], 0, 0); }
+      if (v.druh === 'zlata') { g.strokeStyle = 'rgba(255,211,77,.7)'; g.lineWidth = 3; g.beginPath(); g.arc(0, 0, SZ * .62, 0, Math.PI * 2); g.stroke(); }
       g.restore();
     }
     // krabička od sušenek
@@ -135,13 +166,38 @@ export function spust(platno, { zbyva, priTiku = () => {}, konec }) {
     // texty +1 apod.
     for (const e of efekty) {
       g.globalAlpha = Math.max(0, e.zivot); g.fillStyle = e.barva; g.strokeStyle = '#fff'; g.lineWidth = 5;
-      g.font = `700 24px "Baloo 2", system-ui`; g.textAlign = 'center';
+      g.font = `800 ${e.velky ? 46 : 24}px system-ui`; g.textAlign = 'center'; g.lineWidth = e.velky ? 7 : 5;
       g.strokeText(e.t, e.x, e.y); g.fillText(e.t, e.x, e.y);
     }
     g.globalAlpha = 1;
     g.restore();
+    // zpomalení: jemně modrá obrazovka; zásah: červené okraje (vinětace), které rychle zmizí
+    if (zpomaleni) { g.fillStyle = `rgba(120, 180, 255, ${Math.min(.16, zpomaleni * .08)})`; g.fillRect(0, 0, W, H); }
+    if (zasah) {
+      const v = g.createRadialGradient(W / 2, H / 2, Math.min(W, H) * .35, W / 2, H / 2, Math.max(W, H) * .75);
+      v.addColorStop(0, 'rgba(255, 40, 70, 0)'); v.addColorStop(1, `rgba(255, 40, 70, ${Math.min(.55, zasah * .8)})`);
+      g.fillStyle = v; g.fillRect(0, 0, W, H);
+    }
     const hud = platno.parentElement.querySelector('.hra-hud');
-    if (hud) hud.innerHTML = `<span>🍪 ${body}</span><span>Level ${level}</span><span>${'💗'.repeat(zivoty)}${'🤍'.repeat(3 - zivoty)}</span>`;
+    if (hud) {
+      const z = `${body}|${level}|${zivoty}|${Math.ceil(zpomaleni)}`;
+      if (hud.dataset.z !== z) {
+        hud.dataset.z = z;
+        const zv = hud.querySelector('.zivoty');
+        if (!zv) hud.innerHTML = `<span class="snek"></span><span class="body"></span><span class="level"></span><span class="zivoty"></span>`;
+        hud.querySelector('.body').textContent = `🍪 ${body}`;
+        hud.querySelector('.level').textContent = `Level ${level}`;
+        const sn = hud.querySelector('.snek'); sn.textContent = zpomaleni ? `🐌 ${Math.ceil(zpomaleni)}` : ''; sn.hidden = !zpomaleni;
+        hud.querySelector('.zivoty').innerHTML = [...Array(Math.max(3, Math.ceil(zivoty))).keys()].map(i => srdicko(Math.max(0, Math.min(1, zivoty - i)))).join('');
+      }
+    }
+  }
+  // Srdíčko v liště: plné, půlka (levá polovina), prázdné.
+  function srdicko(plne) {
+    const d = 'M12 21 L3.5 12.5 C-1 8 4 1 9 5 L12 7.5 L15 5 C20 1 25 8 20.5 12.5 Z';
+    const id = 'sr' + Math.random().toString(36).slice(2, 7);
+    return `<svg width="20" height="20" viewBox="0 0 24 24"><clipPath id="${id}"><rect width="${24 * plne}" height="24"/></clipPath>
+      <path d="${d}" fill="#fff"/><path d="${d}" fill="#ff4f8b" clip-path="url(#${id})"/><path d="${d}" fill="none" stroke="#ff4f8b" stroke-width="2" stroke-linejoin="round"/></svg>`;
   }
   function obdelnik(x, y, w, h, r) { g.beginPath(); g.roundRect ? g.roundRect(x, y, w, h, r) : g.rect(x, y, w, h); }
 
