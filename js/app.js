@@ -15,7 +15,8 @@ import { obrazovka, esc, $, $$, kolecko, minuty, toast, konfety, zpet } from './
 import { ik, maIkonu, barvaIkony } from './ikony.js';
 
 addEventListener('pointerdown', odemkni, { once: true });
-$$('#tabs a[data-ik]').forEach(a => (a.querySelector('span').innerHTML = ik(a.dataset.ik, a.classList.contains('stred') ? 52 : 40)));
+// Ikony lišty ve stejném stylu jako balíčky: bílá dlaždice s barevným okrajem.
+$$('#tabs a[data-ik]').forEach(a => { const sp = a.querySelector('span'); sp.innerHTML = ik(a.dataset.ik, 36, { podklad: false }); sp.style.setProperty('--akc', barvaIkony(a.dataset.ik)); });
 // Drip shop uprostřed lišty ukazuje aktuální vytuněnou postavičku (překreslí se při změně obrazovky a po nákupu).
 const tabJa = () => { const x = p(); $('#tabs .stred span').innerHTML = x ? postavicka(x.vzhled, 58, 'hlava', true) : ik('tab-drip', 52); };
 const ikBalicku = (b, px = 40) => maIkonu(b.id) ? ik(b.id, px) : b.ikona;

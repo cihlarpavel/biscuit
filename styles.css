@@ -741,3 +741,16 @@ body.noc .zlata-pruh span { color: #7a5a00; }
 body.noc .drip-nadpis { background: linear-gradient(90deg, #ff9fcc, #c4a3ff, #8fd3ff); -webkit-background-clip: text; background-clip: text; }
 body.noc .sekce-hlava h2 { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='8'%3E%3Cpath d='M0 4 q5 -4 10 0 t10 0 t10 0 t10 0' fill='none' stroke='%23c4a3ff' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E"); }
 body.noc .balicek .mini-prubeh, body.noc .xp { background: rgba(255, 255, 255, .12); }
+
+/* ---------- Ikony lišty jako dlaždice balíčků ---------- */
+.tabs a:not(.stred) span { width: 46px; height: 42px; border-radius: 14px; opacity: 1; filter: none; background: #fff var(--papir);
+  box-shadow: 0 0 0 2.5px var(--akc) inset, 0 3px 0 color-mix(in srgb, var(--akc) 70%, #8a6a90); }
+.tabs a:not(.stred) span .ik { width: 32px; height: 32px; }
+.tabs a:not(.on):not(.stred) span { opacity: .8; }
+.tabs a.on:not(.stred) span { background: var(--akc) var(--papir); transform: translateY(-5px) rotate(-5deg) scale(1.08);
+  box-shadow: 0 0 0 2.5px #fff inset, 0 5px 0 color-mix(in srgb, var(--akc) 60%, #8a6a90), 0 8px 14px rgba(150, 90, 140, .25); }
+/* V noci zůstávají dlaždice ikon světlé jako nálepky, jinak tmavé obrysy ikon zaniknou. */
+body.noc .tabs a:not(.stred) span { background-color: #f4ecff; }
+body.noc .tabs a.on:not(.stred) span { background-color: var(--akc); }
+body.noc .balicek .b-ikona { background: #f4ecff; }
+body.noc .sekce-hlava .ik, body.noc .s-ikonou .ik { filter: drop-shadow(0 0 0 #fff); }

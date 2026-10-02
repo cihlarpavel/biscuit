@@ -7,7 +7,7 @@ const jiskra = (x, y, r = 3, c = '#fff') => `<path d="M${x} ${y - r} l${r * .3} 
 
 const PODKLAD = {
   'k-kuze': '#ffe3d6', 'k-uces': '#fff1c2', 'k-barva': '#e3d9ff', 'k-oci': '#d6ecff', 'k-duhovka': '#d6f5ec', 'k-pusa': '#ffd6e8', 'k-hlava': '#d6ecff', 'k-bryle': '#e3d9ff', 'k-nausnice': '#fff1c2', 'k-piercing': '#e3d9ff', 'k-nahrdelnik': '#ffd6e8', 'k-naramek': '#d6f5ec', 'k-vousy': '#ffe3d6', 'k-tvar': '#e3d9ff', 'k-maska': '#fff1c2', 'k-ruka': '#ffd6e8', 'k-pozadi': '#d6f5ec', 'o-prvni': '#e3d9ff', 'o-perfekt': '#fff1c2', 'o-kometa': '#ffe3d6', 'o-sopka': '#ffe3d6', 'o-kniha': '#d6f5ec', 'o-knihy': '#d6ecff', 'o-mozek': '#ffd6e8', 'o-stopky': '#e3d9ff', 'o-presypaci': '#fff1c2', 'o-rukavice': '#ffe3d6', 'o-sova': '#d6f5ec', 'o-svitani': '#ffd6e8',
-  'tab-uceni': '#ffd6e8', 'tab-battle': '#e3d9ff', 'tab-drip': '#ffd6e8', 'tab-zebricek': '#fff1c2',
+  'tab-uceni': '#ffd6e8', 'tab-ja': '#e3d9ff', 'tab-battle': '#d6ecff', 'tab-drip': '#ffd6e8', 'tab-zebricek': '#fff1c2',
   domu: '#ffd6e8', battle: '#e3d9ff', zebricek: '#fff1c2', ja: '#d6f5ec',
   ohen: '#ffe3d6', susenka: '#fff1dc', zlata: '#fff1c2',
   barvy: '#e3d9ff', cisla20: '#d6ecff', telo: '#ffe3d6', zviratka: '#fff1c2', skola: '#d6f5ec',
@@ -26,6 +26,10 @@ const KRESBY = {
   zebricek: `<path d="M15 10 h18 v9 a9 9 0 0 1 -18 0z" fill="#ffd34d" ${t}/>
     <path d="M15 13 h-4 c0 6 2 8 5 8 M33 13 h4 c0 6 -2 8 -5 8" fill="none" ${t}/>
     <path d="M24 28 v5" ${t}/><rect x="16" y="33" width="16" height="6" rx="2" fill="#b69cff" ${t}/>${jiskra(24, 16, 3.5)}`,
+  'tab-ja': `<rect x="9" y="8" width="30" height="34" rx="6" fill="#b69cff" ${t}/><rect x="19" y="5" width="10" height="6" rx="2" fill="#fff" ${t}/>
+    <circle cx="24" cy="23" r="8" fill="#ffd9c2" ${t}/><path d="M16.5 22 q1 -9 7.5 -9 q6.5 0 7.5 9 q-3 -4 -7.5 -4 q-4.5 0 -7.5 4z" fill="#8a4b2f" ${t}/>
+    <circle cx="21" cy="24" r="1.2" fill="${O}"/><circle cx="27" cy="24" r="1.2" fill="${O}"/><path d="M21.5 27 q2.5 2 5 0" fill="none" stroke="${O}" stroke-width="1.6" stroke-linecap="round"/>
+    <path d="M14 36 h20" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>`,
   ja: `<path d="M24 7 l5 10.5 l11.5 1.5 l-8.5 8 l2.2 11.5 l-10.2 -5.6 l-10.2 5.6 l2.2 -11.5 l-8.5 -8 l11.5 -1.5z" fill="#ffd34d" ${t}/>
     <circle cx="20.5" cy="23" r="1.6" fill="${O}"/><circle cx="27.5" cy="23" r="1.6" fill="${O}"/>
     <path d="M21 28 q3 2.5 6 0" fill="none" ${t}/>`,
@@ -42,17 +46,19 @@ const KRESBY = {
   'tab-uceni': `<path d="M24 14 c-5 -4 -11 -4.5 -15 -2.5 v23 c4 -2 10 -1.5 15 2.5z" fill="#fff" ${t}/>
     <path d="M24 14 c5 -4 11 -4.5 15 -2.5 v23 c-4 -2 -10 -1.5 -15 2.5z" fill="#ffb3d4" ${t}/>
     <path d="M13 19 q4.5 -1 7.5 1 M13 24 q4.5 -1 7.5 1 M28 20 q3.5 -1.6 7 -1" fill="none" stroke="${O}" stroke-width="1.8" stroke-linecap="round" opacity=".5"/>`,
-  'tab-battle': `<path d="M24 8 l14 5 v10 c0 9 -6 14.5 -14 18 c-8 -3.5 -14 -9 -14 -18 v-10z" fill="#9b7bff" ${t}/>
-    <path d="M24 8 l14 5 v10 c0 9 -6 14.5 -14 18z" fill="#7d5cf0"/>
-    <path d="M24 8 l14 5 v10 c0 9 -6 14.5 -14 18 c-8 -3.5 -14 -9 -14 -18 v-10z" fill="none" ${t}/>
-    <text x="24" y="29" text-anchor="middle" font-size="12.5" font-weight="900" fill="#fff" font-family="ui-rounded, system-ui" font-style="italic">VS</text>`,
+  'tab-battle': `<g transform="rotate(45 24 24)"><rect x="21.5" y="5" width="5" height="27" rx="2.5" fill="#e8eef7" ${t}/><path d="M24 8 v20" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
+      <rect x="15.5" y="31" width="17" height="4.5" rx="2.2" fill="#ffd34d" ${t}/><rect x="22" y="35.5" width="4" height="7" rx="2" fill="#b77a45" ${t}/></g>
+    <g transform="rotate(-45 24 24)"><rect x="21.5" y="5" width="5" height="27" rx="2.5" fill="#e8eef7" ${t}/><path d="M24 8 v20" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
+      <rect x="15.5" y="31" width="17" height="4.5" rx="2.2" fill="#ff8fc4" ${t}/><rect x="22" y="35.5" width="4" height="7" rx="2" fill="#b77a45" ${t}/></g>`,
   'tab-drip': `<path d="M24 13 v-2 a3 3 0 1 0 -3 -3" fill="none" ${t}/>
     <path d="M24 13 l-13 6 l-3 9 l6 2 v10 h20 v-10 l6 -2 l-3 -9 z" fill="#ff8fc4" ${t}/>
     <path d="M18 16 q6 7 12 0" fill="#ffd6e8" ${t}/><path d="M22 20 v6 M26 20 v6" stroke="${O}" stroke-width="1.8" stroke-linecap="round"/>
     <path d="M18 33 h12" stroke="${O}" stroke-width="1.8" stroke-linecap="round" opacity=".5"/>`,
-  'tab-zebricek': `<rect x="17" y="20" width="14" height="19" rx="2" fill="#ffd34d" ${t}/><rect x="6" y="27" width="11" height="12" rx="2" fill="#c7cfdb" ${t}/><rect x="31" y="31" width="11" height="8" rx="2" fill="#f0b07a" ${t}/>
-    <text x="24" y="33.5" text-anchor="middle" font-size="10" font-weight="900" fill="${O}" font-family="ui-rounded, system-ui">1</text>
-    <path d="M17 16 l2 -7 l4 4 l1 -6 l1 6 l4 -4 l2 7z" fill="#ffd34d" ${t}/>`,
+  'tab-zebricek': `<path d="M14 9 h20 v10 a10 10 0 0 1 -20 0z" fill="#ffd34d" ${t}/>
+    <path d="M14 12 h-4.5 c0 7 2.5 9 6 9 M34 12 h4.5 c0 7 -2.5 9 -6 9" fill="none" ${t}/>
+    <path d="M24 29 v5" ${t}/><rect x="15" y="34" width="18" height="7" rx="2.5" fill="#b69cff" ${t}/>
+    <path d="M24 12.5 l1.6 3.3 l3.6 .5 l-2.6 2.5 l.6 3.6 l-3.2 -1.7 l-3.2 1.7 l.6 -3.6 l-2.6 -2.5 l3.6 -.5z" fill="#fff"/>
+    <path d="M18 12 v6" stroke="#fff" stroke-opacity=".6" stroke-width="2.2" stroke-linecap="round"/>`,
 
   // ---------- Kategorie v Drip shopu ----------
   'k-kuze': `<circle cx="17" cy="20" r="8" fill="#ffe9dc" ${t}/><circle cx="31" cy="20" r="8" fill="#f1c09b" ${t}/><circle cx="17" cy="32" r="8" fill="#c98d63" ${t}/><circle cx="31" cy="32" r="8" fill="#8d5a3b" ${t}/>`,
