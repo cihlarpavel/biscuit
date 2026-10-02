@@ -172,15 +172,15 @@ export const VECI = [
   v('mazlicek', 'robot-m', 'Robot', 1000, { e: '🤖' }), v('mazlicek', 'ufo-m', 'Mimozemšťánek', 1300, { e: '👽' }),
 
   // Pozadí
-  v('pozadi', 'p-ruzove', 'Růžové', 0, { c: ['#ffd6e8', '#ffb3d1'] }), v('pozadi', 'p-lila', 'Lila', 0, { c: ['#e9e0ff', '#cbb8ff'] }),
-  v('pozadi', 'p-mata', 'Mátové', 15, { c: ['#dcf7ef', '#a8e8d6'] }), v('pozadi', 'p-slunce', 'Sluníčko', 15, { c: ['#fff3c4', '#ffd76e'] }),
-  v('pozadi', 'p-srdicka', 'Srdíčka', 60, { c: ['#ffe1ee', '#ff9cc7'], vzor: '♥' }),
+  v('pozadi', 'p-ruzove', 'Pokojíček', 0, { c: ['#ffd6e8', '#ffb3d1'] }), v('pozadi', 'p-lila', 'Ložnice', 0, { c: ['#e9e0ff', '#cbb8ff'] }),
+  v('pozadi', 'p-mata', 'Zahrada', 15, { c: ['#dcf7ef', '#a8e8d6'] }), v('pozadi', 'p-slunce', 'Pláž', 15, { c: ['#fff3c4', '#ffd76e'] }),
+  v('pozadi', 'p-srdicka', 'Cukrárna', 60, { c: ['#ffe1ee', '#ff9cc7'], vzor: '♥' }),
   v('pozadi', 'p-noc', 'Hvězdná noc', 80, { c: ['#3d3478', '#1f1a45'], vzor: '✦' }),
   v('pozadi', 'p-duha', 'Duha', 100, { duha: true }),
-  v('pozadi', 'p-ohen', 'Oheň', 250, { c: ['#ffd34d', '#ff4f2e'], vzor: '🔥' }),
+  v('pozadi', 'p-ohen', 'Táborák', 250, { c: ['#ffd34d', '#ff4f2e'], vzor: '🔥' }),
   v('pozadi', 'p-vesmir', 'Vesmír', 400, { c: ['#2b1a6b', '#0b0626'], vzor: '🪐' }),
   v('pozadi', 'p-disko', 'Disko', 700, { c: ['#ff5fc8', '#5b2bd6'], vzor: '✨' }),
-  v('pozadi', 'p-zlato', 'Zlato', 1200, { c: ['#fff1a8', '#e0a800'], vzor: '👑' }),
+  v('pozadi', 'p-zlato', 'Palác', 1200, { c: ['#fff1a8', '#e0a800'], vzor: '👑' }),
 ];
 
 export const vec = id => VECI.find(x => x.id === id);
@@ -536,19 +536,51 @@ function maska(x, kuze, c) {
   }
 }
 
-function pozadi(id, defs) {
+// Pozadí avatara: bílý „pokoj“ nakreslený jen tenkými jemnými čarami (okno, květina, knihovna…).
+// Kresba zalézá pod okraj kruhu a za postavičku – barevná je jen postavička.
+const CARA = 'fill="none" stroke="#cbc2d4" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"';
+const hv = (x, y, r) => `<path d="M${x} ${y - r} l${r * .3} ${r * .7} l${r * .7} ${r * .3} l${-r * .7} ${r * .3} l${-r * .3} ${r * .7} l${-r * .3} ${-r * .7} l${-r * .7} ${-r * .3} l${r * .7} ${-r * .3}z"/>`;
+const SCENY_POZADI = {
+  'p-ruzove': `<path d="M72 8 H120 M75 8 q6 22 0 46 M117 8 q-6 22 0 46"/><rect x="79" y="12" width="32" height="38" rx="2"/><path d="M95 12 V50 M79 31 H111"/>
+    <rect x="6" y="20" width="26" height="20" rx="1.5"/><path d="M8 38 l7 -9 l5 5 l4 -4 l6 8"/><circle cx="26" cy="26" r="2.5"/>
+    <path d="M4 100 h20 l-3 16 h-14z M14 100 q-11 -9 -8 -24 q6 7 8 24 q1 -14 10 -20 q1 11 -10 20 M14 100 q-3 -10 -12 -12"/>
+    <path d="M86 74 H120 M86 94 H120 M86 114 H120 M90 74 v-14 M95 74 v-16 M100 74 v-12 M104 74 l6 -13 M90 94 v-15 M96 94 v-12 M101 94 v-16"/>`,
+  'p-lila': `<path d="M-4 12 q64 24 128 0"/>${[[14, 18], [34, 23], [56, 25], [78, 23], [100, 18]].map(([x, y]) => hv(x, y + 4, 3.5)).join('')}
+    <path d="M10 70 h16 l-4 -12 h-8z M18 70 v34 M11 104 h14"/><circle cx="100" cy="46" r="11"/><path d="M100 46 v-6 M100 46 l4 3"/>
+    <path d="M84 100 q0 -14 18 -14 q18 0 18 14 M84 100 v16 M120 100 v16 M80 112 H124"/>`,
+  'p-mata': `<circle cx="100" cy="22" r="9"/>${[0, 45, 90, 135, 180, 225, 270, 315].map(a => `<path d="M100 22 m0 -13 v-5" transform="rotate(${a} 100 22)"/>`).join('')}
+    <path d="M8 30 q-4 -10 8 -10 q4 -8 14 -2 q10 -2 10 8 q4 4 -2 6 h-28 q-6 0 -2 -2z"/>
+    <path d="M18 112 V76 M18 80 q-16 -2 -12 -16 q-6 -14 10 -16 q10 -12 22 0 q14 4 6 18 q4 14 -14 14z"/>
+    <path d="M-2 98 H122 M-2 108 H122"/>${[2, 12, 92, 102, 112].map(x => `<path d="M${x} 116 V94 l3 -4 l3 4 V116"/>`).join('')}
+    <path d="M84 96 v-10 M84 84 a3 3 0 1 1 0 -.1z M76 96 v-8 M76 86 a3 3 0 1 1 0 -.1z"/>`,
+  'p-slunce': `<circle cx="96" cy="24" r="10"/><path d="M14 18 l4 3 l4 -3 M26 24 l3 2.5 l3 -2.5"/>
+    <path d="M-2 100 q8 -5 16 0 t16 0 t16 0 t16 0 t16 0 t16 0 t16 0 t16 0 M-2 110 q8 -5 16 0 t16 0 t16 0 t16 0 t16 0 t16 0 t16 0 t16 0"/>
+    <path d="M14 96 q-2 -30 8 -52 M22 44 q-14 -4 -20 6 M22 44 q-4 -12 -16 -12 M22 44 q10 -10 22 -4 M22 44 q14 2 16 14"/>
+    <path d="M96 96 V58 M76 62 q20 -18 40 0 z M96 44 v-2"/>`,
+  'p-srdicka': `<path d="M-4 12 q64 24 128 0"/>${[[18, 20], [42, 26], [66, 27], [90, 23]].map(([x, y]) => `<path d="M${x} ${y + 8} l-5 -5 c-3 -3 1 -7 5 -3 c4 -4 8 0 5 3z"/>`).join('')}
+    <path d="M6 96 h20 l-3 14 h-14z M4 96 q-2 -10 8 -8 q2 -8 10 -4 q8 -4 8 6 q2 6 -2 6z M16 84 v-4"/><circle cx="16" cy="78" r="2"/>
+    <path d="M86 84 h30 M90 84 v-16 h22 v16 M88 68 q13 -12 26 0 M101 84 v28 M92 112 h18"/>`,
+  'p-noc': `<path d="M98 12 a14 14 0 1 0 14 22 a11 11 0 1 1 -14 -22z"/>${[[16, 18, 4], [36, 10, 3], [62, 14, 3.5], [20, 50, 3], [110, 60, 3.5], [86, 40, 2.5]].map(([x, y, r]) => hv(x, y, r)).join('')}
+    <path d="M-2 102 q20 -14 40 -4 q20 -14 44 -2 q20 -10 40 -2"/><path d="M8 102 V80 l8 -8 l8 8 V102 M14 102 v-8 h4 v8"/>`,
+  'p-duha': `<path d="M8 104 a52 52 0 0 1 104 0 M18 104 a42 42 0 0 1 84 0 M28 104 a32 32 0 0 1 64 0"/>
+    <path d="M-2 104 q-4 -12 10 -12 q4 -8 14 -2 q8 0 8 8 q4 6 -4 6z M98 104 q-4 -12 10 -12 q4 -8 14 -2 q8 0 8 8"/>`,
+  'p-ohen': `<path d="M2 106 l18 -34 l18 34 z M20 72 v34 M14 106 l6 -12 l6 12"/>
+    <path d="M90 108 q-6 -8 2 -16 q0 8 6 8 q-2 -10 6 -16 q2 10 8 12 q4 6 -2 12 z M84 112 l36 -6 M84 106 l36 6"/>
+    <path d="M100 52 l8 -16 l8 16 z M108 52 v6 M4 40 l6 -14 l6 14 z M10 40 v6"/>${[[40, 14, 3], [70, 10, 2.5], [90, 20, 3]].map(([x, y, r]) => hv(x, y, r)).join('')}`,
+  'p-vesmir': `<circle cx="22" cy="28" r="12"/><ellipse cx="22" cy="28" rx="21" ry="5" transform="rotate(-18 22 28)"/>
+    <circle cx="100" cy="92" r="7"/>${[[96, 18, 4], [110, 40, 3], [60, 10, 3], [12, 70, 3.5], [24, 100, 2.5]].map(([x, y, r]) => hv(x, y, r)).join('')}
+    <path d="M104 74 q8 -16 0 -30 q-8 14 0 30 z M100 70 l-4 6 l6 -2 M108 70 l4 6 l-6 -2"/>`,
+  'p-disko': `<path d="M98 0 V12"/><circle cx="98" cy="24" r="12"/><path d="M86 24 H110 M98 12 V36 M89 16 q9 8 18 0 M89 32 q9 -8 18 0"/>
+    <path d="M14 30 v-14 l12 -3 v14 M14 30 a3 3 0 1 1 0 -.1z M26 27 a3 3 0 1 1 0 -.1z M34 48 v-10 l8 -2 v10"/>
+    <rect x="4" y="80" width="18" height="34" rx="2"/><circle cx="13" cy="92" r="5"/><circle cx="13" cy="106" r="3"/>
+    <rect x="98" y="80" width="18" height="34" rx="2"/><circle cx="107" cy="92" r="5"/><circle cx="107" cy="106" r="3"/>`,
+  'p-zlato': `<path d="M60 0 V10 M44 16 q16 10 32 0 M44 16 v4 M76 16 v4 M60 10 v14 M50 22 q10 6 20 0"/>
+    <rect x="6" y="26" width="22" height="28" rx="11"/><rect x="92" y="26" width="22" height="28" rx="11"/>
+    <path d="M10 112 V64 M24 112 V64 M7 64 h20 M96 112 V64 M110 112 V64 M93 64 h20"/><path d="M10 50 q7 -10 14 0 M96 50 q7 -10 14 0"/>`,
+};
+function pozadi(id) {
   const x = vec(id) || vec('p-ruzove');
-  if (x.duha) {
-    const g = 'g' + (++n);
-    defs.push(`<linearGradient id="${g}" x1="0" y1="0" x2="1" y2="1">${DUHA.map((c, i) => `<stop offset="${i / 5}" stop-color="${c}" stop-opacity=".55"/>`).join('')}</linearGradient>`);
-    return `<rect width="120" height="120" fill="#fff"/><rect width="120" height="120" fill="url(#${g})"/>`;
-  }
-  const g = 'g' + (++n);
-  defs.push(`<radialGradient id="${g}"><stop offset="0" stop-color="${x.c[0]}"/><stop offset="1" stop-color="${x.c[1]}"/></radialGradient>`);
-  const emoji = x.vzor && x.vzor.length > 1;
-  const vzor = x.vzor ? [[18, 30], [98, 24], [14, 86], [104, 80], [30, 106], [92, 104]]
-    .map(([x1, y]) => `<text x="${x1}" y="${y}" font-size="${emoji ? 10 : 11}" fill="#fff" opacity="${emoji ? .85 : .7}" text-anchor="middle">${x.vzor}</text>`).join('') : '';
-  return `<rect width="120" height="120" fill="url(#${g})"/>${vzor}`;
+  return `<rect width="120" height="120" fill="#fff"/><g ${CARA}>${SCENY_POZADI[x.id] || SCENY_POZADI['p-ruzove']}</g>`;
 }
 
 // velikost v px; vyrez: 'cela' (celá postavička) nebo 'hlava' (malý avatar v seznamech)
@@ -632,5 +664,5 @@ export function postavicka(vzhled = VYCHOZI, velikost = 120, vyrez = 'cela', poh
     ${naramek(z.naramek, kuze)}
     </g>
     ${mazl ? `<text class="pv-mazl" x="25" y="106" font-size="24" text-anchor="middle">${mazl}</text>` : ''}
-    </g><circle cx="60" cy="60" r="58.6" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="2.4"/><defs>${defs.join('')}</defs></svg>`;
+    </g><circle cx="60" cy="60" r="59" fill="none" stroke="#ece6f0" stroke-width="2"/><defs>${defs.join('')}</defs></svg>`;
 }
