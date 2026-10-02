@@ -617,3 +617,6 @@ body.noc .kat.on { background-color: var(--ruzova); color: #fff; }
 /* V noci měly dlaždice s písmeny bílé pozadí a světlé písmo (skoro neviditelné). */
 body.noc .dlazdice { background: #3a2f63; color: #fff; border-color: rgba(255, 255, 255, .22); box-shadow: 0 4px 0 #241c45; }
 body.noc .sloty i { color: #fff; }
+/* „Drip shop čeká, kámo“: v noci bílá karta se světlým textem – tmavá karta a jasně růžový text. */
+body.noc .drip-ceka { background: var(--karta); color: #ff9fcc; }
+body.noc .drip-ceka b { background: none; -webkit-text-fill-color: #ff9fcc; color: #ff9fcc; }
