@@ -175,7 +175,7 @@ function hraZaOdmenu() {
     return;
   }
   obrazovka(`<section class="stranka konec">${zpet('#/')}<div class="hra-logo">${ik('hra', 120)}</div><h1>Chytej sušenky</h1>
-    <p class="hlaska">Posouvej krabičku prstem a chytej sušenky. Zlatá = 5 bodů, ale když spadne na zem, přijdeš o půl srdíčka. Brokolice bere celé srdíčko 🥦, šnek 🐌 všechno na chvíli zpomalí. A když hodně vzácně spadne srdíčko 💗, chyť ho – je to život navíc!</p>
+    <p class="hlaska">Posouvej krabičku prstem a chytej sušenky. Zlatá = 5 bodů, ale když spadne na zem, přijdeš o půl srdíčka. Brokolice bere celé srdíčko 🥦, šnek 🐌 všechno na chvíli zpomalí. A když hodně vzácně spadne srdíčko ❤️, chyť ho – je to život navíc!</p>
     <div class="hra-info"><span>⏱️ Zbývá ${Math.ceil(zbyva / 60)} min</span><span>🏆 Rekord ${h.rekord}</span><span>🍪 Dnes ${h.susenky}/${HRA_MAX_SUSENEK}</span></div>
     <p class="drobne">Každých 10 bodů = 1 sušenka do aplikace (nejvýš ${HRA_MAX_SUSENEK} za den).</p>
     <button class="btn velke" id="hraj">Hrát ▶</button></section>`, { bezListy: true });
@@ -352,6 +352,10 @@ function ja() {
     <div class="graf">${dny.map(k => { const m = minuty(x.dny[k.k]?.s || 0); return `<div class="sloupec${m >= x.nastaveni.cil ? ' splneno' : ''}">
       <span>${m || ''}</span><i style="height:${m / maxMin * 100}%"></i><small>${k.nazev}</small></div>`; }).join('')}
       <div class="cil-cara" style="bottom:calc(${x.nastaveni.cil / maxMin} * (100% - 34px) + 20px)"></div></div>
+    <h2>Můj profil</h2>
+    <div class="profil-jmeno"><input id="nova-prezdivka" class="pole" maxlength="14" value="${jmeno(x)}" placeholder="Přezdívka" autocomplete="off">
+      <button class="btn" id="ulozit-jmeno">Uložit</button></div>
+    <div class="rod-volba">${[['z', '👧 Holka'], ['m', '👦 Kluk']].map(([k, t]) => `<button data-novy-rod="${k}" class="${x.rod === k ? 'on' : ''}">${t}</button>`).join('')}</div>
     <h2>Noční režim</h2>
     <div class="delky noc-volba">${[['auto', 'Automaticky', 'večer od 20:00'], ['on', 'Vždy tmavý', '🌙'], ['off', 'Vždy světlý', '☀️']].map(([k, t, m]) =>
       `<button class="delka${(x.nastaveni.noc || 'auto') === k ? ' on' : ''}" data-noc="${k}"><b>${t}</b><small>${m}</small></button>`).join('')}</div>
@@ -362,6 +366,21 @@ function ja() {
       <a class="odkaz" href="#/rodic">Pro rodiče</a></div>
   </section>`, { tab: 'ja' });
   $$('[data-noc]').forEach(b => (b.onclick = () => { x.nastaveni.noc = b.dataset.noc; S.uloz(); nastavSvet(x); nastavNoc(); ja(); }));
+  // Změna přezdívky a holka/kluk: hned se uloží a pošle kamarádům online (rod mění i řasy postavičky).
+  const ulozJmeno = () => {
+    const n = $('#nova-prezdivka').value.trim();
+    if (!n) return toast('Napiš přezdívku 🙂');
+    if (n === x.prezdivka) return;
+    x.prezdivka = n; S.uloz(); posledniZverejneni = 0; zverejniPozdeji();
+    toast('Uloženo ✨'); ja();
+  };
+  $('#ulozit-jmeno').onclick = ulozJmeno;
+  $('#nova-prezdivka').onkeydown = e => { if (e.key === 'Enter') ulozJmeno(); };
+  $$('[data-novy-rod]').forEach(b => (b.onclick = () => {
+    if (x.rod === b.dataset.novyRod) return;
+    x.rod = x.vzhled.rod = b.dataset.novyRod; S.uloz(); posledniZverejneni = 0; zverejniPozdeji();
+    tabJa(); ja();
+  }));
   vlozSchovanou('ja');
 }
 

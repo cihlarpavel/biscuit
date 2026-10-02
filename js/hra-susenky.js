@@ -1,7 +1,7 @@
 // „Chytej sušenky“ – hra za odměnu. Krabička dole se ovládá prstem, shora padají sušenky.
 // Sušenka 1 bod, zlatá 5 bodů (když spadne na dno, bere půl života), brokolice bere celý život,
 // vzácné srdíčko dá život navíc (i nad 3, nejvýš ZIVOTY_MAX), šnek na chvíli všechno zpomalí. Každých 15 bodů nový level.
-// Ztráta života je vidět i koutkem oka: červené okraje obrazovky, velké „−1 💗“ a zatřesení srdíček.
+// Ztráta života je vidět i koutkem oka: červené okraje obrazovky, velké „−1 ❤️“ a zatřesení srdíček.
 // Hra běží na <canvas> v rozlišení displeje (ostrá i na Retině).
 //
 // spust(platno, { zbyva: sekund do denního limitu, priTiku(sekund), konec({ body, zlate, level, limit }) })
@@ -37,6 +37,18 @@ function susenka(g, s, zlata) {
   }
 }
 
+// Červené srdíčko (život navíc) ve stejném stylu jako sušenky: obrys a lesk.
+function srdce(g, s) {
+  g.translate(s / 2, s / 2 + s * .04);
+  const k = s / 26;
+  g.scale(k, k);
+  const p = new Path2D('M0 10 C-3 7 -11 2 -11 -4 C-11 -9 -6 -11 -3 -10 C-1.5 -9.5 -.5 -8.5 0 -7 C.5 -8.5 1.5 -9.5 3 -10 C6 -11 11 -9 11 -4 C11 2 3 7 0 10 Z');
+  g.fillStyle = '#e8283c'; g.fill(p);
+  g.lineWidth = 2.5 / k * .8; g.strokeStyle = OBRYS; g.lineJoin = 'round'; g.stroke(p);
+  g.fillStyle = 'rgba(255,255,255,.55)';
+  g.beginPath(); g.ellipse(-5.5, -5, 2.6, 1.5, -.7, 0, Math.PI * 2); g.fill();
+}
+
 export function spust(platno, { zbyva, priTiku = () => {}, konec }) {
   const g = platno.getContext('2d');
   const dpr = Math.min(3, devicePixelRatio || 1);
@@ -52,7 +64,7 @@ export function spust(platno, { zbyva, priTiku = () => {}, konec }) {
 
   const S = Math.max(40, Math.min(58, W / 8));
   const SZ = S * 1.2; // zlaté jsou větší
-  const SPR = { susenka: sprite(S, (c, s) => susenka(c, s, false)), zlata: sprite(SZ, (c, s) => susenka(c, s, true)) };
+  const SPR = { susenka: sprite(S, (c, s) => susenka(c, s, false)), zlata: sprite(SZ, (c, s) => susenka(c, s, true)), srdce: sprite(S, srdce) };
 
   const krab = { x: W / 2, sirka: Math.min(130, W * .32), vyska: 56 };
   let cil = krab.x;
@@ -81,7 +93,7 @@ export function spust(platno, { zbyva, priTiku = () => {}, konec }) {
     zivoty = Math.max(0, zivoty - kolik);
     serie = 0; zasah = .7; otres = .35;
     text(duvod, x, y, kolik >= 1 ? '#3fa34d' : '#e0a800');
-    text(kolik >= 1 ? '−1 💗' : '−½ 💗', W / 2, H * .45, '#ff3b5c', true);
+    text(kolik >= 1 ? '−1 ❤️' : '−½ ❤️', W / 2, H * .45, '#ff3b5c', true);
     const hud = platno.parentElement.querySelector('.hra-hud .zivoty');
     if (hud) { hud.classList.remove('au'); void hud.offsetWidth; hud.classList.add('au'); }
     if (navigator.vibrate) navigator.vibrate(kolik >= 1 ? 120 : 60);
@@ -116,7 +128,7 @@ export function spust(platno, { zbyva, priTiku = () => {}, konec }) {
         else if (v.druh === 'snek') { zpomaleni = ZPOMALENI_S; text('Zpomalení 🐌', W / 2, H * .4, '#3b8fd9', true); }
         else if (v.druh === 'srdce') {
           zivoty = Math.min(ZIVOTY_MAX, zivoty + 1);
-          text('+1 💗', W / 2, H * .45, '#ff4f8b', true);
+          text('+1 ❤️', W / 2, H * .45, '#e8283c', true);
           const zv = platno.parentElement.querySelector('.hra-hud .zivoty');
           if (zv) { zv.classList.remove('jupi'); void zv.offsetWidth; zv.classList.add('jupi'); }
         }
@@ -151,7 +163,8 @@ export function spust(platno, { zbyva, priTiku = () => {}, konec }) {
       g.save(); g.translate(v.x, v.y); g.rotate(v.rot);
       if (v.druh === 'susenka') g.drawImage(SPR.susenka, -S / 2, -S / 2, S, S);
       else if (v.druh === 'zlata') g.drawImage(SPR.zlata, -SZ / 2, -SZ / 2, SZ, SZ);
-      else { g.font = `${S * .85}px system-ui`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText({ brokolice: '🥦', srdce: '💗', snek: '🐌' }[v.druh], 0, 0); }
+      else if (v.druh === 'srdce') { g.rotate(-v.rot); g.drawImage(SPR.srdce, -S / 2, -S / 2, S, S); }
+      else { g.font = `${S * .85}px system-ui`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText({ brokolice: '🥦', snek: '🐌' }[v.druh], 0, 0); }
       if (v.druh === 'zlata') { g.strokeStyle = 'rgba(255,211,77,.7)'; g.lineWidth = 3; g.beginPath(); g.arc(0, 0, SZ * .62, 0, Math.PI * 2); g.stroke(); }
       g.restore();
     }
@@ -197,7 +210,7 @@ export function spust(platno, { zbyva, priTiku = () => {}, konec }) {
     const d = 'M12 21 L3.5 12.5 C-1 8 4 1 9 5 L12 7.5 L15 5 C20 1 25 8 20.5 12.5 Z';
     const id = 'sr' + Math.random().toString(36).slice(2, 7);
     return `<svg width="20" height="20" viewBox="0 0 24 24"><clipPath id="${id}"><rect width="${24 * plne}" height="24"/></clipPath>
-      <path d="${d}" fill="#fff"/><path d="${d}" fill="#ff4f8b" clip-path="url(#${id})"/><path d="${d}" fill="none" stroke="#ff4f8b" stroke-width="2" stroke-linejoin="round"/></svg>`;
+      <path d="${d}" fill="#fff"/><path d="${d}" fill="#e8283c" clip-path="url(#${id})"/><path d="${d}" fill="none" stroke="#e8283c" stroke-width="2" stroke-linejoin="round"/></svg>`;
   }
   function obdelnik(x, y, w, h, r) { g.beginPath(); g.roundRect ? g.roundRect(x, y, w, h, r) : g.rect(x, y, w, h); }
 
