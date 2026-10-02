@@ -27,7 +27,7 @@ v `sw.js`, commit, `git push` (`gh` je v `~/.local/bin/gh`). Ve škole jsou na s
   přes `S.pridej(p, n)`, jinak se celkový součet nepohne.
 - Postavička má obrysy (`OBRYS`), stínování pleti a oblečení, oválné oči v barvě duhovky (bez bělma – s bělmem působily vykuleně) a obočí. Věc v ruce bez ruky; ruka jen s náramkem.
 - Hlavní karta na úvodní obrazovce: scénka podle světa (`scena()` v svety.js, v noci noční) a postavička bez kulatého pozadí (`postavicka(..., { bezPozadi: true })`).
-- Vzhled: písmo Fredoka (nadpisy, tlačítka) + Nunito z Google Fonts, papírové karty (`--papir`),
+- Vzhled: písmo Baloo 2 (nadpisy, tlačítka) + Nunito z Google Fonts (Fredoka NEPOUŽÍVAT – nemá české háčky ě č ř), papírové karty (`--papir`),
   plastická tlačítka, barevné karty balíčků (`--akc` = barva podkladu ikony, `barvaIkony()`).
 - Noční režim: `body.noc`, automaticky 20:00–6:30, nebo volba v Já (`nastaveni.noc`). Nové světlé
   prvky (bílé pozadí) je potřeba doplnit i do bloku `body.noc` ve styles.css.

@@ -130,12 +130,12 @@ export function spust(platno, { zbyva, priTiku = () => {}, konec }) {
     g.fillStyle = '#ff8fc4'; obdelnik(x, y + 8, w, h - 8, 14); g.fill(); g.stroke();
     g.fillStyle = '#ffd6e8'; obdelnik(x + 8, y + 18, w - 16, h - 30, 8); g.fill();
     g.fillStyle = '#c4a3ff'; obdelnik(x - 6, y, w + 12, 14, 7); g.fill(); g.stroke();
-    g.fillStyle = OBRYS; g.font = `700 ${Math.round(h * .3)}px Fredoka, system-ui`; g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.fillStyle = OBRYS; g.font = `700 ${Math.round(h * .3)}px "Baloo 2", system-ui`; g.textAlign = 'center'; g.textBaseline = 'middle';
     g.fillText('Biscuit', krab.x, y + 18 + (h - 30) / 2);
     // texty +1 apod.
     for (const e of efekty) {
       g.globalAlpha = Math.max(0, e.zivot); g.fillStyle = e.barva; g.strokeStyle = '#fff'; g.lineWidth = 5;
-      g.font = `700 24px Fredoka, system-ui`; g.textAlign = 'center';
+      g.font = `700 24px "Baloo 2", system-ui`; g.textAlign = 'center';
       g.strokeText(e.t, e.x, e.y); g.fillText(e.t, e.x, e.y);
     }
     g.globalAlpha = 1;

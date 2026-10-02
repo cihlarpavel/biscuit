@@ -529,7 +529,7 @@ body { font-family: 'Nunito', ui-rounded, "SF Pro Rounded", system-ui, sans-seri
 h1, h2, h3, .btn, .bublina, .b-text b, .zadani, .kol-text b, .stat, .tabs a, .kdo b, .moznost, .dlazdice,
 .karta-nova .en, .otazka .en, .cz-velke, .titul, .z-jmeno, .profil-karta b, .delka b, .vyzva b, .hlaska, .odmena span,
 .cisla b, .zpet-btn, .kat, .vec small, .svet b, .stitek-ted, .uroven b, .drip-nadpis, .b-body, .muj-kod b {
-  font-family: 'Fredoka', 'Nunito', ui-rounded, system-ui, sans-serif;
+  font-family: 'Baloo 2', 'Nunito', ui-rounded, system-ui, sans-serif;
 }
 h1 { font-weight: 700; font-size: 30px; }
 h2, h3 { font-weight: 600; }
@@ -674,7 +674,7 @@ h2, h3 { font-weight: 600; }
 .popup-karta.prohra { background-image: var(--papir), radial-gradient(circle at 50% 0%, #e3e9ff 0 35%, #fff 65%); }
 .popup-karta.remiza { background-image: var(--papir), radial-gradient(circle at 50% 0%, #e3d9ff 0 35%, #fff 65%); }
 .popup-stuha { position: absolute; top: -18px; left: 50%; translate: -50% 0; rotate: -2deg; white-space: nowrap;
-  font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 15px; color: #fff; padding: 6px 18px; border-radius: 10px; border: 3px solid #fff;
+  font-family: 'Baloo 2', sans-serif; font-weight: 600; font-size: 15px; color: #fff; padding: 6px 18px; border-radius: 10px; border: 3px solid #fff;
   background: linear-gradient(180deg, #ff9fcc, #ff6fae); box-shadow: 0 4px 0 #d94a8c; }
 .popup-karta h1 { font-size: 32px; margin: 4px 0 8px; }
 .popup-karta.vyhra h1 { color: #e08a00; text-shadow: 0 2px 0 #fff3b8; }
@@ -766,7 +766,7 @@ body.noc .sekce-hlava .ik, body.noc .s-ikonou .ik { filter: drop-shadow(0 0 0 #f
 .hra-stav { display: block; font-size: 12.5px; color: var(--tlumene); font-weight: 800; margin-top: 2px; }
 .karta-hry.odemcena { background-image: var(--papir), linear-gradient(135deg, #fffbe6, #ffe9a8); border-color: #ffe08a; }
 .karta-hry:not(.odemcena) { filter: saturate(.5); opacity: .85; }
-.hra-hrat { flex: none; font-family: 'Fredoka', sans-serif; font-weight: 600; color: #fff; padding: 9px 14px; border-radius: 99px; border: 2.5px solid #fff;
+.hra-hrat { flex: none; font-family: 'Baloo 2', sans-serif; font-weight: 600; color: #fff; padding: 9px 14px; border-radius: 99px; border: 2.5px solid #fff;
   background: linear-gradient(180deg, #ffd34d, #ffae2b); box-shadow: 0 4px 0 #d98a00; animation: hop 1.6s infinite; }
 .hra-logo { display: grid; place-items: center; margin-top: 34px; animation: zlataPrilet .7s cubic-bezier(.3, 1.6, .5, 1) both; }
 .hra-info { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 6px 0; }
@@ -775,7 +775,7 @@ body.noc .sekce-hlava .ik, body.noc .s-ikonou .ik { filter: drop-shadow(0 0 0 #f
 .hra-platno::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 26px; background: #9be08a; border-top: 3px solid #3b2a3f; }
 .hra-platno canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; z-index: 1; }
 .hra-hud { position: absolute; z-index: 2; top: calc(12px + env(safe-area-inset-top)); left: 60px; right: 12px; display: flex; gap: 8px; justify-content: flex-end; pointer-events: none; }
-.hra-hud span, .hra-zbyva { background: #fff; border: 2.5px solid #fff; border-radius: 99px; padding: 5px 11px; font-family: 'Fredoka', sans-serif; font-weight: 600;
+.hra-hud span, .hra-zbyva { background: #fff; border: 2.5px solid #fff; border-radius: 99px; padding: 5px 11px; font-family: 'Baloo 2', sans-serif; font-weight: 600;
   box-shadow: 0 3px 0 rgba(150, 90, 140, .2); font-size: 15px; }
 .hra-zbyva { position: absolute; z-index: 2; top: calc(54px + env(safe-area-inset-top)); right: 12px; pointer-events: none; }
 .hra-platno .zavrit { position: absolute; z-index: 3; top: calc(10px + env(safe-area-inset-top)); left: 12px; width: 42px; height: 42px; border-radius: 50%; background: #fff; box-shadow: 0 3px 0 rgba(150, 90, 140, .2); }
