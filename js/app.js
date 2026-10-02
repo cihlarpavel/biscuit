@@ -431,7 +431,7 @@ function obchod() {
     const kolecko = c => c === 'duha' ? 'conic-gradient(#ff6b7a, #ffa94d, #ffe066, #69db7c, #4dabf7, #9775fa, #ff6b7a)' : c;
     obrazovka(`${hlavicka(x)}<section class="stranka satnik">
       <h1 class="drip-nadpis">Drip shop</h1>
-      <div class="satnik-nahled">${postavicka(zkouska, 250)}</div>
+      <div class="satnik-nahled">${postavicka(zkouska, 210)}</div>
       <div class="kategorie">${KATEGORIE.filter(k => !k.vUcesu).map(k => `<button class="kat${k.id === kat.id ? ' on' : ''}" data-k="${k.id}"><span>${ik(k.ik, 28)}</span>${esc(k.nazev)}</button>`).join('')}</div>
       ${barvy.length ? `<div class="barvy-vlasu">${barvy.map(v => `<button class="barva-vlasu${zkouska.barva === v.id ? ' on' : ''}${maVec(x, v) ? '' : ' cizi'}" data-v="${v.id}" data-kat="barva" aria-label="${esc(v.nazev)}" title="${esc(v.nazev)}">
           <i style="background:${kolecko(v.c)}"></i>${maVec(x, v) ? '' : `<small>${v.cena}</small>`}</button>`).join('')}</div>` : ''}
@@ -447,6 +447,7 @@ function obchod() {
     </section>`, { tab: 'drip' });
 
     $('.kat.on')?.scrollIntoView({ inline: 'center', block: 'nearest' });
+    if (!vykresli.uz) { vykresli.uz = true; $('.veci .vec.on')?.scrollIntoView({ inline: 'center', block: 'nearest' }); } // při otevření ukázat nošenou věc
     $$('.kat').forEach(b => (b.onclick = () => { satnikKat = b.dataset.k; obchod(); }));
     $$('.vec, .barva-vlasu').forEach(b => (b.onclick = () => {
       const v = b.dataset.v ? vec(b.dataset.v) : null;
@@ -454,10 +455,11 @@ function obchod() {
       zkouska = { ...zkouska, [k]: v?.id || null };
       // Co už má, si rovnou oblékne (a uloží). Nekoupené jen zkouší.
       if (!v || maVec(x, v)) { x.vzhled = { ...x.vzhled, [k]: v?.id || null }; S.uloz(); }
-      const top = document.getElementById('app').scrollTop;
+      const top = document.getElementById('app').scrollTop, vlevo = $('.veci')?.scrollLeft || 0;
       vykresli();
       tabJa();
       document.getElementById('app').scrollTop = top;
+      const v2 = $('.veci'); if (v2) v2.scrollLeft = vlevo; // carousel zůstane, kde byl
     }));
     const koupit = $('#koupit');
     if (koupit) koupit.onclick = () => {
