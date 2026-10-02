@@ -22,11 +22,11 @@ export const KATEGORIE = [
   { id: 'uces', nazev: 'Účes', ik: 'k-uces', povinne: true, hlava: true },
   { id: 'barva', nazev: 'Barva vlasů', ik: 'k-barva', povinne: true, hlava: true, vUcesu: true }, // kolečka v sekci Účes
   { id: 'oci', nazev: 'Oči', ik: 'k-oci', povinne: true, hlava: true },
-  { id: 'pusa', nazev: 'Pusa', ik: 'k-pusa', povinne: true, hlava: true },
-  { id: 'obleceni', nazev: 'Oblečení', ik: 'obleceni' },
-  { id: 'hlava', nazev: 'Na hlavu', ik: 'k-hlava', hlava: true },
   { id: 'bryle', nazev: 'Brýle', ik: 'k-bryle', hlava: true },
+  { id: 'pusa', nazev: 'Pusa', ik: 'k-pusa', povinne: true, hlava: true },
   { id: 'tvar', nazev: 'Na obličej', ik: 'k-vousy', hlava: true },
+  { id: 'hlava', nazev: 'Na hlavu', ik: 'k-hlava', hlava: true },
+  { id: 'obleceni', nazev: 'Oblečení', ik: 'obleceni' },
   { id: 'boty', nazev: 'Boty', ik: 'u6', povinne: true },
   { id: 'ruka', nazev: 'V ruce', ik: 'k-ruka' },
   { id: 'mazlicek', nazev: 'Mazlíček', ik: 'u1' },
@@ -34,24 +34,33 @@ export const KATEGORIE = [
 
 const v = (kat, id, nazev, cena, extra = {}) => ({ kat, id, nazev, cena, ...extra });
 // b = klíč v blob.js (když se liší od id), c = barva. Id mají předponu, aby se nekřížila se starou postavičkou.
+// Každá sekce jde od obyčejných věcí (zdarma, Běžné) přes Cool a Epické po šílené Legendární a Bizár (Pavel 3. 10. 2026).
 export const VECI = [
   // Těsto
   v('kuze', 't-susenka', 'Sušenka', 0, { b: 'susenka' }), v('kuze', 't-maslova', 'Máslová', 0, { b: 'maslova' }),
-  v('kuze', 't-cokoladova', 'Čokoládová', 0, { b: 'cokoladova' }), v('kuze', 't-pernik', 'Perník', 120, { b: 'pernik' }),
-  v('kuze', 't-posyp', 'S posypem', 120, { b: 'posyp' }), v('kuze', 't-poleva', 'S polevou', 180, { b: 'poleva' }),
-  v('kuze', 't-oreo', 'Oreo', 280, { b: 'oreo' }), v('kuze', 't-ruzova', 'Růžová', 300, { b: 'ruzova' }),
-  v('kuze', 't-modra', 'Modrá', 300, { b: 'modra' }), v('kuze', 't-zelena', 'Zelená', 400, { b: 'zelena' }),
-  v('kuze', 't-fialova', 'Fialová', 400, { b: 'fialova' }), v('kuze', 't-meloun', 'Meloun', 600, { b: 'meloun' }),
-  v('kuze', 't-beruska', 'Beruška', 700, { b: 'beruska' }), v('kuze', 't-zebra', 'Zebra', 900, { b: 'zebra' }),
+  v('kuze', 't-cokoladova', 'Čokoládová', 0, { b: 'cokoladova' }),
+  v('kuze', 't-ruzova', 'Růžová', 60, { b: 'ruzova' }), v('kuze', 't-modra', 'Modrá', 60, { b: 'modra' }),
+  v('kuze', 't-zelena', 'Zelená', 80, { b: 'zelena' }), v('kuze', 't-fialova', 'Fialová', 80, { b: 'fialova' }),
+  v('kuze', 't-pernik', 'Perník', 120, { b: 'pernik' }), v('kuze', 't-posyp', 'S posypem', 150, { b: 'posyp' }),
+  v('kuze', 't-poleva', 'S polevou', 200, { b: 'poleva' }), v('kuze', 't-oreo', 'Oreo', 240, { b: 'oreo' }),
+  v('kuze', 't-meloun', 'Meloun', 300, { b: 'meloun' }), v('kuze', 't-krava', 'Kravička', 400, { b: 'krava' }),
+  v('kuze', 't-tygr', 'Tygr', 500, { b: 'tygr' }), v('kuze', 't-beruska', 'Beruška', 600, { b: 'beruska' }),
+  v('kuze', 't-zirafa', 'Žirafa', 700, { b: 'zirafa' }), v('kuze', 't-zebra', 'Zebra', 900, { b: 'zebra' }),
   v('kuze', 't-leopard', 'Leopard', 900, { b: 'leopard' }), v('kuze', 't-tucnak', 'Tučňák', 1000, { b: 'tucnak' }),
-  v('kuze', 't-galaxie', 'Galaxie', 1800, { b: 'galaxie' }), v('kuze', 't-zlata', 'Zlatá', 2000, { b: 'zlata' }),
+  v('kuze', 't-dino', 'Dinosaurus', 1200, { b: 'dino' }), v('kuze', 't-robot', 'Robot', 1400, { b: 'robot' }),
+  v('kuze', 't-krystal', 'Krystal', 1700, { b: 'krystal' }), v('kuze', 't-ufo', 'Mimozemšťan', 2000, { b: 'ufo' }),
+  v('kuze', 't-galaxie', 'Galaxie', 2200, { b: 'galaxie' }), v('kuze', 't-zlata', 'Zlatá', 2600, { b: 'zlata' }),
+  v('kuze', 't-lava', 'Láva', 3000, { b: 'lava' }), v('kuze', 't-disko', 'Disko koule', 3400, { b: 'disko' }),
   v('kuze', 't-duhova', 'Duhová', 3600, { b: 'duhova' }),
 
   // Účes
   v('uces', 'u-ofina', 'Ofina', 0, { b: 'ofina' }), v('uces', 'u-dlouhe', 'Dlouhé', 0, { b: 'dlouhe' }),
   v('uces', 'u-culiky', 'Culíky', 0, { b: 'culiky' }), v('uces', 'u-rozcuch', 'Rozcuch', 0, { b: 'rozcuch' }),
   v('uces', 'u-kudrny', 'Kudrny', 0, { b: 'kudrny' }), v('uces', 'u-fluffy', 'Fluffy', 0, { b: 'fluffy' }), v('uces', 'u-zadne', 'Holá sušenka', 0, { b: '' }),
-  v('uces', 'u-drdol', 'Drdol', 80, { b: 'drdol' }), v('uces', 'u-ciro', 'Číro', 240, { b: 'ciro' }),
+  v('uces', 'u-drdol', 'Drdol', 80, { b: 'drdol' }), v('uces', 'u-copanky', 'Copánky', 120, { b: 'copanky' }),
+  v('uces', 'u-ciro', 'Číro', 240, { b: 'ciro' }), v('uces', 'u-afro', 'Afro', 500, { b: 'afro' }),
+  v('uces', 'u-obri-ciro', 'Obří číro', 900, { b: 'obri-ciro' }), v('uces', 'u-plamenne', 'Plameny', 1600, { b: 'plamenne' }),
+  v('uces', 'u-mrak', 'Bouřkový mrak', 2400, { b: 'mrak' }), v('uces', 'u-spagety', 'Špagety', 2800, { b: 'spagety' }),
 
   // Barva vlasů
   v('barva', 'b-hneda', 'Hnědá', 0, { c: '#5b3424' }), v('barva', 'b-cerna', 'Černá', 0, { c: '#2b2230' }),
@@ -61,45 +70,74 @@ export const VECI = [
   v('barva', 'b-bila', 'Bílá', 300, { c: '#f4f1f7' }), v('barva', 'b-duha', 'Duhová', 1600, { c: 'duha' }),
 
   // Oči
-  v('oci', 'o-koukaci', 'Koukací', 0, { b: 'koukaci' }), v('oci', 'o-nahoru', 'Zasněné', 50, { b: 'nahoru' }),
-  v('oci', 'o-silene', 'Šilhavé', 60, { b: 'silene' }), v('oci', 'o-ospale', 'Ospalé', 60, { b: 'ospale' }),
-  v('oci', 'o-zamilovane', 'Zamilované', 160, { b: 'zamilovane' }), v('oci', 'o-hvezdy', 'Hvězdičky', 300, { b: 'hvezdy' }),
-  v('oci', 'o-kyklop', 'Kyklop', 600, { b: 'kyklop' }), v('oci', 'o-spiralky', 'Hypnóza', 1000, { b: 'spiralky' }),
+  v('oci', 'o-koukaci', 'Koukací', 0, { b: 'koukaci' }), v('oci', 'o-mrk', 'Mrkací', 40, { b: 'mrk' }),
+  v('oci', 'o-nahoru', 'Zasněné', 50, { b: 'nahoru' }), v('oci', 'o-silene', 'Šilhavé', 60, { b: 'silene' }),
+  v('oci', 'o-ospale', 'Ospalé', 60, { b: 'ospale' }), v('oci', 'o-zamilovane', 'Zamilované', 160, { b: 'zamilovane' }),
+  v('oci', 'o-hvezdy', 'Hvězdičky', 300, { b: 'hvezdy' }), v('oci', 'o-kyklop', 'Kyklop', 600, { b: 'kyklop' }),
+  v('oci', 'o-pixel', 'Pixelové', 800, { b: 'pixel' }), v('oci', 'o-spiralky', 'Hypnóza', 1000, { b: 'spiralky' }),
+  v('oci', 'o-laser', 'Laserové', 1600, { b: 'laser' }), v('oci', 'o-tri', 'Tři oči', 2200, { b: 'tri-oci' }),
+  v('oci', 'o-diamanty', 'Diamantové', 2800, { b: 'diamanty' }),
+
+  // Brýle
+  v('bryle', 'br-kulate', 'Kulaté', 40, { b: 'kulate' }), v('bryle', 'br-nerd', 'Nerdky', 80, { b: 'nerd' }),
+  v('bryle', 'br-srdickove', 'Srdíčkové', 180, { b: 'srdickove' }), v('bryle', 'br-3d', '3D brýle', 250, { b: 'tri_d' }),
+  v('bryle', 'br-velke', 'Obří sluneční', 300, { b: 'velke' }), v('bryle', 'br-hvezdicove', 'Hvězdicové', 450, { b: 'hvezdicove' }),
+  v('bryle', 'br-monokl', 'Monokl', 550, { b: 'monokl' }), v('bryle', 'br-lyzarske', 'Lyžařské', 600, { b: 'lyzarske' }),
+  v('bryle', 'br-pixel', 'Pixel frajer', 900, { b: 'pixel' }), v('bryle', 'br-disko', 'Disko LED', 1800, { b: 'disko' }),
+  v('bryle', 'br-vizor', 'Kyber vizor', 2400, { b: 'vizor' }),
 
   // Pusa
   v('pusa', 'p-usmev', 'Úsměv', 0, { b: 'usmev' }), v('pusa', 'p-otevrena', 'Jupí', 0, { b: 'otevrena' }),
-  v('pusa', 'p-jazyk', 'Jazyk', 40, { b: 'jazyk' }), v('pusa', 'p-zuby', 'Zubatá', 80, { b: 'zuby' }),
-  v('pusa', 'p-zobak', 'Zobák', 500, { b: 'zobak' }), v('pusa', 'p-vampir', 'Upír', 600, { b: 'vampir' }),
+  v('pusa', 'p-usmevuska', 'Úšklebek', 30, { b: 'usmevuska' }), v('pusa', 'p-kulata', 'Ó!', 30, { b: 'kulata' }),
+  v('pusa', 'p-jazyk', 'Jazyk', 40, { b: 'jazyk' }), v('pusa', 'p-mezera', 'Chybí zub', 70, { b: 'mezera' }),
+  v('pusa', 'p-zuby', 'Zubatá', 80, { b: 'zuby' }), v('pusa', 'p-rovnatka', 'Rovnátka', 150, { b: 'rovnatka' }),
+  v('pusa', 'p-pusinka', 'Pusinka', 220, { b: 'pusinka' }), v('pusa', 'p-grimasa', 'Grimasa', 300, { b: 'grimasa' }),
+  v('pusa', 'p-vyplazeny', 'Vypláznutý jazyk', 450, { b: 'vyplazeny' }), v('pusa', 'p-zobak', 'Zobák', 500, { b: 'zobak' }),
+  v('pusa', 'p-vampir', 'Upír', 600, { b: 'vampir' }), v('pusa', 'p-zlate-zuby', 'Zlaté zuby', 900, { b: 'zlate-zuby' }),
+  v('pusa', 'p-pirani', 'Piraňa', 1400, { b: 'pirani' }), v('pusa', 'p-duhovy-jazyk', 'Duhový jazyk', 2400, { b: 'duhovy-jazyk' }),
 
-  // Oblečení
-  v('obleceni', 'ob-tricko', 'Tričko', 0, { b: 'tricko' }), v('obleceni', 'ob-tricko-hvezda', 'Tričko s hvězdou', 50, { b: 'tricko-hvezda' }), v('obleceni', 'ob-mikina', 'Mikina', 0, { b: 'mikina' }),
-  v('obleceni', 'ob-saty', 'Šaty', 60, { b: 'saty' }), v('obleceni', 'ob-monterky', 'Montérky', 120, { b: 'monterky' }),
-  v('obleceni', 'ob-plavky', 'Plavky', 160, { b: 'plavky' }), v('obleceni', 'ob-smoking', 'Smoking', 800, { b: 'smoking' }),
+  // Na obličej
+  v('tvar', 'tv-naplast', 'Náplast', 20, { b: 'naplast' }), v('tvar', 'tv-pihy', 'Pihy', 30),
+  v('tvar', 'tv-trpyt', 'Třpytky', 150, { b: 'trpyt' }), v('tvar', 'tv-tygr', 'Tygří malování', 350, { b: 'tygr' }),
+  v('tvar', 'tv-knir', 'Knír', 400), v('tvar', 'tv-plnovous', 'Plnovous', 600, { b: 'plnovous' }),
+  v('tvar', 'tv-knir-kudrna', 'Kroucený knír', 900, { b: 'knir-kudrna' }), v('tvar', 'tv-diamant', 'Diamant na čele', 1600, { b: 'diamant' }),
+  v('tvar', 'tv-duha', 'Duhové malování', 2200, { b: 'duha-malovani' }),
 
   // Na hlavu
-  v('hlava', 'h-masle', 'Mašle', 40, { b: 'masle' }), v('hlava', 'h-party', 'Párty čepička', 100, { b: 'party' }),
+  v('hlava', 'h-ksiltovka', 'Kšiltovka', 30, { b: 'ksiltovka' }), v('hlava', 'h-masle', 'Mašle', 40, { b: 'masle' }),
+  v('hlava', 'h-kulich', 'Kulich', 60, { b: 'kulich' }), v('hlava', 'h-party', 'Párty čepička', 100, { b: 'party' }),
   v('hlava', 'h-ousko', 'Kočičí uši', 120, { b: 'ousko' }), v('hlava', 'h-kuchar', 'Kuchařská čepice', 240, { b: 'kuchar' }),
   v('hlava', 'h-fedora', 'Fedora', 300, { b: 'fedora' }), v('hlava', 'h-kovboj', 'Kovbojský klobouk', 400, { b: 'kovboj' }),
   v('hlava', 'h-vrtulka', 'Vrtulka', 500, { b: 'vrtulka' }), v('hlava', 'h-tykadla', 'Tykadla', 600, { b: 'tykadla' }),
-  v('hlava', 'h-cylindr', 'Cylindr', 800, { b: 'cylindr' }), v('hlava', 'h-korunka', 'Korunka', 2000, { b: 'korunka' }),
+  v('hlava', 'h-cert', 'Čertí rohy', 700, { b: 'cert' }), v('hlava', 'h-cylindr', 'Cylindr', 800, { b: 'cylindr' }),
+  v('hlava', 'h-svatozar', 'Svatozář', 900, { b: 'svatozar' }), v('hlava', 'h-viking', 'Vikinská helma', 1100, { b: 'viking' }),
+  v('hlava', 'h-roh', 'Jednorožčí roh', 1300, { b: 'roh' }), v('hlava', 'h-pizza', 'Pizza čepice', 1600, { b: 'pizza' }),
+  v('hlava', 'h-korunka', 'Korunka', 2000, { b: 'korunka' }), v('hlava', 'h-chobotnice', 'Chobotnice', 2600, { b: 'chobotnice' }),
+  v('hlava', 'h-astronaut', 'Skafandr', 3000, { b: 'astronaut' }),
 
-  // Brýle
-  v('bryle', 'br-nerd', 'Nerdky', 80, { b: 'nerd' }), v('bryle', 'br-srdickove', 'Srdíčkové', 180, { b: 'srdickove' }),
-  v('bryle', 'br-velke', 'Obří sluneční', 300, { b: 'velke' }), v('bryle', 'br-lyzarske', 'Lyžařské', 600, { b: 'lyzarske' }),
-
-  // Na obličej
-  v('tvar', 'tv-pihy', 'Pihy', 30), v('tvar', 'tv-knir', 'Knír', 400),
+  // Oblečení
+  v('obleceni', 'ob-tricko', 'Tričko', 0, { b: 'tricko' }), v('obleceni', 'ob-mikina', 'Mikina', 0, { b: 'mikina' }),
+  v('obleceni', 'ob-pruhy', 'Pruhované', 40, { b: 'pruhy' }), v('obleceni', 'ob-tricko-hvezda', 'Tričko s hvězdou', 50, { b: 'tricko-hvezda' }),
+  v('obleceni', 'ob-saty', 'Šaty', 60, { b: 'saty' }), v('obleceni', 'ob-monterky', 'Montérky', 120, { b: 'monterky' }),
+  v('obleceni', 'ob-plavky', 'Plavky', 160, { b: 'plavky' }), v('obleceni', 'ob-smoking', 'Smoking', 800, { b: 'smoking' }),
+  v('obleceni', 'ob-superhrdina', 'Superhrdina', 1000, { b: 'superhrdina' }), v('obleceni', 'ob-dino', 'Dino overal', 1300, { b: 'dino' }),
+  v('obleceni', 'ob-astronaut', 'Astronaut', 1800, { b: 'astronaut' }), v('obleceni', 'ob-disko', 'Disko flitry', 2200, { b: 'disko' }),
+  v('obleceni', 'ob-brneni', 'Zlaté brnění', 2800, { b: 'brneni' }),
 
   // Boty
   v('boty', 'bo-modre', 'Modré tenisky', 0, { c: '#4dabf7' }), v('boty', 'bo-ruzove', 'Růžové tenisky', 0, { c: '#ff5fa2' }),
   v('boty', 'bo-cervene', 'Červené', 60, { c: '#e8352b' }), v('boty', 'bo-zlute', 'Žluté', 60, { c: '#ffd34d' }),
-  v('boty', 'bo-cerne', 'Černé', 100, { c: '#2b2230' }), v('boty', 'bo-zlate', 'Zlaté', 1400, { c: '#e0a800' }),
+  v('boty', 'bo-cerne', 'Černé', 100, { c: '#2b2230' }), v('boty', 'bo-kovbojky', 'Kovbojky', 300, { b: 'kovbojky' }),
+  v('boty', 'bo-zabky', 'Žabí bačkory', 450, { b: 'zabky' }), v('boty', 'bo-brusle', 'Kolečkové brusle', 700, { b: 'brusle' }),
+  v('boty', 'bo-zlate', 'Zlaté', 1400, { c: '#e0a800' }), v('boty', 'bo-raketove', 'Raketové boty', 2400, { b: 'raketove' }),
+  v('boty', 'bo-kridla', 'Okřídlené', 3000, { b: 'kridla' }),
 
   // V ruce (čokoláda v puse, lízátko v pravé ruce, ostatní v mávající ruce)
   v('ruka', 'r-kytka', 'Kytička', 40, { b: 'kytka' }), v('ruka', 'r-cokolada', 'Čokoláda', 60, { b: 'cokolada' }),
   v('ruka', 'r-balonek', 'Balónek', 60, { b: 'balonek' }), v('ruka', 'r-lizatko', 'Lízátko', 80, { b: 'lizatko' }),
   v('ruka', 'r-zmrzlina', 'Zmrzlina', 100, { b: 'zmrzlina' }), v('ruka', 'r-mobil', 'Mobil', 160, { b: 'mobil' }),
   v('ruka', 'r-mikrofon', 'Mikrofon', 300, { b: 'mikrofon' }), v('ruka', 'r-hulka', 'Kouzelná hůlka', 900, { b: 'hulka' }),
+  v('ruka', 'r-trofej', 'Pohár vítěze', 1400, { b: 'trofej' }), v('ruka', 'r-mec', 'Světelný meč', 2600, { b: 'mec' }),
 
   // Mazlíček
   v('mazlicek', 'm-rybicka', 'Rybička', 160, { b: 'rybicka' }), v('mazlicek', 'm-kocka', 'Kočička', 240, { b: 'kocka' }),
@@ -131,7 +169,7 @@ function proKresleni(z) {
   return {
     rod: z.rod, kuze: b('kuze').b, vlasy: b('uces').b, barvaVlasu: b('barva').c, oci: b('oci').b, pusa: b('pusa').b,
     obleceni: vol('obleceni')?.b, hlava: vol('hlava')?.b, bryle: vol('bryle')?.b, boty: b('boty').c,
-    kousnuti: losDne(z, 'kous' + RELACE), pihy: z.tvar === 'tv-pihy', vousy: z.tvar === 'tv-knir' ? 'knir' : '', vec: vol('ruka')?.b, mazlicek: vol('mazlicek')?.b,
+    kousnuti: losDne(z, 'kous' + RELACE), pihy: z.tvar === 'tv-pihy', vousy: z.tvar === 'tv-knir' ? 'knir' : '', oblicej: vol('tvar')?.b, botyTyp: b('boty').b, vec: vol('ruka')?.b, mazlicek: vol('mazlicek')?.b,
   };
 }
 

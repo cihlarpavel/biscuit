@@ -112,6 +112,9 @@ Učebnice **Happy Street 2, 3. vydání (Oxford, české vydání)**, Units 1–
   Ceny v Drip shopu i hranice vzácnosti ×2. Tlačítko „Náhodný mix“ v Drip shopu zrušeno.
 - **Úroveň postavičky** (`uroven()` v postavicka.js, Pavel 3. 10.): podle nejdražší věci na sobě – zdarma bílé
   pozadí, Cool nádech + mátový kroužek, Epické fialový + třpytky, Legendární zlatá záře, Bizár duhová aura.
+  Každá sekce Drip shopu jde od obyčejných po bizáry (164 věcí; těsta tygr…disko koule, pusy až po duhový jazyk,
+  brýle až po kyber vizor) – nové kresby v blob.js v bloku „Rozšíření 3. 10. 2026“ (OBLICEJ, OBLECENI_ZA, BOTY).
+  Brýle jsou v pořadí hned za Očima.
   Věci zdarma jsou schválně obyčejné (tričko bez hvězdy, perník placený). Barva vlasů = kolečka v sekci Účes
   (`vUcesu`). Věci „V ruce“ (kromě čokolády a lízátka) drží v mávající ruce (`V_RUCE` v blob.js).
 - **Denní cíl 20 min** jako odpočet (`odpocet()` v app.js): kolečko „20 min zbývá“ ubývá; tlačítko „Jdeme na to“ →
