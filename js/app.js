@@ -50,6 +50,12 @@ function route() {
   (TRASY[cesta] || domu)(arg && decodeURIComponent(arg));
 }
 addEventListener('hashchange', route);
+// Odkaz na adresu, na které už jsme (třeba Zpět z výběru délky battlu, který běží pod #/battle),
+// by prohlížeč ignoroval – obrazovku proto vykreslíme ručně.
+document.addEventListener('click', e => {
+  const a = e.target.closest('a[href^="#/"]');
+  if (a && a.getAttribute('href') === location.hash) { e.preventDefault(); route(); }
+});
 const jdi = h => { if (location.hash === h) route(); else location.hash = h; };
 
 // ---------- Hlavička ----------
