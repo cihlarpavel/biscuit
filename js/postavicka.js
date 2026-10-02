@@ -123,7 +123,7 @@ function proKresleni(z) {
   return {
     rod: z.rod, kuze: b('kuze').b, vlasy: b('uces').b, barvaVlasu: b('barva').c, oci: b('oci').b, pusa: b('pusa').b,
     obleceni: vol('obleceni')?.b, hlava: vol('hlava')?.b, bryle: vol('bryle')?.b, boty: b('boty').c,
-    kousnuti: losDne(z, 'kous'), pihy: z.tvar === 'tv-pihy', vousy: z.tvar === 'tv-knir' ? 'knir' : '', vec: vol('ruka')?.b, mazlicek: vol('mazlicek')?.b,
+    kousnuti: losDne(z, 'kous' + RELACE), pihy: z.tvar === 'tv-pihy', vousy: z.tvar === 'tv-knir' ? 'knir' : '', vec: vol('ruka')?.b, mazlicek: vol('mazlicek')?.b,
   };
 }
 
@@ -170,6 +170,8 @@ const SCENY_KLICE = Object.keys(SCENY_POZADI);
 // Los podle semínka postavičky a dne: každý den jiné pozadí i ukousnutí, ale všude v aplikaci stejné.
 const losDne = (z, sul = '') => [...(z.seminko || JSON.stringify([z.kuze, z.uces, z.barva, z.oci])) + new Date().toDateString() + sul]
   .reduce((a, c) => (Math.imul(a, 31) + c.charCodeAt(0)) >>> 0, 11);
+// Ukousnutí se losuje znovu při každém otevření aplikace (během jednoho otevření je všude stejné).
+const RELACE = Math.random().toString(36).slice(2, 8);
 function pozadi(z) {
   const h = losDne(z);
   return `<rect width="120" height="120" fill="#fff"/><g ${CARA}>${SCENY_POZADI[SCENY_KLICE[h % SCENY_KLICE.length]]}</g>`;

@@ -13,7 +13,7 @@ const TELO = Array.from({ length: 120 }, (_, i) => {
 }).join(' ') + 'Z';
 // Ukousnutý kousek vlevo dole – tři kruhy „zubů“. Nahoře by se pletl s vlasy a klobouky.
 // 5 ukousnutí: [úhel ve stupních, poloměr „zubu“]. 0 = největší vlevo dole (výchozí, ikona aplikace),
-// ostatní menší a jinde – mimo vlasy (díra ve vlasech vypadala jako bílá bublina), nohy a ruce.
+// ostatní menší a jinde – mimo přední vlasy, nohy a ruce. Vlasy se nekoušou, jen sušenka.
 // Aplikace losuje podle semínka a dne.
 const BOD = (u, d) => { const a = u * Math.PI / 180; return [CX + Math.cos(a) * d, CY + Math.sin(a) * d]; };
 const KOUSNUTI = [
@@ -165,20 +165,19 @@ export function susenkaObsah(v) {
   const ki = Math.abs(v.kousnuti | 0) % KOUSNUTI.length, KOUS = KOUSNUTI[ki];
   const kousMaska = s => `<mask id="${id}${s}"><rect x="-20" y="-20" width="160" height="160" fill="#fff"/>${KOUS.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#000"/>`).join('')}</mask>`;
   return `<g style="color:${k.barva}"><defs>${defs}
-    <clipPath id="${id}k"><path d="${TELO}"/>${vl ? (v.vlasy === 'rozcuch' ? `<path d="${BODLINY}"/>` : `<path d="${CEPICE}"/>`) : ''}</clipPath>
     <clipPath id="${id}"><path d="${TELO}"/></clipPath>${kousMaska('m')}${kousMaska('v')}</defs>
     ${tela ? nohy(v.boty || '#4dabf7') : ''}
     <g class="pv-kyv">
-    ${vl && vl.za ? `<g mask="url(#${id}m)"><g class="pv-vlasy">${vl.za(cv)}</g></g>` : ''}
+    ${vl && vl.za ? `<g class="pv-vlasy">${vl.za(cv)}</g>` : ''}
     ${k.za || ''}
     <g mask="url(#${id}m)">
       <path d="${TELO}" fill="${k.barva}"/>
       <g clip-path="url(#${id})">${k.vzor || ''}${OBLECENI[v.obleceni] || ''}<ellipse cx="40" cy="42" rx="12" ry="7" fill="#fff" opacity=".2" transform="rotate(-35 40 42)"/></g>
       <path d="${TELO}" fill="none" ${T}/>
-      ${predVlasy}
     </g>
-    <!-- obrys ukousnutí pod ručičkama, jinak přes ně přejede -->
-    <g clip-path="url(#${id}k)"><g mask="url(#${id}v)">${KOUS.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="${OB}" stroke-width="4.8"/>`).join('')}</g></g>
+    <!-- Ukousnutí bere jen sušenku: zadní vlasy jsou vidět dírou, přední vlasy a ručičky leží přes obrys. -->
+    <g clip-path="url(#${id})"><g mask="url(#${id}v)">${KOUS.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="${OB}" stroke-width="4.8"/>`).join('')}</g></g>
+    ${predVlasy}
     ${tela ? `<g class="pv-ruce">${ruce(v.mavani !== false)}</g>` : ''}
     <g fill="currentColor" stroke="${OB}" stroke-width="1.3" stroke-linejoin="round">${drobky(ki)}</g>
     ${v.rod === 'z' ? TVARE : ''}${v.pihy ? PIHY : ''}

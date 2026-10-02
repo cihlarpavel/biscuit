@@ -20,8 +20,8 @@ v `sw.js`, commit, `git push` (`gh` je v `~/.local/bin/gh`). Ve škole jsou na s
 - **Postavička = ukousnutá sušenka** (od 2. 10. 2026; Pou styl Pavel zamítl jako kopírování, kostičky a
   dřívější chibi taky). Kulatá sušenka je hlava i tělo, má vlasy, ručičky (jednou mává), nožičky s botami;
   holka (`vzhled.rod === 'z'`) má řasy a tvářičky. Ukousnutí má 5 podob (`KOUSNUTI` v blob.js, 0 = největší
-  vlevo dole, ikona), aplikace losuje podle semínka a dne (`losDne`). Ukousnutí nesmí do vlasů – díra v tmavých
-  vlasech vypadá jako bílá bublina. Zornice (`pv-zl`/`pv-zr`) koukají na diváka; CSS je občas rozhýbe
+  vlevo dole, ikona), aplikace losuje při každém otevření (`RELACE`). Ukousnutí bere jen sušenku: zadní
+  vlasy jsou vidět dírou, obrys jen po hraně sušenky, přední vlasy a ručičky leží přes něj. Zornice (`pv-zl`/`pv-zr`) koukají na diváka; CSS je občas rozhýbe
   (pohled stranou, šilhání, zakoulení jedním okem, levá spadne na dno a vyskočí).
   - `js/blob.js` kreslí (`susenkaObsah(v)` s klíči kreslení, `blob(v, px)` samostatně – náhled `susenka.html`).
   - `js/postavicka.js` je katalog Drip shopu (12 kategorií, id s předponou `t-`, `u-`, `b-`, `o-`…, vzácnost
