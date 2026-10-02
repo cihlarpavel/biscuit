@@ -177,7 +177,7 @@ street | ulice | 🏘️`), vety: [
     ['She\'s in the garage!', 'Je v garáži!'],
     ['Flossy\'s got three puppies!', 'Flossy má tři štěňátka!'],
     ['How do you spell dog?', 'Jak se hláskuje dog?'],
-    ['I spy with my little eye something beginning with b.', 'Vidím, vidím něco, co začíná na b.'],
+    ['I spy with my little eye something beginning with b.', 'Hra „Vidím, vidím, co ty nevidíš“: vidím něco na písmeno b.'],
     ['Is it a banana? Yes!', 'Je to banán? Ano!'],
   ] },
   { id: 'u2', skupina: 'hs2', unit: 2, nazev: 'The presents', ikona: '🎁', extra: 'cisla100', slova: radky(`

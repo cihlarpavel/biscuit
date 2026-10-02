@@ -98,7 +98,7 @@ export function hraj(ulohy, { battle = false, nazev = '', limit = 0, profil = nu
     let telo = '';
 
     if (u.typ === 'nove') {
-      telo = `<div class="zadani">Nové slovíčko ✨</div>
+      telo = `<div class="zadani">${p.en.includes(' ') ? 'Nová věta' : 'Nové slovíčko'} ✨</div>
         <div class="karta-nova">${p.obr ? `<div class="obr">${esc(p.obr)}</div>` : ''}
           <div class="en">${esc(p.en)}</div><div class="cz">${esc(p.cz)}</div>
           <div class="repro-radek">${poslech(p.en, true)}</div></div>
