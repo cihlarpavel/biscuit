@@ -21,10 +21,10 @@ const KOUSNUTI = [
   [[4, 7], [16, 5]],                  // vpravo
   [[57, 7], [47, 5]],                 // dole vpravo
   [[90, 7.5], [101, 5]],              // dole uprostřed, mezi nohama
-  [[160, 7], [149, 5]],               // vlevo pod mávající rukou
+  [[156, 7], [145, 5]],               // vlevo pod mávající rukou
 ].map(k => k.map(([u, r]) => [...BOD(u, R + 3), r]));
 // Drobky odletují ven od hlavního zubu.
-const drobky = i => { const u = [140, 6, 57, 92, 158][i];
+const drobky = i => { const u = [140, 4, 57, 90, 156][i];
   return [[0, 12, 4], [9, 19, 3], [-7, 24, 3]].map(([du, dd, w]) => { const [x, y] = BOD(u + du, R + dd);
     return `<rect x="${(x - w / 2).toFixed(1)}" y="${(y - w / 2).toFixed(1)}" width="${w}" height="${w}" transform="rotate(${(u * 3 + du * 7) % 90} ${x.toFixed(1)} ${y.toFixed(1)})"/>`; }).join(''); };
 let n = 0;
@@ -174,8 +174,9 @@ export function susenkaObsah(v) {
       <path d="${TELO}" fill="none" ${T}/>
       ${predVlasy}
     </g>
-    ${tela ? `<g class="pv-ruce">${ruce(v.mavani !== false)}</g>` : ''}
+    <!-- obrys ukousnutí pod ručičkama, jinak přes ně přejede -->
     <g clip-path="url(#${id}k)"><g mask="url(#${id}v)">${KOUS.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="${OB}" stroke-width="6"/>`).join('')}</g></g>
+    ${tela ? `<g class="pv-ruce">${ruce(v.mavani !== false)}</g>` : ''}
     <g fill="currentColor" stroke="${OB}" stroke-width="1.6" stroke-linejoin="round">${drobky(ki)}</g>
     ${v.rod === 'z' ? TVARE : ''}${v.pihy ? PIHY : ''}
     <g class="pv-pusa">${pusa}</g>
