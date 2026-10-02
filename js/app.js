@@ -80,7 +80,7 @@ function obrazovkaVitej() {
 
 function novy() {
   let vzhled = nahodnyVzhled();
-  obrazovka(`<section class="stranka">
+  obrazovka(`<section class="stranka">${S.profily().length ? zpet('#/rodic') : ''}
     <div class="maskot-bublina">${maskot(80, 'mrk')}<div class="bublina">Jak ti mám říkat? Stačí přezdívka.</div></div>
     <input id="prezdivka" class="pole" maxlength="14" placeholder="Přezdívka" autocomplete="off">
     <div class="rod-volba"><button data-rod="z">👧 Holka</button><button data-rod="m">👦 Kluk</button></div>
@@ -487,6 +487,8 @@ function rodic() {
   obrazovka(`<section class="stranka">${zpet('#/ja')}<h1>Pro rodiče</h1>
     <p class="drobne">Čas se počítá jen při aktivním učení: po 45 s bez klepnutí nebo s aplikací na pozadí se zastaví.</p>
     ${karty}
+    <a class="btn vedlejsi" href="#/novy">＋ Založit další profil</a>
+    <p class="drobne">Jen výjimečně (třeba pro sourozence). Mezi profily se přepíná tady tlačítkem „Používat tento profil“.</p>
     <h3>Záloha</h3><p class="drobne">Všechno je jen v tomhle telefonu. Zálohu si ulož třeba do Souborů.</p>
     <div class="tlacitka"><button class="btn vedlejsi" id="zaloha">Stáhnout zálohu</button>
       <label class="btn vedlejsi">Obnovit ze zálohy<input type="file" id="obnova" accept=".json,application/json" hidden></label>
