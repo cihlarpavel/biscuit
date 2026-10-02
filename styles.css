@@ -593,7 +593,7 @@ body.noc .tabs { background: rgba(29, 23, 51, .95) var(--papir); border-top-colo
 body.noc .tabs a.stred span { background: var(--karta); }
 body.noc .kol-pozadi { stroke: #3a2f63; }
 body.noc .sloty i { background: rgba(255, 255, 255, .06); border-color: #6b58b8; }
-body.noc .sloty i.plne { background: #fff4dc; }
+body.noc .sloty i.plne { background: #fff4dc; color: #2b2348; }
 body.noc .veta-radek { background: rgba(255, 255, 255, .05); border-color: #6b58b8; }
 body.noc .btn.vedlejsi { background: linear-gradient(180deg, #4a3d7e, #3a2f63); color: #e2d6ff; box-shadow: 0 5px 0 #231b45, 0 9px 16px rgba(0, 0, 0, .3); }
 body.noc .repro { background: linear-gradient(180deg, #4a3d7e, #3a2f63); box-shadow: 0 4px 0 #231b45; }
@@ -620,9 +620,10 @@ body.noc :is(.delka.on, .rod-volba button.on, .vec.on) { border-color: var(--ruz
 body.noc .kat.on { background-color: var(--ruzova); color: #fff; }
 /* V noci měly dlaždice s písmeny bílé pozadí a světlé písmo (skoro neviditelné). */
 body.noc .dlazdice { background: #3a2f63; color: #fff; border-color: rgba(255, 255, 255, .22); box-shadow: 0 4px 0 #241c45; }
-body.noc .sloty i { color: #fff; }
 /* „Drip shop čeká, kámo“: v noci bílá karta se světlým textem – tmavá karta a jasně růžový text. */
 body.noc .drip-ceka { background: var(--karta); color: #ff9fcc; }
 body.noc .drip-ceka b { background: none; -webkit-text-fill-color: #ff9fcc; color: #ff9fcc; }
 .hlas-volba { display: flex; gap: 8px; align-items: center; }
 .hlas-volba select { flex: 1; min-width: 0; padding: 10px; border-radius: 12px; font-size: 15px; }
+body.noc .sloty.ok i.plne { color: #2e9c84; }
+body.noc .sloty.chyba i.plne { color: #e0445a; }
