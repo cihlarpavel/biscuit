@@ -47,10 +47,13 @@ const KRESBY = {
   'tab-uceni': `<path d="M24 14 c-5 -4 -11 -4.5 -15 -2.5 v23 c4 -2 10 -1.5 15 2.5z" fill="#fff" ${t}/>
     <path d="M24 14 c5 -4 11 -4.5 15 -2.5 v23 c-4 -2 -10 -1.5 -15 2.5z" fill="#ffb3d4" ${t}/>
     <path d="M13 19 q4.5 -1 7.5 1 M13 24 q4.5 -1 7.5 1 M28 20 q3.5 -1.6 7 -1" fill="none" stroke="${O}" stroke-width="1.8" stroke-linecap="round" opacity=".5"/>`,
-  'tab-battle': `<g transform="rotate(45 24 24)"><rect x="21.5" y="5" width="5" height="27" rx="2.5" fill="#e8eef7" ${t}/><path d="M24 8 v20" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
-      <rect x="15.5" y="31" width="17" height="4.5" rx="2.2" fill="#ffd34d" ${t}/><rect x="22" y="35.5" width="4" height="7" rx="2" fill="#b77a45" ${t}/></g>
-    <g transform="rotate(-45 24 24)"><rect x="21.5" y="5" width="5" height="27" rx="2.5" fill="#e8eef7" ${t}/><path d="M24 8 v20" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
-      <rect x="15.5" y="31" width="17" height="4.5" rx="2.2" fill="#ff8fc4" ${t}/><rect x="22" y="35.5" width="4" height="7" rx="2" fill="#b77a45" ${t}/></g>`,
+  'tab-battle': `<path d="M5 33 q-1 -15 9 -18 q8 -2 11 5 l3 5 l-3 1.5 q1 4 -1 6 l-1.5 1 q1 4 -5 4.5 q-8 1 -12.5 -5z" fill="#ffd9c2" ${t}/>
+    <path d="M5 30 q-2 -13 7 -17 q8 -3 13 4 q-6 -1 -10 2 q-3 4 -3 10 q-4 -2 -7 1z" fill="#8a4b2f" ${t}/>
+    <circle cx="20" cy="24.5" r="1.7" fill="${O}"/><path d="M19.5 20.5 l3 -1.2" ${t} stroke-width="2"/>
+    <path d="M43 33 q1 -15 -9 -18 q-8 -2 -11 5 l-3 5 l3 1.5 q-1 4 1 6 l1.5 1 q-1 4 5 4.5 q8 1 12.5 -5z" fill="#c98d63" ${t}/>
+    <path d="M43 30 q2 -13 -7 -17 q-8 -3 -13 4 q6 -1 10 2 q3 4 3 10 q4 -2 7 1z" fill="#ff8fc4" ${t}/>
+    <circle cx="28" cy="24.5" r="1.7" fill="${O}"/><path d="M28.5 20.5 l-3 -1.2" ${t} stroke-width="2"/>
+    <path d="M24 6 l-2 4 h3 l-2 4" fill="none" stroke="#ffb703" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>`,
   'tab-drip': `<path d="M24 13 v-2 a3 3 0 1 0 -3 -3" fill="none" ${t}/>
     <path d="M24 13 l-13 6 l-3 9 l6 2 v10 h20 v-10 l6 -2 l-3 -9 z" fill="#ff8fc4" ${t}/>
     <path d="M18 16 q6 7 12 0" fill="#ffd6e8" ${t}/><path d="M22 20 v6 M26 20 v6" stroke="${O}" stroke-width="1.8" stroke-linecap="round"/>

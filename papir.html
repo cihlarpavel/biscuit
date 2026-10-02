@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Biscuit – papírový styl</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@700;800;900&display=swap">
+<style>
+  /* Návrh: papírová koláž. Žádné přechody – plné papírové barvy, vrstvy se stínem, zrnitost. */
+  :root {
+    --krem: #fffaf2; --papir: #f7efe3; --pozadi: #efe3d2; --inkoust: #2f2a4a; --tlumene: #7d6f86;
+    --korala: #f08a7e; --korala-tm: #c9655b; --pudr: #f2b5c4; --horcice: #f2c25b; --salvej: #a9c9a4; --levandule: #c8b6e2; --mata: #9fd3c7; --hneda: #a56b4f;
+    --zrno: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .25 0 0 0 0 .2 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    --stin: 0 1px 0 rgba(255, 255, 255, .7) inset, 0 2px 1px rgba(90, 58, 42, .10), 0 8px 16px -6px rgba(90, 58, 42, .28);
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: Nunito, system-ui, sans-serif; font-weight: 800; color: var(--inkoust); background: var(--pozadi) var(--zrno); }
+  h1, h2, h3, b, .btn, .bublina { font-family: 'Baloo 2', Nunito, sans-serif; }
+  .uvod { max-width: 760px; margin: 0 auto; padding: 22px 16px 6px; }
+  .uvod h1 { margin: 0 0 4px; font-size: 28px; }
+  .uvod p { margin: 0; color: var(--tlumene); font-size: 15px; }
+  .telefon { max-width: 390px; margin: 16px auto 40px; padding: 14px 14px 0; background: var(--pozadi) var(--zrno); border-radius: 36px; box-shadow: 0 0 0 10px #2f2a4a, 0 20px 50px rgba(0, 0, 0, .25); overflow: hidden; }
+
+  /* Vrstvený papír: list + podkladový list jiné barvy posunutý za ním */
+  .list { position: relative; background: var(--krem) var(--zrno); border-radius: 22px; box-shadow: var(--stin); }
+  /* podkladový list jiné barvy vykukující zpod karty */
+  .list { box-shadow: 0 1px 0 rgba(255, 255, 255, .7) inset, 5px 6px 0 var(--zada, var(--pudr)), 5px 10px 14px -4px rgba(90, 58, 42, .3); }
+  .paska { position: absolute; width: 70px; height: 20px; top: -9px; left: 50%; translate: -50% 0; rotate: -4deg; background: rgba(242, 194, 91, .75);
+    box-shadow: 0 1px 2px rgba(90, 58, 42, .15); clip-path: polygon(3% 0, 97% 4%, 100% 50%, 96% 100%, 2% 96%, 0 50%); }
+
+  .hlavicka { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .hlavicka .jmeno { flex: 1; } .hlavicka .jmeno b { display: block; font-size: 19px; line-height: 1; } .hlavicka .jmeno small { color: var(--korala-tm); font-size: 13px; }
+  .pilulka { display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; border-radius: 99px; background: var(--krem) var(--zrno); box-shadow: var(--stin); font-size: 15px; }
+
+  .hero { position: relative; height: 220px; border-radius: 26px; overflow: hidden; box-shadow: var(--stin); margin-bottom: 22px; }
+  .hero > svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .hero::after { content: ''; position: absolute; inset: 0; background: var(--zrno); pointer-events: none; z-index: 1; }
+  .hero .postava, .hero .vpravo { z-index: 2; }
+  .hero .postava { position: absolute; left: -6px; bottom: -14px; }
+  .hero .vpravo { position: absolute; right: 12px; top: 54px; width: 54%; display: flex; flex-direction: column; gap: 8px; }
+  .bublina { background: var(--krem) var(--zrno); padding: 8px 12px; border-radius: 16px 16px 16px 4px; box-shadow: var(--stin); font-size: 16px; font-weight: 700; }
+  .uroven { background: var(--krem) var(--zrno); padding: 7px 11px 9px; border-radius: 16px; box-shadow: var(--stin); font-size: 12px; color: var(--tlumene); }
+  .uroven b { color: var(--inkoust); font-size: 15px; }
+  .proužek { height: 11px; border-radius: 99px; background: var(--papir); box-shadow: inset 0 1px 2px rgba(90, 58, 42, .2); margin-top: 4px; overflow: hidden; }
+  .proužek i { display: block; height: 100%; width: 66%; border-radius: 99px; background: var(--horcice); box-shadow: inset 0 -2px 0 rgba(90, 58, 42, .15); }
+
+  .dnes { display: flex; gap: 14px; align-items: center; padding: 16px; margin-bottom: 26px; --zada: var(--salvej); }
+  .kruh { flex: none; width: 96px; height: 96px; border-radius: 50%; display: grid; place-content: center; text-align: center;
+    background: conic-gradient(var(--salvej) 0 72%, var(--papir) 0); box-shadow: var(--stin); }
+  .kruh div { width: 74px; height: 74px; border-radius: 50%; background: var(--krem); display: grid; place-content: center; box-shadow: inset 0 2px 3px rgba(90, 58, 42, .15); }
+  .kruh b { font-size: 28px; line-height: 1; } .kruh small { font-size: 11px; color: var(--tlumene); }
+  .dnes h3 { margin: 0; font-size: 22px; } .dnes p { margin: 2px 0 10px; font-size: 13px; color: var(--tlumene); }
+  .btn { display: inline-block; border: 0; padding: 10px 18px; border-radius: 14px; font-size: 18px; font-weight: 700; color: #fff; background: var(--korala) var(--zrno);
+    box-shadow: 0 4px 0 var(--korala-tm), 0 8px 12px -4px rgba(90, 58, 42, .35); text-shadow: 0 1px 0 rgba(0, 0, 0, .12); }
+
+  .sekce { display: flex; align-items: center; gap: 10px; margin: 6px 0 14px; }
+  .sekce h2 { margin: 0; font-size: 22px; line-height: 1; }
+  .sekce small { color: var(--tlumene); font-size: 13px; }
+  .stuha { background: var(--horcice) var(--zrno); padding: 2px 12px; border-radius: 6px; box-shadow: var(--stin); rotate: -2deg; display: inline-block; }
+
+  .balicky { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 14px; margin-bottom: 24px; }
+  .balicek { padding: 10px 10px 12px; text-align: center; }
+  .balicek .okno { height: 74px; border-radius: 16px; margin-bottom: 8px; display: grid; place-items: center; background: var(--barva) var(--zrno);
+    box-shadow: inset 0 2px 4px rgba(90, 58, 42, .18); position: relative; overflow: hidden; }
+  .balicek .okno svg { position: relative; filter: drop-shadow(0 3px 2px rgba(90, 58, 42, .3)); }
+  .balicek .okno::before { content: ''; position: absolute; width: 110px; height: 110px; right: -40px; bottom: -50px; border-radius: 50%; background: rgba(255, 255, 255, .25); }
+  .balicek b { font-size: 16px; display: block; }
+  .balicek .stav { display: flex; gap: 3px; justify-content: center; margin-top: 4px; }
+  .balicek .stav i { width: 14px; height: 6px; border-radius: 3px; background: var(--papir); box-shadow: inset 0 1px 1px rgba(90, 58, 42, .2); }
+  .balicek .stav i.ok { background: var(--salvej); }
+
+  .lista { display: flex; justify-content: space-around; align-items: flex-end; margin: 0 -14px; padding: 8px 6px 18px; background: var(--krem) var(--zrno);
+    box-shadow: 0 -6px 14px -8px rgba(90, 58, 42, .35); border-radius: 26px 26px 0 0; }
+  .lista a { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 11px; color: var(--tlumene); }
+  .lista a span { width: 46px; height: 42px; display: grid; place-items: center; border-radius: 14px; background: var(--papir); box-shadow: var(--stin); }
+  .lista a.on span { background: var(--pudr); translate: 0 -4px; } .lista a.on { color: var(--korala-tm); }
+  .lista .stred span { width: 64px; height: 64px; border-radius: 50%; margin-top: -26px; background: var(--krem); box-shadow: 0 0 0 4px var(--korala), var(--stin); overflow: hidden; }
+
+  .postavy { max-width: 760px; margin: 0 auto 50px; padding: 0 16px; }
+  .postavy .rada { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
+  .postavy .rada > div { padding: 10px; border-radius: 26px; --zada: var(--levandule); }
+  .postavy .rada > div:nth-child(2) { --zada: var(--salvej); } .postavy .rada > div:nth-child(3) { --zada: var(--horcice); } .postavy .rada > div:nth-child(4) { --zada: var(--pudr); }
+</style>
+</head>
+<body>
+  <div class="uvod">
+    <h1>Návrh: papírová koláž</h1>
+    <p>Vrstvy vystřiženého papíru se stíny, papírová zrnitost, plné barvy bez přechodů. Postavičky bez černých obrysů. Ve dne a v noci.</p>
+  </div>
+  <div class="telefon" id="den"></div>
+  <div class="telefon" id="noc"></div>
+  <div class="postavy"><h2 style="text-align:center">Postavičky</h2><div class="rada" id="postavy"></div></div>
+
+<script type="module">
+  import { postavicka } from './js/postavicka.js';
+  import { scenaPapir } from './js/papir.js';
+  import { ik } from './js/ikony.js';
+  const lotka = { kuze: 'k1', uces: 'mikada', barva: 'zrzava', duhovka: 'o-modre', oci: 'rasy', obleceni: 'mikina-lila', ruka: 'susenka', pozadi: 'p-lila' };
+  const balicky = [['barvy', 'Barvy', '#c8b6e2', 2], ['cisla20', 'Čísla do 20', '#9fd3c7', 1], ['zviratka', 'Zvířátka doma', '#f2c25b', 3], ['hracky', 'Hračky', '#f2b5c4', 0]];
+  const obrazovka = noc => `
+    <div class="hlavicka">${postavicka(lotka, 44, 'hlava', false, { papir: true })}<div class="jmeno"><b>Šarlotka</b><small>Křupavka</small></div>
+      <span class="pilulka">${ik('ohen', 22, { podklad: false })} 3</span><span class="pilulka">${ik('susenka', 22, { podklad: false })} 76</span></div>
+    <div class="hero">${scenaPapir(noc ? 'noc' : 'den')}
+      <div class="postava">${postavicka(lotka, 170, 'cela', true, { bezPozadi: true, papir: true })}</div>
+      <div class="vpravo"><div class="bublina">${noc ? 'Ještě jedna před spaním? 🌙' : 'Zase ty? Super 😎'}</div>
+        <div class="uroven"><b>Křupavka</b> · 76 / 150<div class="proužek"><i></i></div></div></div></div>
+    <div class="list dnes"><span class="paska"></span><div class="kruh"><div><b>7</b><small>z 10 min</small></div></div>
+      <div><h3>Dnešní lekce</h3><p>Nová slovíčka z Unit 1 + opakování</p><span class="btn">Jdeme na to →</span></div></div>
+    <div class="sekce">${ik('o-kniha', 40, { podklad: false })}<div><h2><span class="stuha">Opakování</span></h2><small>Co už znáš ze 3. třídy</small></div></div>
+    <div class="balicky">${balicky.map(([id, nazev, barva, ok], i) => `<div class="list balicek" style="--barva:${barva};--zada:${['#f2b5c4', '#f2c25b', '#a9c9a4', '#c8b6e2'][i]}">
+      <div class="okno">${ik(id, 50, { podklad: false })}</div><b>${nazev}</b><div class="stav">${[0, 1, 2, 3, 4].map(k => `<i class="${k < ok ? 'ok' : ''}"></i>`).join('')}</div></div>`).join('')}</div>
+    <div class="lista"><a class="on"><span>${ik('domu', 32, { podklad: false })}</span>Domů</a><a><span>${ik('tab-battle', 34, { podklad: false })}</span>Battle</a>
+      <a class="stred"><span>${postavicka(lotka, 60, 'hlava', true, { papir: true })}</span>Drip shop</a>
+      <a><span>${ik('tab-zebricek', 32, { podklad: false })}</span>Žebříček</a><a><span>${ik('tab-ja', 32, { podklad: false })}</span>Já</a></div>`;
+  document.getElementById('den').innerHTML = obrazovka(false);
+  const noc = document.getElementById('noc');
+  noc.innerHTML = obrazovka(true);
+  noc.style.cssText = '--krem:#3a335f;--papir:#2f2a4a;--pozadi:#231f3d;--inkoust:#f6efff;--tlumene:#b8aed0;color:#f6efff';
+  const looky = [
+    lotka,
+    { kuze: 'k4', uces: 'afro', barva: 'cerna', duhovka: 'o-hnede', obleceni: 'dziny', nausnice: 'kruhy', pozadi: 'p-mata' },
+    { kuze: 'k2', uces: 'kratke', barva: 'hneda', duhovka: 'o-zelene', obleceni: 'dres', hlava: 'ksiltovka', pozadi: 'p-slunce', mazlicek: 'pejsek' },
+    { kuze: 'k3', uces: 'buns', barva: 'ruzova', duhovka: 'o-fialove', obleceni: 'kozena', oci: 'linky', pozadi: 'p-srdicka' },
+  ];
+  document.getElementById('postavy').innerHTML = looky.map(l => `<div class="list">${postavicka(l, 150, 'cela', true, { papir: true })}</div>`).join('');
+</script>
+</body>
+</html>

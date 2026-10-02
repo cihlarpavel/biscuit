@@ -214,7 +214,9 @@ function odstin(hex, f) {
   const k = [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16)).map(x => Math.round(f > 0 ? x + (255 - x) * f : x * (1 + f)));
   return '#' + k.map(x => Math.max(0, Math.min(255, x)).toString(16).padStart(2, '0')).join('');
 }
-const OBRYS = `stroke="#3b2a3f" stroke-width="1.6" stroke-linejoin="round"`;
+const OBRYS_KRESBA = `stroke="#3b2a3f" stroke-width="1.6" stroke-linejoin="round"`;
+// V papírovém stylu (volba papir) se obrysy vypnou a vrstvy dostanou vržený stín.
+let OBRYS = OBRYS_KRESBA;
 
 const hvezdicka = (x, y, r, c) => `<path d="M${x} ${y - r}l${r * .3} ${r * .7}l${r * .7} ${r * .3}l${-r * .7} ${r * .3}l${-r * .3} ${r * .7}l${-r * .3} ${-r * .7}l${-r * .7} ${-r * .3}l${r * .7} ${-r * .3}z" fill="${c}"/>`;
 const srdicko = (x, y, s, c) => `<path d="M${x} ${y + s}l${-s} ${-s}c${-s * .6} ${-s * .7} ${s * .3} ${-s * 1.5} ${s} ${-s * .6}c${s * .7} ${-s * .9} ${s * 1.6} ${-s * .1} ${s} ${s * .6}z" fill="${c}"/>`;
@@ -536,8 +538,13 @@ function maska(x, kuze, c) {
   }
 }
 
-function pozadi(id, defs) {
+function pozadi(id, defs, papir = false, F = '') {
   const x = vec(id) || vec('p-ruzove');
+  // Papírový styl: plné barvy ve dvou vrstvách, žádný přechod.
+  if (papir) {
+    const [a, b] = x.duha ? ['#fff4dc', '#f2b5c4'] : x.c;
+    return `<rect width="120" height="120" fill="${a}"/><circle cx="60" cy="78" r="50" fill="${b}" opacity=".65"${F}/>`;
+  }
   if (x.duha) {
     const g = 'g' + (++n);
     defs.push(`<linearGradient id="${g}" x1="0" y1="0" x2="1" y2="1">${DUHA.map((c, i) => `<stop offset="${i / 5}" stop-color="${c}" stop-opacity=".55"/>`).join('')}</linearGradient>`);
@@ -552,13 +559,22 @@ function pozadi(id, defs) {
 }
 
 // velikost v px; vyrez: 'cela' (celá postavička) nebo 'hlava' (malý avatar v seznamech)
-export function postavicka(vzhled = VYCHOZI, velikost = 120, vyrez = 'cela', pohyb = velikost >= 90, { bezPozadi = false } = {}) {
+export function postavicka(vzhled = VYCHOZI, velikost = 120, vyrez = 'cela', pohyb = velikost >= 90, { bezPozadi = false, papir = false } = {}) {
+  OBRYS = papir ? '' : OBRYS_KRESBA;
+  try { return kresli(vzhled, velikost, vyrez, pohyb, bezPozadi, papir); } finally { OBRYS = OBRYS_KRESBA; }
+}
+
+function kresli(vzhled, velikost, vyrez, pohyb, bezPozadi, papir) {
   const z = { ...VYCHOZI, ...vzhled };
   const defs = [];
+  // Papírové vrstvy: vržený stín (zrnitost papíru dodává CSS, filtr v každé kresbě by zpomaloval).
+  const pf = 'pf' + (++n);
+  if (papir) defs.push(`<filter id="${pf}" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="1.8" stdDeviation="1.1" flood-color="#5a3a2a" flood-opacity=".32"/></filter>`);
+  const F = papir ? ` filter="url(#${pf})"` : '';
   const kx = vec(z.kuze) || vec('k1');
   // Pleť s jemným stínováním do stran (u přechodových pletí bez něj).
   let kuze = vypln(kx, defs);
-  if (kx.c) {
+  if (kx.c && !papir) {
     const g = 'k' + (++n);
     defs.push(`<radialGradient id="${g}" cx=".42" cy=".38" r=".75"><stop offset="0" stop-color="${odstin(kx.c, .12)}"/><stop offset=".7" stop-color="${kx.c}"/><stop offset="1" stop-color="${odstin(kx.c, -.14)}"/></radialGradient>`);
     kuze = `url(#${g})`;
@@ -573,7 +589,7 @@ export function postavicka(vzhled = VYCHOZI, velikost = 120, vyrez = 'cela', poh
   const barvaVlasu = vec(z.barva);
   const iris = vypln(vec(z.duhovka) || vec('o-hnede'), defs);
   const obociBarva = barvaVlasu?.c ? odstin(barvaVlasu.c, -.35) : H;
-  const vlasy = (obsah) => z.uces === 'plesata' ? obsah : `<g ${OBRYS}>${obsah}</g>`;
+  const vlasy = (obsah) => z.uces === 'plesata' ? `<g${F}>${obsah}</g>` : `<g ${OBRYS}${F}>${obsah}</g>`;
   const sOfinou = !['plesata', 'ciro', 'obri-ciro'].includes(z.uces);
   const fid = 'f' + (++n);
   const tid = 't' + (++n);
@@ -584,8 +600,8 @@ export function postavicka(vzhled = VYCHOZI, velikost = 120, vyrez = 'cela', poh
 
   const hlava = celaMaska ? '' : `
     ${kapucova ? '' : `<g class="pv-vlasy">${vlasy(vlasyVzadu(z.uces, c))}</g>`}
-    <ellipse cx="36" cy="59" rx="3.2" ry="4.8" fill="${kuze}" ${OBRYS}/><ellipse cx="84" cy="59" rx="3.2" ry="4.8" fill="${kuze}" ${OBRYS}/>
-    <ellipse cx="60" cy="56" rx="25" ry="26" fill="${kuze}" ${OBRYS}/>
+    <ellipse cx="36" cy="59" rx="3.2" ry="4.8" fill="${kuze}" ${OBRYS}${F}/><ellipse cx="84" cy="59" rx="3.2" ry="4.8" fill="${kuze}" ${OBRYS}${F}/>
+    <ellipse cx="60" cy="56" rx="25" ry="26" fill="${kuze}" ${OBRYS}${F}/>
     ${kapucova || !sOfinou ? '' : `<g clip-path="url(#${fid})"><g transform="translate(0 3.5)" opacity=".16">${vlasyVpredu(z.uces, '#000')}</g></g>`}
     <path d="M59.5 56.5 q2.4 2.8 -.6 3.8" stroke="${kx.c ? odstin(kx.c, -.35) : H}" stroke-width="1.4" fill="none" stroke-linecap="round"/>
     ${kx.lesk ? '<ellipse cx="50" cy="42" rx="8" ry="5" fill="#fff" opacity=".45" transform="rotate(-25 50 42)"/>' : ''}
@@ -609,10 +625,10 @@ export function postavicka(vzhled = VYCHOZI, velikost = 120, vyrez = 'cela', poh
   return `<svg class="postavicka${hybe}" width="${velikost}" height="${velikost}" viewBox="${viewBox}" aria-hidden="true">
     <clipPath id="${id}">${bezPozadi ? '<rect x="-20" y="-40" width="160" height="160"/>' : '<circle cx="60" cy="60" r="60"/>'}</clipPath>
     <g clip-path="url(#${id})">
-    ${bezPozadi ? '' : pozadi(z.pozadi, defs)}
+    ${bezPozadi ? '' : pozadi(z.pozadi, defs, papir, F)}
     <g class="pv-telo">
     <g transform="translate(60 120) scale(.86 .9) translate(-60 -120)">
-    ${obleceni(z.obleceni, defs)}
+    <g${F}>${obleceni(z.obleceni, defs)}</g>
     <path d="M28 120 q2 -30 32 -32 q30 2 32 32 z" fill="url(#${tid})"/>
     <path d="M28 120 q2 -30 32 -32 q30 2 32 32" fill="none" ${OBRYS}/>
     <path d="M52 87 q8 6 16 0 v-8 h-16z" fill="${kuze}"/>
@@ -622,8 +638,8 @@ export function postavicka(vzhled = VYCHOZI, velikost = 120, vyrez = 'cela', poh
     </g>
     <g class="pv-hlava"><g transform="translate(0 4) translate(60 84) scale(1.16) translate(-60 -84)">
     ${hlava}
-    ${maska(m, kuzePlna, c)}
-    ${naHlavu(vec(z.hlava), c)}
+    <g${F}>${maska(m, kuzePlna, c)}</g>
+    <g${F}>${naHlavu(vec(z.hlava), c)}</g>
     </g></g></g>
     <g class="pv-ruka">
     ${ruka ? `<text x="96" y="110" font-size="26" text-anchor="middle">${ruka}</text>` : ''}
