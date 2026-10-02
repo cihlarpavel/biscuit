@@ -123,7 +123,7 @@ function proKresleni(z) {
   return {
     rod: z.rod, kuze: b('kuze').b, vlasy: b('uces').b, barvaVlasu: b('barva').c, oci: b('oci').b, pusa: b('pusa').b,
     obleceni: vol('obleceni')?.b, hlava: vol('hlava')?.b, bryle: vol('bryle')?.b, boty: b('boty').c,
-    pihy: z.tvar === 'tv-pihy', vousy: z.tvar === 'tv-knir' ? 'knir' : '', vec: vol('ruka')?.b, mazlicek: vol('mazlicek')?.b,
+    kousnuti: losDne(z, 'kous'), pihy: z.tvar === 'tv-pihy', vousy: z.tvar === 'tv-knir' ? 'knir' : '', vec: vol('ruka')?.b, mazlicek: vol('mazlicek')?.b,
   };
 }
 
@@ -167,10 +167,11 @@ const SCENY_POZADI = {
 // Scénka se losuje: podle „semínka“ postavičky (vzhled.seminko, nastaví se jednou) a dnešního data.
 // Během dne je stejná (v Drip shopu neposkakuje), další den jiná; každá postavička má jinou.
 const SCENY_KLICE = Object.keys(SCENY_POZADI);
+// Los podle semínka postavičky a dne: každý den jiné pozadí i ukousnutí, ale všude v aplikaci stejné.
+const losDne = (z, sul = '') => [...(z.seminko || JSON.stringify([z.kuze, z.uces, z.barva, z.oci])) + new Date().toDateString() + sul]
+  .reduce((a, c) => (Math.imul(a, 31) + c.charCodeAt(0)) >>> 0, 11);
 function pozadi(z) {
-  const den = new Date().toDateString();
-  const zdroj = (z.seminko || JSON.stringify([z.kuze, z.uces, z.barva, z.oci])) + den;
-  const h = [...zdroj].reduce((a, c) => (Math.imul(a, 31) + c.charCodeAt(0)) >>> 0, 11);
+  const h = losDne(z);
   return `<rect width="120" height="120" fill="#fff"/><g ${CARA}>${SCENY_POZADI[SCENY_KLICE[h % SCENY_KLICE.length]]}</g>`;
 }
 export const noveSeminko = () => Math.random().toString(36).slice(2, 10);

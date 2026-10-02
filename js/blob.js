@@ -12,8 +12,21 @@ const TELO = Array.from({ length: 120 }, (_, i) => {
   return `${i ? 'L' : 'M'}${(CX + Math.cos(a) * r).toFixed(1)} ${(CY + Math.sin(a) * r).toFixed(1)}`;
 }).join(' ') + 'Z';
 // Ukousnutý kousek vlevo dole – tři kruhy „zubů“. Nahoře by se pletl s vlasy a klobouky.
-const KOUS = [[140, 10], [126, 7], [154, 7]].map(([u, r]) => { const a = u * Math.PI / 180; return [CX + Math.cos(a) * (R + 3), CY + Math.sin(a) * (R + 3), r]; });
-const DROBKY = `<path d="M8 112 l4 -1 l1 4 l-4 1z M2 102 l3 0 l0 3 l-3 0z M16 120 l3 1 l-1 3 l-3 -1z" fill="currentColor" ${'stroke="#1f1a24" stroke-width="1.6" stroke-linejoin="round"'}/>`;
+// 5 ukousnutí: [úhel ve stupních, poloměr „zubu“]. 0 = největší vlevo dole (výchozí, ikona aplikace),
+// ostatní menší a jinde – mimo vlasy (díra ve vlasech vypadala jako bílá bublina), nohy a ruce.
+// Aplikace losuje podle semínka a dne.
+const BOD = (u, d) => { const a = u * Math.PI / 180; return [CX + Math.cos(a) * d, CY + Math.sin(a) * d]; };
+const KOUSNUTI = [
+  [[140, 10], [126, 7], [154, 7]],   // vlevo dole, velké
+  [[4, 7], [16, 5]],                  // vpravo
+  [[57, 7], [47, 5]],                 // dole vpravo
+  [[90, 7.5], [101, 5]],              // dole uprostřed, mezi nohama
+  [[160, 7], [149, 5]],               // vlevo pod mávající rukou
+].map(k => k.map(([u, r]) => [...BOD(u, R + 3), r]));
+// Drobky odletují ven od hlavního zubu.
+const drobky = i => { const u = [140, 6, 57, 92, 158][i];
+  return [[0, 12, 4], [9, 19, 3], [-7, 24, 3]].map(([du, dd, w]) => { const [x, y] = BOD(u + du, R + dd);
+    return `<rect x="${(x - w / 2).toFixed(1)}" y="${(y - w / 2).toFixed(1)}" width="${w}" height="${w}" transform="rotate(${(u * 3 + du * 7) % 90} ${x.toFixed(1)} ${y.toFixed(1)})"/>`; }).join(''); };
 let n = 0;
 
 // ---------- kůže / převleky celého těla ----------
@@ -130,7 +143,7 @@ const TVARE = `<ellipse cx="31" cy="66" rx="6" ry="4" fill="#ff7aa8" opacity=".5
 const PIHY = [[29, 62], [34, 66], [27, 68], [87, 60], [92, 64], [86, 66]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.3" fill="#7a4a1e"/>`).join('');
 const koncetina = (d, w = 8) => `<path d="${d}" fill="none" stroke="${OB}" stroke-width="${w + 5}" stroke-linecap="round"/><path d="${d}" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round"/>`;
 // Mává levou rukou – pravý horní roh patří ukousnutí.
-const ruce = (mavani) => koncetina('M101 78 Q112 86 114 98') + `<circle cx="114" cy="100" r="6.5" fill="currentColor" ${T2}/>`
+const ruce = (mavani) => koncetina('M99 88 Q110 94 113 105') + `<circle cx="113" cy="107" r="6.5" fill="currentColor" ${T2}/>`
   + (mavani ? `<g class="pv-mava">${koncetina('M19 76 Q8 66 6 52')}<circle cx="6" cy="50" r="6.5" fill="currentColor" ${T2}/></g>` : koncetina('M19 78 Q8 86 6 98') + `<circle cx="6" cy="100" r="6.5" fill="currentColor" ${T2}/>`);
 const nohy = (boty) => koncetina('M48 108 L47 122') + koncetina('M72 108 L73 122')
   + `<path d="M36 126 q0 -8 10 -8 q8 0 8 8z M66 126 q0 -8 8 -8 q10 0 10 8z" fill="${boty}" ${T2}/><path d="M36 126 h18 M66 126 h18" stroke="#fff" stroke-width="2.5"/>`;
@@ -146,13 +159,14 @@ export function susenkaObsah(v) {
   if (cv === 'duha') { cv = `url(#${id}d)`; defs = `<linearGradient id="${id}d" x1="0" y1="0" x2="1" y2="1">${['#ff6b7a', '#ffa94d', '#ffe066', '#69db7c', '#4dabf7', '#9775fa'].map((c, i) => `<stop offset="${i / 5}" stop-color="${c}"/>`).join('')}</linearGradient>`; }
   const tela = !!(v.rod || vl);
   const predVlasy = vl ? vl.pred(cv) : '';
+  const ki = Math.abs(v.kousnuti | 0) % KOUSNUTI.length, KOUS = KOUSNUTI[ki];
   const kousMaska = s => `<mask id="${id}${s}"><rect x="-20" y="-20" width="160" height="160" fill="#fff"/>${KOUS.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#000"/>`).join('')}</mask>`;
   return `<g style="color:${k.barva}"><defs>${defs}
     <clipPath id="${id}k"><path d="${TELO}"/>${vl ? (v.vlasy === 'rozcuch' ? `<path d="${BODLINY}"/>` : `<path d="${CEPICE}"/>`) : ''}</clipPath>
     <clipPath id="${id}"><path d="${TELO}"/></clipPath>${kousMaska('m')}${kousMaska('v')}</defs>
     ${tela ? nohy(v.boty || '#4dabf7') : ''}
     <g class="pv-kyv">
-    ${vl && vl.za ? `<g class="pv-vlasy">${vl.za(cv)}</g>` : ''}
+    ${vl && vl.za ? `<g mask="url(#${id}m)"><g class="pv-vlasy">${vl.za(cv)}</g></g>` : ''}
     ${k.za || ''}
     <g mask="url(#${id}m)">
       <path d="${TELO}" fill="${k.barva}"/>
@@ -162,7 +176,7 @@ export function susenkaObsah(v) {
     </g>
     ${tela ? `<g class="pv-ruce">${ruce(v.mavani !== false)}</g>` : ''}
     <g clip-path="url(#${id}k)"><g mask="url(#${id}v)">${KOUS.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="${OB}" stroke-width="6"/>`).join('')}</g></g>
-    ${DROBKY}
+    <g fill="currentColor" stroke="${OB}" stroke-width="1.6" stroke-linejoin="round">${drobky(ki)}</g>
     ${v.rod === 'z' ? TVARE : ''}${v.pihy ? PIHY : ''}
     <g class="pv-pusa">${pusa}</g>
     <g class="pv-oci">${OCI[v.oci] || OCI.koukaci}${v.rod === 'z' && v.oci !== 'kyklop' ? RASY : ''}</g>

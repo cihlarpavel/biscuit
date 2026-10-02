@@ -384,8 +384,8 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 
 /* ---------- Pohyb postavičky (jen .hybe = větší postavičky) ---------- */
 .postavicka.hybe .pv-oci { transform-origin: 60px 47px; animation: pvMrk 7s var(--d, 0s) infinite; }
-.postavicka.hybe .pv-zl { animation: pvZorL 11s var(--d, 0s) ease-in-out infinite; }
-.postavicka.hybe .pv-zr { animation: pvZorR 11s var(--d, 0s) ease-in-out infinite; }
+.postavicka.hybe .pv-zl { animation: pvZorL 16s var(--d, 0s) ease-in-out infinite; }
+.postavicka.hybe .pv-zr { animation: pvZorR 16s var(--d, 0s) ease-in-out infinite; }
 .postavicka.hybe .pv-kyv { transform-origin: 60px 112px; animation: pvHlava 6.5s var(--d, 0s) ease-in-out infinite; }
 .postavicka.hybe .pv-vlasy { transform-origin: 60px 20px; animation: pvVlasy 3.2s var(--d, 0s) ease-in-out infinite; }
 .postavicka.hybe .pv-pusa { transform-origin: 60px 74px; animation: pvPusa 9s var(--d, 0s) ease-in-out infinite; }
@@ -395,9 +395,14 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 @keyframes pvHlava { 0%, 100% { transform: rotate(0deg); } 25% { transform: rotate(-3deg); } 60% { transform: rotate(2.5deg); } }
 @keyframes pvVlasy { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(2.5deg); } }
 @keyframes pvPusa { 0%, 60%, 76%, 100% { transform: scale(1); } 64%, 72% { transform: scale(1.18, 1.25); } }
-/* Zornice: většinu času koukají na tebe, občas mrknou stranou a jednou zašilhají k nosu. */
-@keyframes pvZorL { 0%, 22%, 34%, 52%, 62%, 78%, 88%, 100% { transform: translate(0, 0); } 25%, 31% { transform: translate(-3.5px, 0); } 55%, 59% { transform: translate(3.5px, 1px); } 81%, 85% { transform: translate(3px, -1px); } }
-@keyframes pvZorR { 0%, 22%, 34%, 52%, 62%, 78%, 88%, 100% { transform: translate(0, 0); } 25%, 31% { transform: translate(-3.5px, 0); } 55%, 59% { transform: translate(-3.5px, 1px); } 81%, 85% { transform: translate(3px, -1px); } }
+/* Zornice: většinu času koukají na tebe. Za jeden cyklus: mrknou doleva, zašilhají k nosu, pravá se
+   zakoulí dokola, levá spadne na dno oka (pravá se za ní podívá) a vyskočí zpátky, nakonec pohled doprava nahoru. */
+@keyframes pvZorL { 0%, 12%, 21%, 31%, 39%, 54%, 70%, 79%, 87%, 100% { transform: translate(0, 0); } 14%, 19% { transform: translate(-3.5px, 0); }
+  33%, 37% { transform: translate(3.5px, 1px); } 56% { transform: translate(0, 6.2px); animation-timing-function: ease-out; } 57% { transform: translate(0, 4.8px); }
+  58%, 65% { transform: translate(0, 6.2px); } 68% { transform: translate(0, -1.5px); } 81%, 85% { transform: translate(3px, -1px); } }
+@keyframes pvZorR { 0%, 12%, 21%, 31%, 39%, 42%, 53%, 55%, 68%, 79%, 87%, 100% { transform: translate(0, 0); } 14%, 19% { transform: translate(-3.5px, 0); }
+  33%, 37% { transform: translate(-3.5px, 1px); } 44% { transform: translate(0, -4.5px); } 46% { transform: translate(4.5px, 0); } 48% { transform: translate(0, 4.5px); }
+  50% { transform: translate(-4.5px, 0); } 52% { transform: translate(0, -4.5px); } 58%, 65% { transform: translate(-2.5px, 3px); } 81%, 85% { transform: translate(3px, -1px); } }
 @keyframes pvMava { 0%, 55%, 100% { transform: rotate(0deg); } 62%, 76% { transform: rotate(16deg); } 69%, 83% { transform: rotate(-10deg); } }
 @keyframes pvMazl { 0%, 55%, 75%, 100% { transform: translateY(0); } 62% { transform: translateY(-6px); } 68% { transform: translateY(0); } 71% { transform: translateY(-2px); } }
 @media (prefers-reduced-motion: reduce) { .postavicka.hybe * { animation: none !important; } }

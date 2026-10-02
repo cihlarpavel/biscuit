@@ -19,7 +19,10 @@ v `sw.js`, commit, `git push` (`gh` je v `~/.local/bin/gh`). Ve škole jsou na s
 - Pozadí avatara se LOSUJE (12 vtipných čmáranic, vždy jen 1–2 kresby – Pavel chce méně a „crazy“, `pozadi(z)`): podle `vzhled.seminko` + dnešního data, každý den jiné. Kategorie Pozadí v Drip shopu není.
 - **Postavička = ukousnutá sušenka** (od 2. 10. 2026; Pou styl Pavel zamítl jako kopírování, kostičky a
   dřívější chibi taky). Kulatá sušenka je hlava i tělo, má vlasy, ručičky (jednou mává), nožičky s botami;
-  holka (`vzhled.rod === 'z'`) má řasy a tvářičky. Ukousnutí je vlevo dole (nahoře se pletlo s vlasy a klobouky).
+  holka (`vzhled.rod === 'z'`) má řasy a tvářičky. Ukousnutí má 5 podob (`KOUSNUTI` v blob.js, 0 = největší
+  vlevo dole, ikona), aplikace losuje podle semínka a dne (`losDne`). Ukousnutí nesmí do vlasů – díra v tmavých
+  vlasech vypadá jako bílá bublina. Zornice (`pv-zl`/`pv-zr`) koukají na diváka; CSS je občas rozhýbe
+  (pohled stranou, šilhání, zakoulení jedním okem, levá spadne na dno a vyskočí).
   - `js/blob.js` kreslí (`susenkaObsah(v)` s klíči kreslení, `blob(v, px)` samostatně – náhled `susenka.html`).
   - `js/postavicka.js` je katalog Drip shopu (12 kategorií, id s předponou `t-`, `u-`, `b-`, `o-`…, vzácnost
     podle ceny) a rámeček s pozadím; `proKresleni()` převádí id věcí na klíče blob.js. Nová věc = položka
