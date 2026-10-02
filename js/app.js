@@ -225,7 +225,7 @@ function battle() {
       <span>${jm(b.a)} <b>${b.sa}</b> : <b>${b.sb}</b> ${jm(b.b)}</span><small>${b.datum}</small></div>`).join('')}</div>` : ''}
   </section>`, { tab: 'battle' });
   vlozSchovanou('battle');
-  $$('.profil-karta[data-id]').forEach(b => (b.onclick = () => hrajBattle(x, S.profil(b.dataset.id))));
+  $$('.profil-karta[data-id]').forEach(b => (b.onclick = () => vyberDelkuMistni(x, S.profil(b.dataset.id))));
   napojOnlineSekci(x);
 }
 
@@ -239,8 +239,16 @@ function vzajemne(a, b) {
   return z;
 }
 
+function vyberDelkuMistni(h1, h2) {
+  obrazovka(`<section class="stranka">${zpet('#/battle')}
+    <div class="vyzva-hlava"><h1>Jak dlouhý battle?</h1><p class="titul">${jmeno(h1)} vs ${jmeno(h2)}</p></div>
+    ${volbaDelky()}<button class="btn velke" id="jdeme">Jdeme na to ⚔️</button></section>`, { bezListy: true });
+  napojVolbuDelky();
+  $('#jdeme').onclick = () => hrajBattle(h1, h2);
+}
+
 function hrajBattle(h1, h2) {
-  const ulohy = sestavBattle(h1, h2);
+  const ulohy = sestavBattle(h1, h2, zvolenaDelka);
   const puvodni = S.data().aktivni;
   const skore = [];
   const kolo = (hracka, hotovo) => {
@@ -264,25 +272,26 @@ function hrajBattle(h1, h2) {
     kolo(h2, v2 => {
       if (v2.preruseno) return jdi('#/battle');
       skore.push(v2.body);
-      vysledekBattlu(h1, h2, skore);
+      vysledekBattlu(h1, h2, skore, ulohy.length);
     });
   });
 }
 
-function vysledekBattlu(h1, h2, [s1, s2]) {
+function vysledekBattlu(h1, h2, [s1, s2], n) {
+  const od = odmenaBattlu(n);
   const data = S.data();
   (data.battly ||= []).push({ a: h1.id, b: h2.id, sa: s1, sb: s2, datum: S.dnes() });
   data.battly = data.battly.slice(-200);
   let text;
   if (s1 === s2) {
     text = H.nahodne(H.SOUBOJ.remiza);
-    [h1, h2].forEach(h => { h.souboje.remizy++; S.pridej(h, 5); });
+    [h1, h2].forEach(h => { h.souboje.remizy++; S.pridej(h, od.r); });
   } else {
     const [v, pr] = s1 > s2 ? [h1, h2] : [h2, h1];
     const rozdil = Math.abs(s1 - s2);
     text = H.rod(H.dosad(H.nahodne(rozdil <= 150 ? H.SOUBOJ.tesne : H.SOUBOJ.jasne), { vitez: v.prezdivka, porazena: pr.prezdivka }), v);
-    v.souboje.vyhry++; S.pridej(v, 10);
-    pr.souboje.prohry++; S.pridej(pr, 3);
+    v.souboje.vyhry++; S.pridej(v, od.v);
+    pr.souboje.prohry++; S.pridej(pr, od.p);
   }
   const nove = [h1, h2].flatMap(h => zkontroluj(h).map(o => ({ ...o, kdo: h })));
   S.uloz();
@@ -292,12 +301,12 @@ function vysledekBattlu(h1, h2, [s1, s2]) {
     <h1>Výsledek</h1>
     <div class="b-vysledek">${karta(h1, s1, s1 > s2)}<span class="vs">vs</span>${karta(h2, s2, s2 > s1)}</div>
     <p class="hlaska">${esc(text)}</p>
-    <p class="drobne">Výhra 🍪 +10, prohra 🍪 +3, remíza 🍪 +5</p>
+    <p class="drobne">Výhra 🍪 +${od.v}, prohra 🍪 +${od.p}, remíza 🍪 +${od.r}</p>
     ${nove.map(o => `<div class="novy-odznak"><span>${ikOdznaku(o, 48)}</span><div><small>${jmeno(o.kdo)} má nový odznak!</small><b>${esc(o.nazev)}</b></div></div>`).join('')}
     <button class="btn velke" id="odveta">Odveta ⚔️</button>
     <a class="odkaz" href="#/battle">Konec</a></section>`, { bezListy: true });
   konfety(); zvukFanfara();
-  $('#odveta').onclick = () => hrajBattle(h2, h1);
+  $('#odveta').onclick = () => { zvolenaDelka = n; hrajBattle(h2, h1); };
 }
 
 // ---------- Žebříček ----------
@@ -509,6 +518,18 @@ function rodic() {
   $('#zmenapin').onclick = () => { r.pin = null; rodicOdemceno = false; S.uloz(); rodic(); };
 }
 
+// ---------- Délka battlu a odměny ----------
+const DELKY = [
+  { n: 20, nazev: 'Rychlovka', popis: '20 otázek', odmena: { v: 25, r: 12, p: 6 } },
+  { n: 30, nazev: 'Klasika', popis: '30 otázek', odmena: { v: 35, r: 17, p: 8 } },
+  { n: 40, nazev: 'Maraton', popis: '40 otázek', odmena: { v: 50, r: 25, p: 12 } },
+];
+let zvolenaDelka = 30;
+const odmenaBattlu = n => (DELKY.find(d => d.n === n) || DELKY[0]).odmena;
+const volbaDelky = () => `<div class="delky">${DELKY.map(d => `<button class="delka${d.n === zvolenaDelka ? ' on' : ''}" data-n="${d.n}">
+  <b>${d.nazev}</b><small>${d.popis}</small><small>výhra +${d.odmena.v} 🍪</small></button>`).join('')}</div>`;
+const napojVolbuDelky = () => $$('.delka').forEach(b => (b.onclick = () => { zvolenaDelka = +b.dataset.n; $$('.delka').forEach(x => x.classList.toggle('on', x === b)); }));
+
 // ---------- Online: kamarádi, výzvy, battle na dálku ----------
 // Hlášky k výzvě: v databázi je jen jejich číslo, žádný volný text.
 const VYZVY = [['Are you ready? 😎', 'Můžeme?'], ['Catch me if you can! 🏃', 'Chyť mě, jestli to dokážeš!'], ["Let's play! 🎮", 'Pojďme hrát!'],
@@ -568,7 +589,8 @@ function zpracujBattly(x) {
   for (const b of online.battly) {
     if (!oboHotovo(b) || x.zpracovano.includes(b.id)) continue;
     const ja = mojeVysl(b, x.id).body || 0, ona = mojeVysl(b, souperkaId(b, x.id)).body || 0;
-    if (ja > ona) { x.souboje.vyhry++; S.pridej(x, 10); } else if (ja < ona) { x.souboje.prohry++; S.pridej(x, 3); } else { x.souboje.remizy++; S.pridej(x, 5); }
+    const od = odmenaBattlu(b.ulohy.length);
+    if (ja > ona) { x.souboje.vyhry++; S.pridej(x, od.v); } else if (ja < ona) { x.souboje.prohry++; S.pridej(x, od.p); } else { x.souboje.remizy++; S.pridej(x, od.r); }
     x.zpracovano.push(b.id);
     zmena = true;
   }
@@ -585,7 +607,7 @@ function onlineSekce(x) {
   return `
     ${hrat.length ? `<h2>Výzvy pro tebe</h2>${hrat.map(b => { const k = kamaradka(souperkaId(b, x.id)); const odMe = b.hraci[0] === x.id;
       return `<div class="vyzva"><span class="avatar velky">${av(k, 60)}</span><div><b>${odMe ? `Tvoje výzva · ${jmeno(k)}` : `${jmeno(k)} ${H.rod('[tě vyzval|tě vyzvala]', k)}!`}</b>
-        <span class="vyzva-en">${esc(vyzva(b)[0])}</span><small>${esc(vyzva(b)[1])}</small></div>
+        <span class="vyzva-en">${esc(vyzva(b)[0])}</span><small>${esc(vyzva(b)[1])} · ${(DELKY.find(d => d.n === b.ulohy.length) || { nazev: b.ulohy.length + ' otázek' }).nazev}</small></div>
         <button class="btn" data-hrat="${b.id}">Hrát</button></div>`; }).join('')}` : ''}
     ${cekam.length ? `<div class="historie">${cekam.map(b => { const k = kamaradka(souperkaId(b, x.id)); const st = mojeVysl(b, k.id);
       return `<div class="h-radek"><span>${st.odpovezeno ? `${jmeno(k)} právě hraje 🔥` : `Čeká se, až zahraje ${jmeno(k)}`}</span><small>ty ⚡ ${mojeVysl(b, x.id).body}</small></div>`; }).join('')}</div>` : ''}
@@ -620,13 +642,16 @@ function napojOnlineSekci(x) {
 function vybratVyzvu(x, k) {
   obrazovka(`<section class="stranka">${zpet('#/battle')}
     <div class="vyzva-hlava"><span class="avatar obri">${postavicka(k.vzhled, 120)}</span><h1>Nová výzva ⚔️</h1><p class="titul">Soupeř: ${jmeno(k)}</p>
-    <p class="drobne">Vyber hlášku, kterou ${H.rod('[mu|jí]', k)} pošleš. Pak hned hraješ ty, ${jmeno(k)} odehraje svoje kolo, až bude mít čas (nebo hned, když je online).</p></div>
+    <p class="drobne">Pak hned hraješ ty, ${jmeno(k)} odehraje svoje kolo, až bude mít čas (nebo hned, když je online).</p></div>
+    <h3>Jak dlouhý?</h3>${volbaDelky()}
+    <h3>Hláška pro soupeře</h3>
     <div class="seznam">${VYZVY.map(([en, cz], i) => `<button class="moznost hlaska-vyzvy" data-i="${i}"><b>${esc(en)}</b><small>${esc(cz)}</small></button>`).join('')}</div>
   </section>`, { bezListy: true });
+  napojVolbuDelky();
   $$('.hlaska-vyzvy').forEach(b => (b.onclick = async () => {
     b.disabled = true;
     try {
-      const ulohy = sestavBattle(x, { nastaveni: { unit: k.unit || 1, vsechnyUnity: false } });
+      const ulohy = sestavBattle(x, { nastaveni: { unit: k.unit || 1, vsechnyUnity: false } }, zvolenaDelka);
       const id = await O.vyzvi(x, k, ulohy, +b.dataset.i);
       hrajOnline(x, { id, ulohy, hraci: [x.id, k.id], vysledky: {} });
     } catch { toast('Výzva se neodeslala. Jsi online?'); b.disabled = false; }
@@ -681,7 +706,7 @@ function vysledekOnline(x, b, k) {
     <h1>Výsledek</h1>
     <div class="b-vysledek">${karta(x, a, a > o)}<span class="vs">vs</span>${karta(k, o, o > a)}</div>
     <p class="hlaska">${esc(text)}</p>
-    <p class="drobne">${a > o ? 'Výhra 🍪 +10' : a < o ? 'Prohra 🍪 +3' : 'Remíza 🍪 +5'}</p>
+    <p class="drobne">${(od => a > o ? `Výhra 🍪 +${od.v}` : a < o ? `Prohra 🍪 +${od.p}` : `Remíza 🍪 +${od.r}`)(odmenaBattlu(b.ulohy.length))}</p>
     <button class="btn velke" id="odveta">Odveta ⚔️</button>
     <a class="odkaz" href="#/battle">Konec</a></section>`, { bezListy: true });
   konfety(); zvukFanfara();
