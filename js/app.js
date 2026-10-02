@@ -47,8 +47,8 @@ function route() {
   if (x0 && x0.vzhled.verze !== 2) prevedNaSusenku(x0);
   // Perník byl do 3. 10. zdarma – kdo ho nosí, dostane ho jako koupený.
   if (x0 && x0.vzhled.kuze === 't-pernik' && !x0.koupeno.includes('t-pernik')) { x0.koupeno.push('t-pernik'); S.uloz(); }
-  // Denní cíl 10 min je málo (Pavel 3. 10. 2026) – výchozí je 15; kdo měl 10, dostane jednou 15.
-  if (x0 && !x0.nastaveni.cil15) { if (x0.nastaveni.cil === 10) x0.nastaveni.cil = 15; x0.nastaveni.cil15 = true; S.uloz(); }
+  // Denní cíl je 20 min (Pavel 3. 10. 2026) – kdo měl starších 10 nebo 15, dostane jednou 20.
+  if (x0 && !x0.nastaveni.cil20) { if ([10, 15].includes(x0.nastaveni.cil)) x0.nastaveni.cil = 20; x0.nastaveni.cil20 = true; S.uloz(); }
   // Holka/kluk se kreslí z vzhled.rod (řasy, tvářičky) – vzhled odchází i kamarádkám online.
   if (x0 && x0.rod && x0.vzhled.rod !== x0.rod) { x0.vzhled.rod = x0.rod; S.uloz(); }
   // Zasněné oči (koukají nahoru) byly první den zdarma a losovaly se – kdo si je nekoupil, kouká zase na tebe.
@@ -114,6 +114,13 @@ function novy() {
 }
 
 // ---------- Domů ----------
+// Denní cíl jako odpočet (Pavel 3. 10. 2026): plné kolečko s velkým „20 min zbývá“, ubývá s každou
+// minutou aktivního učení; po splnění ✓.
+function odpocet(x, velikost) {
+  const cil = x.nastaveni.cil * 60, zbyva = Math.max(0, cil - S.den(x).s);
+  return zbyva ? kolecko(zbyva / cil, `<b>${Math.ceil(zbyva / 60)}</b><small>min zbývá</small>`, velikost)
+    : kolecko(1, '<b>✓</b><small>splněno</small>', velikost);
+}
 function domu() {
   const x = p();
   const d = S.den(x);
@@ -137,10 +144,10 @@ function domu() {
   obrazovka(`${hlavicka(x)}<section class="stranka domu">
     <div class="maskot-bublina">${maskot(84, hotovo ? 'mrk' : 'radost')}<div class="bublina">${esc(pozdrav)}</div></div>
     <div class="dnes-karta">
-      ${kolecko(d.s / (cil * 60), `<b>${minuty(d.s)}</b><small>z ${cil} min</small>`)}
+      ${odpocet(x)}
       <div class="dnes-text"><h3>Dnešní lekce</h3>
         <p>${unitTed ? `Nová slovíčka z Unit ${unitTed.unit} + opakování + něco navíc` : 'Opakování a něco navíc'}</p>
-        <a class="btn" href="#/lekce">${hotovo ? 'Ještě jednu' : 'Jdeme na to'} →</a></div>
+        <a class="btn" href="#/lekce">${hotovo ? 'Ještě jednu' : d.s < 60 ? 'Jdeme na to' : cil * 60 - d.s <= 180 ? 'Dokonči dnešek' : 'Pokračuj'} →</a></div>
     </div>
     ${kartaHry(x)}
     ${skupiny}</section>`, { tab: 'domu' });
@@ -280,7 +287,7 @@ function konecLekce(x, v, bonus, cilTed, nove) {
   obrazovka(`<section class="stranka konec">${zpet('#/', 'Domů')}${maskot(150, v.perfekt ? 'mrk' : 'radost')}
     <h1>${esc(H.rod(H.nahodne(H.KONEC_LEKCE[druh]), x))}</h1>
     <div class="odmena"><span>${ikS('susenka', 34)} +${v.susenky + bonus}</span><small>${v.susenky} za odpovědi, ${bonus} bonus${cilTed ? ' (vč. denního cíle!)' : ''}</small></div>
-    ${kolecko(d.s / (x.nastaveni.cil * 60), `<b>${minuty(d.s)}</b><small>z ${x.nastaveni.cil} min</small>`, 110)}
+    ${odpocet(x, 110)}
     ${cilTed ? `<p class="hlaska">${esc(H.nahodne(H.CIL_SPLNEN))}</p>` : ''}
     ${VECI.some(v => !maVec(x, v) && v.cena <= x.susenky) ? `<a class="drip-ceka" href="#/obchod">${ik('tab-drip', 34)}<b>${esc(H.DRIP_CEKA)}</b></a>` : ''}
     ${nove.map(o => `<div class="novy-odznak"><span>${ikOdznaku(o, 48)}</span><div><small>Nový odznak!</small><b>${esc(o.nazev)}</b></div></div>`).join('')}

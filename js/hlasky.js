@@ -35,7 +35,7 @@ export const SPATNE = [
 // Bez oslovení jménem: přezdívka se nedá spolehlivě dát do 5. pádu („Čau Šarlotka“ zní špatně).
 export const POZDRAVY = [
   '{jmeno} je zpátky 👋', 'Čau! Sušenky čekají 🍪', 'Jdeme na to?', 'Zase ty? Super 😎',
-  'Patnáct minut a máš klid.', 'Hej, angličtina volá.', 'Drip shop čeká, kámo 🛍️',
+  'Dvacet minut a máš klid.', 'Hej, angličtina volá.', 'Drip shop čeká, kámo 🛍️',
 ];
 
 export const CIL_SPLNEN = [

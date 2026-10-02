@@ -114,6 +114,8 @@ Učebnice **Happy Street 2, 3. vydání (Oxford, české vydání)**, Units 1–
   pozadí, Cool nádech + mátový kroužek, Epické fialový + třpytky, Legendární zlatá záře, Bizár duhová aura.
   Věci zdarma jsou schválně obyčejné (tričko bez hvězdy, perník placený). Barva vlasů = kolečka v sekci Účes
   (`vUcesu`). Věci „V ruce“ (kromě čokolády a lízátka) drží v mávající ruce (`V_RUCE` v blob.js).
+- **Denní cíl 20 min** jako odpočet (`odpocet()` v app.js): kolečko „20 min zbývá“ ubývá; tlačítko „Jdeme na to“ →
+  po první minutě „Pokračuj“ → poslední 3 min „Dokonči dnešek“ → po splnění ✓ a „Ještě jednu“.
 - Hra za odměnu: chycení podle skutečné velikosti (zlatá je větší), brokolice jen když padne dovnitř;
   krabička je `DOLE` px nad spodkem kvůli prstu; při skryté appce se hra zastaví.
 - Drip shop: za sušenky těsta, účesy, barvy vlasů, oči, pusy, oblečení, klobouky, brýle, boty, mazlíčci.

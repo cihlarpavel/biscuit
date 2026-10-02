@@ -26,7 +26,7 @@ export function novyProfil(prezdivka, vzhled) {
     odznaky: {},      // id -> datum získání
     koupeno: [],      // id věcí ze Šatníku (postavicka.js)
     souboje: { vyhry: 0, prohry: 0, remizy: 0 },
-    nastaveni: { cil: 15, unit: 1, vsechnyUnity: false, cil15: true },
+    nastaveni: { cil: 20, unit: 1, vsechnyUnity: false, cil20: true },
   };
   stav.profily.push(p);
   stav.aktivni = p.id;
