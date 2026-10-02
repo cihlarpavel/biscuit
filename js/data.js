@@ -50,7 +50,8 @@ fifteen | patnáct | 15
 sixteen | šestnáct | 16
 seventeen | sedmnáct | 17
 eighteen | osmnáct | 18
-nineteen | devatenáct | 19`), vety: [
+nineteen | devatenáct | 19
+twenty | dvacet | 20`), vety: [
     ['How old are you?', 'Kolik je ti let?'],
     ['I\'m ten.', 'Je mi deset.'],
     ['I\'ve got two cats.', 'Mám dvě kočky.'],
@@ -63,12 +64,12 @@ nose | nos | 👃
 mouth | pusa | 👄
 hair | vlasy | 💇‍♀️
 teeth | zuby | 🦷
-arms | paže, ruce | 💪
-hands | ruce (dlaně) | 🙌
+arms | paže | 💪
+hands | ruce | 🙌
 feet | chodidla | 🦶
 fingers | prsty | 🖐️`), vety: [
     ['I\'ve got brown eyes.', 'Mám hnědé oči.'],
-    ['She\'s got long hair.', 'Má dlouhé vlasy.'],
+    ['She\'s got long hair.', '(Ona) má dlouhé vlasy.'],
     ['Touch your nose!', 'Dotkni se nosu!'],
   ] },
   { id: 'zviratka', skupina: 'opakovani', nazev: 'Zvířátka doma', ikona: '🐱', slova: radky(`
@@ -134,7 +135,7 @@ trainers | tenisky | 👟`), vety: [
   ] },
   { id: 'mnam', skupina: 'opakovani', nazev: 'Mňam!', ikona: '🍪', slova: radky(`
 apple | jablko | 🍎
-orange | pomeranč | 🍊
+oranges | pomeranče | 🍊
 pear | hruška | 🍐
 milk | mléko | 🥛
 biscuit | sušenka | 🍪
@@ -146,7 +147,7 @@ sweets | bonbony | 🍬
 water | voda | 💧`), vety: [
     ['I like ice cream.', 'Mám rád(a) zmrzlinu.'],
     ['I don\'t like milk.', 'Nemám rád(a) mléko.'],
-    ['Can I have a biscuit, please?', 'Můžu si vzít sušenku, prosím?'],
+    ['Can I have a biscuit, please?', 'Můžu dostat sušenku, prosím?'],
   ] },
   { id: 'ahoj', skupina: 'opakovani', nazev: 'Ahoj, jak se máš?', ikona: '👋', slova: [], vety: [
     ['Hello!', 'Ahoj!'],
@@ -177,7 +178,7 @@ street | ulice | 🏘️`), vety: [
     ['She\'s in the garage!', 'Je v garáži!'],
     ['Flossy\'s got three puppies!', 'Flossy má tři štěňátka!'],
     ['How do you spell dog?', 'Jak se hláskuje dog?'],
-    ['I spy with my little eye something beginning with b.', 'Hra „Vidím, vidím, co ty nevidíš“: vidím něco na písmeno b.'],
+    ['I spy with my little eye something beginning with b.', 'Vidím, vidím, co ty nevidíš, a začíná to na b.'],
     ['Is it a banana? Yes!', 'Je to banán? Ano!'],
   ] },
   { id: 'u2', skupina: 'hs2', unit: 2, nazev: 'The presents', ikona: '🎁', extra: 'cisla100', slova: radky(`
@@ -186,15 +187,15 @@ grandpa | dědeček | 👴
 brother | bratr | 👦
 sister | sestra | 👧
 uncle | strýček | 👨
-auntie | tetička | 👩
+aunt | teta | 👩
 cousin | bratranec, sestřenice | 🧒
-twins | dvojčata | 👯
+twins | dvojčata
 relatives | příbuzní | 👨‍👩‍👧‍👦
 present | dárek | 🎁
-anniversary | oslava výročí | 🎉
-necklace | náhrdelník | 📿
+anniversary | výročí | 🎉
+necklace | náhrdelník
 tie | kravata | 👔
-calculator | kalkulačka | 🧮
+calculator | kalkulačka
 email | e-mail | 📧
 number | číslo | 🔢
 country | země, stát | 🌍
@@ -212,18 +213,18 @@ a hundred | sto | 100`), vety: [
     ['Have you got the presents?', 'Máš ty dárky?'],
     ['Where\'s his present?', 'Kde je jeho dárek?'],
     ['Where\'s her present?', 'Kde je její dárek?'],
-    ['He\'s got one sister.', 'Má jednu sestru.'],
-    ['She hasn\'t got any brothers.', 'Nemá žádné bratry.'],
+    ['He\'s got one sister.', '(On) má jednu sestru.'],
+    ['She hasn\'t got any brothers.', '(Ona) nemá žádné bratry.'],
     ['How many cousins has Polly got?', 'Kolik bratranců a sestřenic má Polly?'],
     ['Daisy is five years younger than Polly.', 'Daisy je o pět let mladší než Polly.'],
     ['Dad is three years older than Mum.', 'Táta je o tři roky starší než máma.'],
-    ['My brother lives at number forty-four.', 'Můj bratr bydlí v čísle čtyřicet čtyři.'],
+    ['My brother lives at number forty-four.', 'Můj bratr bydlí v domě číslo čtyřicet čtyři.'],
   ] },
   { id: 'u3', skupina: 'hs2', unit: 3, nazev: 'Shopping for Mum', ikona: '🛒', slova: radky(`
 breakfast | snídaně | 🥣
 lunch | oběd
-dinner | hlavní jídlo dne | 🍽️
-meal | jídlo (událost)
+dinner | večeře (hlavní jídlo dne) | 🍽️
+meal | jídlo (snídaně, oběd, večeře)
 apple juice | jablečný džus | 🧃
 avocado | avokádo | 🥑
 bacon | slanina | 🥓
@@ -235,7 +236,7 @@ café | kavárna
 cereal | cereálie
 cheese | sýr | 🧀
 coffee | káva | ☕
-cream | šlehačka
+cream | smetana, šlehačka
 crisps | brambůrky
 cucumber | okurka | 🥒
 eggs | vajíčka | 🥚
@@ -243,8 +244,8 @@ fish and chips | ryba a hranolky | 🐟🍟
 grapes | hroznové víno | 🍇
 jam | džem
 lemonade | citronáda, limonáda | 🥤
-lettuce | hlávkový salát | 🥬
-mushrooms | houby | 🍄
+lettuce | hlávkový salát (zelenina) | 🥬
+mushrooms | houby
 onion | cibule | 🧅
 rice | rýže | 🍚
 salad | salát | 🥗
@@ -256,9 +257,9 @@ strawberry | jahoda | 🍓
 tea | čaj | 🍵
 toast | toast, topinka
 tomatoes | rajčata | 🍅
-treat | pohoštění
+treat | pamlsek, odměna
 tuna | tuňák
-vegetable | zelenina | 🥦
+vegetables | zelenina | 🥦
 yoghurt | jogurt
 time | čas | ⏰
 seven o'clock | sedm hodin | 7:00
@@ -266,7 +267,7 @@ half past seven | půl osmé | 7:30`), vety: [
     ['Does she like apples?', 'Má ráda jablka?'],
     ['She likes pears.', 'Má ráda hrušky.'],
     ['He doesn\'t like oranges.', 'Nemá rád pomeranče.'],
-    ['He\'s got some biscuits.', 'Má nějaké sušenky.'],
+    ['He\'s got some biscuits.', '(On) má nějaké sušenky.'],
     ['He hasn\'t got any grapes.', 'Nemá žádné hroznové víno.'],
     ['I have breakfast at seven o\'clock.', 'Snídám v sedm hodin.'],
     ['Can I have a sandwich, please?', 'Můžu dostat sendvič, prosím?'],
@@ -294,23 +295,23 @@ farm | farma | 🚜
 bigger | větší
 smaller | menší
 taller | vyšší
-shorter | kratší
+shorter | nižší, kratší
 fatter | tlustší
 thinner | hubenější
 older | starší
+younger | mladší
 next to | vedle
-between | mezi, uprostřed
+between | mezi
 opposite | naproti
 same | stejný
-grey | šedivý | 🩶
+grey | šedý | 🩶
 slow | pomalý | 🐌
 strong | silný | 💪
 delicious | vynikající | 😋
 mountain | hora | ⛰️
 spring | jaro | 🌱
 car park | parkoviště | 🅿️
-toilets | záchody | 🚻
-shopkeeper | majitel/majitelka obchodu`), vety: [
+toilets | záchody | 🚻`), vety: [
     ['Are they monkeys?', 'Jsou to opice?'],
     ['They\'re funny.', 'Jsou legrační.'],
     ['They aren\'t dangerous.', 'Nejsou nebezpečné.'],
@@ -320,7 +321,8 @@ shopkeeper | majitel/majitelka obchodu`), vety: [
     ['The lion is between the tiger and the hippo.', 'Lev je mezi tygrem a hrochem.'],
   ] },
   { id: 'u5', skupina: 'hs2', unit: 5, nazev: 'Kites', ikona: '🪁', slova: radky(`
-kite | (papírový) drak | 🪁
+kite | papírový drak | 🪁
+shopkeeper | prodavač, prodavačka
 bike | kolo | 🚲
 boat | loď | ⛵
 bus | autobus | 🚌
@@ -340,9 +342,9 @@ school | škola | 🏫
 sports centre | sportovní středisko
 park | park | 🌳
 lake | jezero
-mountains | pohoří | 🏔️
+mountains | hory | 🏔️
 roof | střecha
-dragon | drak | 🐉
+dragon | pohádkový drak | 🐉
 scary | děsivý | 😱
 ticket | jízdenka | 🎫
 How much? | Kolik?
@@ -352,14 +354,14 @@ cross | přejít
 left | vlevo | ⬅️
 right | vpravo | ➡️
 Turn left. | Zahni doleva.
-straight across | přímo přes
+straight across | rovnou přes (silnici)
 past | kolem
 front | přední strana`), vety: [
     ['There\'s a toy shop.', 'Je tam hračkářství.'],
     ['There are kites.', 'Jsou tam draci.'],
     ['There aren\'t any red kites.', 'Nejsou tam žádní červení draci.'],
     ['Are there any purple kites?', 'Jsou tam nějací fialoví draci?'],
-    ['How do you go to school?', 'Jak jezdíš do školy?'],
+    ['How do you go to school?', 'Jak se dostáváš do školy?'],
     ['I go to school by car.', 'Jezdím do školy autem.'],
     ['I walk to school.', 'Chodím do školy pěšky.'],
     ['How much is it?', 'Kolik to stojí?'],
@@ -383,10 +385,10 @@ watch | dívat se | 👀
 film | film
 cartoon | kreslený film
 channel | televizní kanál
-animal programme | program o zvířatech
+animal programme | pořad o zvířatech
 sports programme | sportovní pořad
 cookery show | pořad o vaření
-comedy show | zábavný pořad
+comedy show | komediální pořad
 game show | soutěžní pořad
 homework | domácí úkol | 📝
 piano lesson | hodina klavíru | 🎹
@@ -401,23 +403,24 @@ beach | pláž | 🏖️
 planet | planeta | 🪐
 spaceship | kosmická loď | 🚀
 leg | noha | 🦵
-miss | zmeškat
+miss | vynechat, zameškat
 price | cena | 🏷️
 Christmas Day | první svátek vánoční | 🎄`), vety: [
     ['Do you like swimming?', 'Máš rád(a) plavání?'],
-    ['Yes, I do.', 'Ano.'],
-    ['No, I don\'t.', 'Ne.'],
+    ['Yes, I do.', 'Ano, mám.'],
+    ['No, I don\'t.', 'Ne, nemám.'],
     ['I like playing football.', 'Rád(a) hraju fotbal.'],
     ['So do I!', 'Já taky!'],
-    ['I do my homework on Mondays.', 'Domácí úkoly dělám v pondělí.'],
+    ['I do my homework on Mondays.', 'Domácí úkoly dělám každé pondělí.'],
   ] },
   { id: 'u7', skupina: 'hs2', unit: 7, nazev: 'We\'re late!', ikona: '⏰', slova: radky(`
 job | zaměstnání
+baker | pekař, pekařka | 🧑‍🍳
 work | pracovat
 firefighter | hasič/hasička | 🧑‍🚒
 nurse | zdravotní sestra | 🧑‍⚕️
 mechanic | mechanik | 🧑‍🔧
-office worker | administrativní síla | 🧑‍💼
+office worker | úředník, úřednice | 🧑‍💼
 postman | listonoš, poštovní doručovatel | 📮
 astronaut | kosmonaut/kosmonautka | 🧑‍🚀
 astronomer | astronom/astronomka | 🔭
@@ -428,19 +431,19 @@ lollipop lady | paní, která pomáhá dětem u školy přejít silnici
 uniform | uniforma
 wear | nosit (na sobě oblečení)
 get up | vstávat (z postele)
-get dressed | obléci se
+get dressed | obléknout se
 have a shower | dát si sprchu | 🚿
 go to bed | jít spát | 🛌
 clock | hodiny | 🕰️
 quarter past four | čtvrt na pět | 4:15
 quarter to ten | tři čtvrtě na deset | 9:45
-hungry | hladový | 😋
+hungry | hladový | 🍽️
 sick | nemocný | 🤒
 hospital | nemocnice | 🏥
 thermometer | teploměr | 🌡️
 letter | dopis | ✉️
 newspaper | noviny | 📰
-camera | fotoaparát | 📷
+camera | fotoaparát, kamera | 📷
 paint | malovat | 🎨
 oven glove | chňapka
 sign | značka, symbol
@@ -473,8 +476,8 @@ windy | větrno | 🌬️
 foggy | mlhavo | 🌫️
 hot | horko | 🥵
 cold | chladno | 🥶
-warm | teplý
-wet | mokrý | 💦
+warm | teplo
+wet | mokro, deštivo | 💦
 It's raining. | Prší. | ☔
 It's snowing. | Sněží. | 🌨️
 thunderstorm | bouřka | ⛈️
@@ -501,7 +504,7 @@ November | listopad
 December | prosinec
 coat | kabát | 🧥
 boots | (vysoké) boty | 🥾
-jumper | svetřík
+jumper | svetr
 skirt | sukně
 shoe | bota | 👞
 umbrella | deštník | ☂️
@@ -525,7 +528,7 @@ window | okno | 🪟
 lights | světla | 💡
 shoulders | ramena
 wave | mávat | 👋
-talk | hovořit | 🗣️
+talk | mluvit | 🗣️
 busy | mít hodně práce
 exciting | vzrušující
 pretty | hezký, půvabný
@@ -548,7 +551,7 @@ Christmas tree | vánoční stromek | 🎄
 Father Christmas | anglický Ježíšek, nosí dětem dárky | 🎅
 stocking | punčocha | 🧦
 decorations | ozdoby
-mince pie | vánoční koláček s kandovaným ovocem
+mince pie | vánoční koláček se sušeným ovocem
 New Year's Day | Nový rok
 resolution | předsevzetí
 firework | ohňostroj | 🎆
@@ -561,7 +564,7 @@ sugar | cukr
 Good Friday | Velký pátek
 Easter Day | Boží hod velikonoční | 🐣
 nests | hnízda | 🪺
-carnival | karneval, masopust
+carnival | karneval (průvod v kostýmech)
 dress up | převléknout se (za koho)
 maypole | májka
 crown | koruna | 👑
@@ -570,12 +573,12 @@ wedding | svatba | 💒
 bride | nevěsta | 👰
 groom | ženich
 bridesmaid | družička
-party | oslava, párty | 🥳
-celebration | oslava, slavnost | 🎉
+party | párty, večírek | 🥳
+celebration | oslava | 🎉
 sports day | sportovní den
 race | závodit
 racing car | závodní auto | 🏎️
-playground | hřiště
+playground | hřiště, školní dvůr
 candyfloss | cukrová vata
 toffee apple | jablíčko v karamelu | 🍎
 hedgehog | ježek | 🦔
@@ -606,7 +609,7 @@ surprised | překvapený, překvapená | 😮
 funny | legrační | 😂
 friendly | přátelský | 🤗`), vety: [
     ['I\'m happy today.', 'Dnes jsem šťastná.'],
-    ['Are you tired?', 'Jsi unavený?'],
+    ['Are you tired?', 'Jsi unavená?'],
     ['Don\'t be sad!', 'Nebuď smutná!'],
   ] },
   { id: 'more', skupina: 'navic', nazev: 'U moře', ikona: '🐙', slova: radky(`
@@ -619,7 +622,7 @@ seal | tuleň | 🦭
 shell | mušle | 🐚
 starfish | hvězdice
 island | ostrov | 🏝️
-wave | vlna | 🌊
+waves | vlny (na moři) | 🌊
 sand | písek
 swim | plavat | 🏊`), vety: [
     ['Look! A shark!', 'Podívej! Žralok!'],
@@ -628,15 +631,15 @@ swim | plavat | 🏊`), vety: [
   ] },
   { id: 'doma', skupina: 'navic', nazev: 'U nás doma', ikona: '🏠', slova: radky(`
 house | dům | 🏠
-bedroom | ložnice | 🛏️
+bedroom | ložnice
 bathroom | koupelna | 🛁
 kitchen | kuchyně
-living room | obývák | 🛋️
-garden | zahrada | 🌳
+living room | obývací pokoj, obývák
+garden | zahrada | 🏡
 bed | postel | 🛏️
 table | stůl
 sofa | pohovka | 🛋️
-lamp | lampa | 💡
+lamp | lampa
 mirror | zrcadlo | 🪞
 stairs | schody`), vety: [
     ['My bedroom is pink.', 'Moje ložnice je růžová.'],
@@ -672,7 +675,7 @@ LOL | laughing out loud – hlasitě se směju | 😂
 bestie | nejlepší kamarádka | 👯‍♀️
 vibe | nálada, atmosféra | ✨
 cringe | trapné | 😬
-crush | koho se ti líbí | 💘`), vety: [
+crush | někdo, kdo se ti líbí | 💘`), vety: [
     ['She\'s my bestie.', 'Je to moje nejlepší kamarádka.'],
     ['Just chill!', 'V klidu!'],
     ['That was a good game.', 'To byla dobrá hra.'],
@@ -683,7 +686,7 @@ crush | koho se ti líbí | 💘`), vety: [
     ['Please.', 'Prosím.'],
     ['Thank you very much.', 'Moc děkuji.'],
     ['Sorry!', 'Promiň!'],
-    ['Excuse me.', 'Promiňte.'],
+    ['Excuse me.', 'S dovolením. / Prosím vás…'],
     ['I don\'t understand.', 'Nerozumím.'],
     ['Can you help me, please?', 'Můžeš mi pomoct, prosím?'],
     ['Can I go to the toilet, please?', 'Můžu jít na záchod, prosím?'],
