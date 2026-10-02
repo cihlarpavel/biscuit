@@ -24,7 +24,8 @@ export function nastavSoupere(stav) {
   if (el) el.outerHTML = souperHtml();
 }
 
-export function hraj(ulohy, { battle = false, nazev = '', limit = 0, profil = null, souper = null, priOdpovedi = () => {}, konec }) {
+// nasobek = extra kolo: sušenka za každou ZA_KOLIK_SPRAVNYCH/nasobek-tou správnou, zlatá otázka ×nasobek.
+export function hraj(ulohy, { battle = false, nazev = '', limit = 0, profil = null, souper = null, nasobek = 1, priOdpovedi = () => {}, konec }) {
   const fronta = [...ulohy];
   const celkem = fronta.filter(u => u.typ !== 'nove').length;
   let hotovo = 0, susenky = 0, chyby = 0, body = 0, spravne = 0;
@@ -58,7 +59,7 @@ export function hraj(ulohy, { battle = false, nazev = '', limit = 0, profil = nu
     if (u.typ !== 'nove') {
       if (prvniPokus) hotovo++;
       let zisk = 0;
-      if (spravne && prvniPokus) { zapocitejSpravne(); zisk = (pocetSpravne() % ZA_KOLIK_SPRAVNYCH === 0 ? 1 : 0) + (u.zlata ? ZLATA_OTAZKA : 0); susenky += zisk; }
+      if (spravne && prvniPokus) { zapocitejSpravne(); zisk = (pocetSpravne() % Math.max(1, ZA_KOLIK_SPRAVNYCH / nasobek) === 0 ? 1 : 0) + (u.zlata ? ZLATA_OTAZKA * nasobek : 0); susenky += zisk; }
       if (!spravne) chyby++;
       if (battle && spravne) body += 100 + Math.max(0, Math.round(50 - (Date.now() - start) / 200));
       priOdpovedi(u, spravne, prvniPokus, { body, odpovezeno: hotovo, celkem, spravne: pocetSpravne(), zisk });

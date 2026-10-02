@@ -2,7 +2,7 @@
 import * as S from './store.js';
 import { SKUPINY, BALICKY, balicek, polozky } from './data.js';
 import { postavicka, KATEGORIE, VECI, vec, maVec, nahodnyVzhled, vzacnost, noveSeminko, STARE_CENY } from './postavicka.js';
-import { sestav, sestavBattle, odemcene, zapis, postupBalicku, slabiny, UMI } from './lekce.js';
+import { sestav, sestavExtra, sestavBattle, odemcene, zapis, postupBalicku, slabiny, UMI } from './lekce.js';
 import { hraj, nastavSoupere } from './hra.js';
 import * as O from './online.js';
 import * as HRA from './hra-susenky.js';
@@ -119,8 +119,10 @@ function novy() {
 function odpocet(x, velikost) {
   const cil = x.nastaveni.cil * 60, zbyva = Math.max(0, cil - S.den(x).s);
   return zbyva ? kolecko(zbyva / cil, `<b>${Math.ceil(zbyva / 60)}</b><small>min zbývá</small>`, velikost)
-    : kolecko(1, '<b>✓</b><small>splněno</small>', velikost);
+    : kolecko(1, '<span class="splneno-text">Dnes máš splněno</span>', velikost);
 }
+const EXTRA_DENNE = 2;
+const extraZbyva = x => EXTRA_DENNE - (S.den(x).extra || 0);
 function domu() {
   const x = p();
   const d = S.den(x);
@@ -147,7 +149,8 @@ function domu() {
       ${odpocet(x)}
       <div class="dnes-text"><h3>Dnešní lekce</h3>
         <p>${unitTed ? `Nová slovíčka z Unit ${unitTed.unit} + opakování + něco navíc` : 'Opakování a něco navíc'}</p>
-        <a class="btn" href="#/lekce">${hotovo ? 'Ještě jednu' : d.s < 60 ? 'Jdeme na to' : cil * 60 - d.s <= 180 ? 'Dokonči dnešek' : 'Pokračuj'} →</a></div>
+        ${hotovo && extraZbyva(x) > 0 ? '<a class="btn zelena" href="#/lekce/extra">Dát si extra 5 minut →</a><small class="extra-pozn">těžší úlohy · dvojité sušenky 🍪🍪</small>'
+          : `<a class="btn" href="#/lekce">${hotovo ? 'Ještě jednu' : d.s < 60 ? 'Jdeme na to' : cil * 60 - d.s <= 180 ? 'Dokonči dnešek' : 'Pokračuj'} →</a>`}</div>
     </div>
     ${kartaHry(x)}
     ${skupiny}</section>`, { tab: 'domu' });
@@ -253,11 +256,15 @@ function detailBalicku(id) {
 const ODMENY = { lekce: 2, perfekt: 3, cil: 5, bleskovkaVse: 4 };
 function spustLekci(idBalicku) {
   const x = p();
-  const ulohy = sestav(x, idBalicku || null);
+  // „extra“ = extra 5 minut po splnění denního cíle: těžší úlohy, dvojnásobné sušenky, nejvýš EXTRA_DENNE× za den.
+  const extra = idBalicku === 'extra' && extraZbyva(x) > 0;
+  if (idBalicku === 'extra' && !extra) idBalicku = null;
+  const ulohy = extra ? sestavExtra(x) : sestav(x, idBalicku || null);
   const cilPred = S.den(x).s >= x.nastaveni.cil * 60;
   nastavUceni(true);
   hraj(ulohy, {
-    nazev: idBalicku ? balicek(idBalicku)?.nazev : 'Dnešní lekce', profil: x,
+    nazev: extra ? 'Extra 5 minut ⚡ dvojité sušenky' : idBalicku ? balicek(idBalicku)?.nazev : 'Dnešní lekce', profil: x,
+    nasobek: extra ? 2 : 1,
     priOdpovedi: (u, ok, prvni, info) => {
       if (u.polozka?.id) zapis(x, u.polozka, ok, prvni);
       const d = S.den(x);
@@ -270,7 +277,8 @@ function spustLekci(idBalicku) {
       if (v.preruseno) { S.uloz(); return jdi('#/'); }
       const d = S.den(x);
       d.lekce++;
-      let bonus = ODMENY.lekce + (v.perfekt ? ODMENY.perfekt : 0);
+      if (extra) d.extra = (d.extra || 0) + 1;
+      let bonus = (ODMENY.lekce + (v.perfekt ? ODMENY.perfekt : 0)) * (extra ? 2 : 1);
       const cilTed = !cilPred && d.s >= x.nastaveni.cil * 60;
       if (cilTed) bonus += ODMENY.cil;
       S.pridej(x, bonus);
@@ -292,7 +300,7 @@ function konecLekce(x, v, bonus, cilTed, nove) {
     ${VECI.some(v => !maVec(x, v) && v.cena <= x.susenky) ? `<a class="drip-ceka" href="#/obchod">${ik('tab-drip', 34)}<b>${esc(H.DRIP_CEKA)}</b></a>` : ''}
     ${nove.map(o => `<div class="novy-odznak"><span>${ikOdznaku(o, 48)}</span><div><small>Nový odznak!</small><b>${esc(o.nazev)}</b></div></div>`).join('')}
     <a class="btn velke" href="#/">Hotovo</a>
-    <a class="odkaz" href="#/lekce">Ještě jednu lekci</a></section>`, { bezListy: true });
+    ${extraZbyva(x) > 0 && d.s >= x.nastaveni.cil * 60 ? `<a class="odkaz" href="#/lekce/extra">Dát si extra 5 minut ⚡</a>` : '<a class="odkaz" href="#/lekce">Ještě jednu lekci</a>'}</section>`, { bezListy: true });
   if (v.perfekt || cilTed || nove.length) { konfety(); zvukFanfara(); }
 }
 

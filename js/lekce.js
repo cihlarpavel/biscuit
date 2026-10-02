@@ -48,22 +48,23 @@ function moznosti(cil, zdroj, pole, n = 4) {
 
 // nova = položku vidí poprvé: jen úlohy, ze kterých se dá naučit (výběr z možností, poslech s obrázkem),
 // psaní a skládání až u známých. jinyNez = typ, který se má vynechat (obměna po chybě).
-function ulohaPro(polozka, zdroj, { nova = false, jinyNez = null } = {}) {
-  const u = ulohaTypu(polozka, zdroj, nova, jinyNez);
-  u.obmena = () => ulohaPro(polozka, zdroj, { jinyNez: u.typ });
+function ulohaPro(polozka, zdroj, { nova = false, jinyNez = null, tezka = false } = {}) {
+  const u = ulohaTypu(polozka, zdroj, nova, jinyNez, tezka);
+  u.obmena = () => ulohaPro(polozka, zdroj, { jinyNez: u.typ, tezka });
   return u;
 }
-function ulohaTypu(polozka, zdroj, nova, jinyNez) {
+// tezka = extra kolo: jen úlohy, kde se angličtina tvoří (cz→en, psaní, skládání věty).
+function ulohaTypu(polozka, zdroj, nova, jinyNez, tezka = false) {
   if (polozka.druh === 'veta') {
     const slov = polozka.en.split(' ').length;
-    const skladat = !nova && slov >= 2 && slov <= 9 && (jinyNez === 'vyber-vetu' || (jinyNez !== 'skladani' && Math.random() < 0.6));
+    const skladat = !nova && slov >= 2 && slov <= 9 && (jinyNez === 'vyber-vetu' || (jinyNez !== 'skladani' && (tezka || Math.random() < 0.6)));
     return skladat
       ? { typ: 'skladani', polozka, dlazdice: zamichat(polozka.en.split(' ')) }
       : { typ: 'vyber-vetu', polozka, moznosti: moznosti(polozka, zdroj, 'cz', 3) };
   }
-  let typy = nova ? ['en-cz'] : ['en-cz', 'cz-en'];
+  let typy = tezka ? ['cz-en'] : nova ? ['en-cz'] : ['en-cz', 'cz-en'];
   const sObr = zdroj.filter(x => x.obr && x.druh === 'slovo');
-  if (polozka.obr && sObr.length >= 4) typy.push('poslech', 'poslech');
+  if (!tezka && polozka.obr && sObr.length >= 4) typy.push('poslech', 'poslech');
   if (!nova && /^[a-z]{3,8}$/i.test(polozka.en)) typy.push('psani');
   if (jinyNez && typy.length > 1) typy = typy.filter(t => t !== jinyNez);
   const typ = typy[Math.floor(Math.random() * typy.length)];
@@ -128,6 +129,19 @@ export function sestav(p, idBalicku = null, delka = 20) {
   // Překvapení: asi v každé páté lekci se jedna otázka promění ve zlatou (5 sušenek místo 1).
   if (ulohy.length && Math.random() < 0.22) ulohy[Math.floor(Math.random() * ulohy.length)].zlata = true;
   return ulohy;
+}
+
+// Extra kolo po splnění denního cíle („Dát si extra 5 minut“): ~10 těžších úloh ze slov, která už zná –
+// přednostně ta, ve kterých chybuje a která jsou v nižších přihrádkách. Sušenky se za něj dávají dvojnásobné.
+export function sestavExtra(p, delka = 10) {
+  const bal = odemcene(p);
+  const zdroj = bal.flatMap(polozky);
+  const s = id => p.srs[id];
+  const zname = zdroj.filter(x => s(x.id));
+  const vaha = x => (s(x.id).chyby || 0) * 2 - s(x.id).b + Math.random() * 2;
+  const vyber = zname.sort((a, b) => vaha(b) - vaha(a)).slice(0, delka);
+  if (vyber.length < delka) vyber.push(...zamichat(zdroj.filter(x => !vyber.includes(x))).slice(0, delka - vyber.length));
+  return zamichat(vyber).map(x => ulohaPro(x, zdroj, { tezka: true }));
 }
 
 // Battle: stejné otázky pro obě hráčky, jen z balíčků odemčených oběma.
