@@ -16,7 +16,7 @@ v `sw.js`, commit, `git push` (`gh` je v `~/.local/bin/gh`). Ve škole jsou na s
   Dnešní lekce = opakování + 3 nová z aktuální Unit + kousek „do šířky“ z jiného balíčku.
 - `js/hra.js` – přehrávání úloh (nové slovíčko, poslech s obrázky, en→cz, cz→en, skládání slova
   z písmen, hláskování, skládání věty, písmena abecedy, čísla). Stejný kód hraje i battle.
-- Pozadí avatara se LOSUJE (11 čárových scének, `pozadi(z)`): podle `vzhled.seminko` + dnešního data, každý den jiné. Kategorie Pozadí v Drip shopu není.
+- Pozadí avatara se LOSUJE (12 vtipných čmáranic, vždy jen 1–2 kresby – Pavel chce méně a „crazy“, `pozadi(z)`): podle `vzhled.seminko` + dnešního data, každý den jiné. Kategorie Pozadí v Drip shopu není.
 - `js/postavicka.js` – postavička ve stylu Pou (Lotka chtěla zůstat u původního stylu, jen víc
   detailů): 18 kategorií, ~220 věcí, vzácnost podle ceny (Běžné → Cool → Epické → Legendární →
   Bizár, masky a kostýmy až 3 000 🍪). Kreslení vrstev do SVG. Nová věc = položka ve `VECI` +
