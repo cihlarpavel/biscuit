@@ -1,5 +1,8 @@
 // Vlastní sada ikon ve stylu nálepky: pootočený pastelový podklad, tmavý obrys, výrazné výplně.
 // ik('nazev', velikost). Mřížka 48×48. Nová ikona = položka v KRESBY (+ barva podkladu v PODKLAD).
+// Když je ve složce ilustrace malovaný obrázek stejného jména (viz ILUSTRACE_JMENA), použije se místo kresby.
+import { ma, obr } from './obrazky.js';
+const ILUSTRACE_JMENA = { domu: 'tab-domu', hra: 'truhla' };
 
 const O = '#3b2a3f';
 const t = `stroke="${O}" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round"`;
@@ -206,6 +209,8 @@ const KRESBY = {
 };
 
 export function ik(nazev, velikost = 40, { podklad = true } = {}) {
+  const ilu = ILUSTRACE_JMENA[nazev] || nazev;
+  if (ma(ilu)) return obr(ilu, velikost, 'ik');
   const k = KRESBY[nazev];
   if (!k) return '';
   const pod = podklad && PODKLAD[nazev] && PODKLAD[nazev] !== '#ffffff'

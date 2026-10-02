@@ -14,6 +14,10 @@ import { SVETY, nastavSvet, odemcene as odemceneSvety, svetPro, nasbirano, nahle
 import * as H from './hlasky.js';
 import { obrazovka, esc, $, $$, kolecko, minuty, toast, konfety, zpet } from './ui.js';
 import { ik, maIkonu, barvaIkony } from './ikony.js';
+import { nactiSeznam, ma as maIlustraci } from './obrazky.js';
+import { scenaPapir } from './papir.js';
+
+await nactiSeznam();
 
 addEventListener('pointerdown', odemkni, { once: true });
 // Ikony lišty ve stejném stylu jako balíčky: bílá dlaždice s barevným okrajem.
@@ -134,8 +138,8 @@ function domu() {
 
   obrazovka(`${hlavicka(x)}<section class="stranka domu">
     <div class="hero">
-      <div class="hero-scena">${scena(jeNoc() ? 'noc' : svetPro(x).id)}</div>
-      <div class="hero-postava">${postavicka(x.vzhled, 140, 'cela', true, { bezPozadi: true })}</div>
+      <div class="hero-scena">${scenaPapir(jeNoc() ? 'noc' : 'den')}</div>
+      <div class="hero-postava">${postavicka(x.vzhled, 150, 'cela', true, { bezPozadi: true })}</div>
       <div class="hero-text">
         <div class="bublina">${esc(pozdrav)}</div>
         <div class="uroven"><div class="uroven-radek"><b>${esc(H.titul(n, x))}</b>
@@ -616,6 +620,9 @@ function jeNoc() {
 function nastavNoc() {
   const noc = jeNoc();
   document.body.classList.toggle('noc', noc);
+  const stul = noc ? 'pozadi-noc' : 'pozadi-den';
+  document.body.classList.toggle('stul', maIlustraci(stul));
+  if (maIlustraci(stul)) document.body.style.setProperty('--stul', `url('ilustrace/${stul}.webp')`);
   if (noc) document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#1d1733');
 }
 setInterval(() => { const pred = document.body.classList.contains('noc'); nastavNoc(); if (pred !== jeNoc() && !jeNoc()) nastavSvet(p()); }, 60000);

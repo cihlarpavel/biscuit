@@ -1,3 +1,9 @@
 .DS_Store
 # Fotky a přepis učebnice nepublikovat (autorská práva, repo pro GitHub Pages je veřejné)
 podklady/
+
+# Původní vygenerované obrázky (velké) – publikují se jen zmenšené .webp
+ilustrace/*.png
+ilustrace/*.PNG
+ilustrace/*.jpg
+ilustrace/*.jpeg

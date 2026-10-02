@@ -809,3 +809,112 @@ body.noc .hra-info span { background-color: var(--karta); }
 .hero-postava .postavicka { filter: drop-shadow(0 0 0 #fff) drop-shadow(3px 4px 0 rgba(59, 42, 63, .25)); }
 .hero .bublina { box-shadow: 3px 4px 0 rgba(59, 42, 63, .18); }
 .hero .uroven { box-shadow: 3px 4px 0 rgba(59, 42, 63, .18); }
+
+/* =========================================================================
+   SEŠIT NA STOLE (podle předlohy): krémový papír, modrá jako hlavní barva,
+   karty jako stránky sešitu (kroužky, sponka, páska), čtverečkovaný papír,
+   plné barvy bez přechodů. Malované pozadí stolu z ilustrace/pozadi-*.webp.
+   ========================================================================= */
+:root {
+  --bg: #f3eadb; --text: #22305a; --tlumene: #6f7591; --karta: #fffaf1;
+  --modra: #3f6fe0; --modra-tm: #2c53b8; --modra-sv: #dfe8ff; --cervena-sesit: #e5534b; --zluta: #f2c14b;
+  --ruzova: #3f6fe0; --ruzova-svetla: #e4ebff; --lila: #7d9cf0; --lila-svetla: #e9eeff;
+  --mata: #57b38a; --mata-svetla: #ddf3e8;
+  --stin-papir: 0 1px 0 rgba(255, 255, 255, .8) inset, 0 2px 2px rgba(80, 60, 30, .08), 0 10px 18px -8px rgba(80, 60, 30, .3);
+  --ctverecky: linear-gradient(rgba(63, 111, 224, .07) 1px, transparent 1px) 0 0 / 16px 16px, linear-gradient(90deg, rgba(63, 111, 224, .07) 1px, transparent 1px) 0 0 / 16px 16px;
+}
+body { background-color: var(--bg); color: var(--text); }
+body.stul { background: var(--bg) var(--stul) center top / cover fixed no-repeat; }
+body.stul #app { background: none; }
+
+/* Plné barvy místo přechodů */
+.btn, .btn.velke { background: var(--modra) var(--papir); box-shadow: 0 5px 0 var(--modra-tm), 0 10px 16px -6px rgba(44, 83, 184, .45); border-color: #fff; text-shadow: none; }
+.btn::after { display: none; }
+.btn:active { box-shadow: 0 2px 0 var(--modra-tm); }
+.btn.vedlejsi { background: #fff var(--papir); color: var(--modra-tm); box-shadow: 0 4px 0 #c9d6f5, 0 8px 14px -6px rgba(44, 83, 184, .25); }
+.prubeh i, .xp i, .balicek .mini-prubeh i { background: var(--modra); animation: none; }
+.xp i { background: var(--zluta); }
+.balicek .mini-prubeh i { background: var(--mata); }
+.stitek-ted, .popup-stuha { background: var(--cervena-sesit); box-shadow: 0 3px 0 #b8403a; }
+.hra-hrat { background: var(--zluta); box-shadow: 0 4px 0 #c9962c; color: var(--text); }
+.drip-nadpis { background: none; -webkit-background-clip: border-box; background-clip: border-box; color: var(--text); }
+.zlata-pruh { background: var(--zluta); }
+.kol-plneni { stroke: var(--modra); }
+.kol-plneni.hotovo { stroke: var(--mata); }
+.kol-pozadi { stroke: #ece4d6; }
+.sekce-hlava h2 { background-image: none; padding-bottom: 0; }
+.uroven-radek b, .titul, .kdo small { color: var(--modra-tm); }
+.spravne-volba { --m: #bfe8d2 !important; border-color: var(--mata) !important; }
+
+/* Hlavní karta: papírová scénka v rámečku z papíru s páskou */
+.hero, body.noc .hero { background: var(--karta); border: 6px solid var(--karta); border-radius: 22px; box-shadow: var(--stin-papir); overflow: visible; }
+.hero-scena { inset: 0; border-radius: 16px; overflow: hidden; }
+.hero::before { content: ''; position: absolute; z-index: 3; top: -12px; right: 18px; width: 70px; height: 22px; rotate: 8deg;
+  background: rgba(125, 156, 240, .55); clip-path: polygon(3% 0, 97% 5%, 100% 50%, 96% 100%, 2% 95%, 0 50%); }
+.hero .bublina, .hero .uroven { background: var(--karta); border-color: var(--karta); }
+
+/* Stránka sešitu: kroužková vazba vlevo, čtverečky, sponka */
+.dnes-karta, .karta-hry, .z-karta, .r-karta, .vyzva, .historie, .prazdne {
+  background-color: var(--karta); background-image: var(--ctverecky); border-color: var(--karta); }
+.dnes-karta { padding-left: 34px; border-radius: 18px; box-shadow: var(--stin-papir), -4px 6px 0 -2px #efe4d0, -8px 12px 0 -4px #e6d8c0; }
+.dnes-karta::before { /* kroužky vazby místo washi pásky */
+  content: ''; position: absolute; left: 8px; top: 16px; bottom: 16px; width: 18px; translate: 0; rotate: 0deg; border-radius: 0;
+  background: radial-gradient(circle at 9px 9px, #fffaf1 0 4px, #8a93ad 4.5px 6.5px, transparent 7px) 0 0 / 18px 26px repeat-y; box-shadow: none; }
+.dnes-karta::after { /* sponka */
+  content: ''; position: absolute; top: -14px; left: 46px; width: 22px; height: 46px; rotate: -8deg;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 46'%3E%3Cpath d='M6 40 V10 a5 5 0 0 1 10 0 V36 a8 8 0 0 1 -16 0 V14' fill='none' stroke='%238a93ad' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat; }
+.karta-hry { border-radius: 18px; rotate: 0deg; }
+.karta-hry.odemcena { background-color: #fff6dc; background-image: var(--ctverecky); border-color: #fff6dc; }
+
+/* Karty balíčků: papír se čtverečky, bez barevného přechodu */
+.balicek { background-color: var(--karta); background-image: var(--ctverecky); border-color: var(--karta); }
+.balicek .b-ikona { background: #fff; box-shadow: 0 0 0 2px var(--akc) inset, 0 3px 0 color-mix(in srgb, var(--akc) 75%, #6a5a40); }
+.b-pozadi .ik { opacity: .12; }
+.balicek.ted { border-color: var(--karta); box-shadow: 0 0 0 3px var(--modra), var(--stin-papir); }
+
+/* Nadpisy sekcí na papírové stužce */
+.sekce-hlava h2 { background: var(--zluta) var(--papir); padding: 2px 12px; border-radius: 6px; rotate: -1.5deg; box-shadow: 0 2px 0 rgba(80, 60, 30, .15); }
+
+/* Odpovědi: papírové kartičky s barevným proužkem nahoře */
+.moznost { background-color: var(--karta); background-image: linear-gradient(var(--m), var(--m)) 0 0 / 100% 7px no-repeat, var(--ctverecky);
+  border-color: var(--karta); box-shadow: 0 5px 0 color-mix(in srgb, var(--m) 70%, #6a5a40), var(--stin-papir); }
+.mrizka .moznost:nth-child(4n+1), .seznam .moznost:nth-child(4n+1) { --m: #8fb0f5; }
+.mrizka .moznost:nth-child(4n+2), .seznam .moznost:nth-child(4n+2) { --m: #f3a19b; }
+.mrizka .moznost:nth-child(4n+3), .seznam .moznost:nth-child(4n+3) { --m: #8fd1b0; }
+.mrizka .moznost:nth-child(4n+4), .seznam .moznost:nth-child(4n+4) { --m: #f2c14b; }
+
+/* Já: místo růžovofialového přechodu papírová karta se scénkou */
+.hero-ja, body.noc .hero-ja { background: var(--karta); background-image: var(--ctverecky); }
+.hero-ja::after { display: none; }
+.hero-ja h1 { color: var(--text); text-shadow: none; }
+.hero-ja .titul { background: var(--modra-sv); }
+
+/* Spodní lišta: krémový papír */
+.tabs { background: var(--karta) var(--papir); border-top: 0; box-shadow: 0 -2px 0 #e9dfcd, 0 -10px 20px -8px rgba(80, 60, 30, .3); }
+.tabs a.on { color: var(--modra-tm); }
+.tabs a.stred span { border-color: var(--modra); box-shadow: 0 6px 16px rgba(44, 83, 184, .3); background: var(--karta); }
+
+/* Vyskakovací okna a výsledky bez přechodů */
+.popup-karta, .popup-karta.vyhra, .popup-karta.prohra, .popup-karta.remiza { background-color: var(--karta); background-image: var(--ctverecky); }
+.popup-karta.vyhra { border-color: var(--zluta); }
+.vysledek.ok { background: #ddf3e8 var(--papir); }
+.vysledek.chyba { background: #fde3e1 var(--papir); }
+.hra.zlata { background: #fff6dc; }
+
+/* Malované ilustrace */
+.ilu { display: block; object-fit: contain; filter: drop-shadow(0 3px 3px rgba(80, 60, 30, .18)); }
+.maskot.ilu { filter: drop-shadow(0 4px 4px rgba(80, 60, 30, .2)); }
+
+/* ---------- Noc ---------- */
+body.noc { --bg: #1e2340; --karta: #2b3157; --text: #eef1ff; --tlumene: #aab2d6;
+  --ctverecky: linear-gradient(rgba(255, 255, 255, .05) 1px, transparent 1px) 0 0 / 16px 16px, linear-gradient(90deg, rgba(255, 255, 255, .05) 1px, transparent 1px) 0 0 / 16px 16px; }
+body.noc .dnes-karta { box-shadow: var(--stin-papir), -4px 6px 0 -2px #262b4d, -8px 12px 0 -4px #22274a; }
+body.noc .dnes-karta::before { background: radial-gradient(circle at 9px 9px, #1e2340 0 4px, #8a93ad 4.5px 6.5px, transparent 7px) 0 0 / 18px 26px repeat-y; }
+body.noc :is(.balicek, .moznost, .dnes-karta, .karta-hry, .z-karta, .hero, .hero-ja) { background-color: var(--karta); border-color: var(--karta); }
+body.noc .balicek .b-ikona { background: #f4ecff; }
+body.noc .sekce-hlava h2 { color: #22305a; }
+/* Pozadí: klidný krémový papír (světy už neurčují barvu ani čmáranice – ty patří ke starému stylu) */
+body, body.noc { background-color: var(--bg); background-image: var(--papir); background-size: auto; }
+body.stul { background: var(--bg) var(--stul) center top / cover fixed no-repeat; }
+.dnes-karta::before { height: auto; }
+body:not(.noc) { --bg: #f3eadb; }

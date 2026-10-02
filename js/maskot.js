@@ -1,7 +1,13 @@
 // Maskotka: holka s culíkem v mikině, drží sušenku. Kreslená jako SVG, ať je ostrá na každém displeji.
 // nalada: 'radost' | 'mrk' | 'hmm'
 
+import { ma, obr } from './obrazky.js';
+
 export function maskot(velikost = 120, nalada = 'radost') {
+  // Malovaná maskotka z ilustrací, pokud je k dispozici.
+  const ilu = { radost: 'maskotka', mrk: 'maskotka-radost', hmm: 'maskotka-hmm' }[nalada] || 'maskotka';
+  if (ma(ilu)) return obr(ilu, velikost, 'maskot');
+  if (ma('maskotka')) return obr('maskotka', velikost, 'maskot');
   const oci = nalada === 'mrk'
     ? `<circle cx="50" cy="52" r="3.4" fill="#3b2a3f"/><path d="M66 52 q4 -3 8 0" stroke="#3b2a3f" stroke-width="2.6" fill="none" stroke-linecap="round"/>`
     : `<circle cx="50" cy="52" r="3.4" fill="#3b2a3f"/><circle cx="70" cy="52" r="3.4" fill="#3b2a3f"/>

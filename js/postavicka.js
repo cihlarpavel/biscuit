@@ -559,7 +559,7 @@ function pozadi(id, defs, papir = false, F = '') {
 }
 
 // velikost v px; vyrez: 'cela' (celá postavička) nebo 'hlava' (malý avatar v seznamech)
-export function postavicka(vzhled = VYCHOZI, velikost = 120, vyrez = 'cela', pohyb = velikost >= 90, { bezPozadi = false, papir = false } = {}) {
+export function postavicka(vzhled = VYCHOZI, velikost = 120, vyrez = 'cela', pohyb = velikost >= 90, { bezPozadi = false, papir = true } = {}) {
   OBRYS = papir ? '' : OBRYS_KRESBA;
   try { return kresli(vzhled, velikost, vyrez, pohyb, bezPozadi, papir); } finally { OBRYS = OBRYS_KRESBA; }
 }
