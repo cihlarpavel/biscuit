@@ -584,11 +584,11 @@ function onlineSekce(x) {
   const vyzva = b => VYZVY[b.hlaska] || VYZVY[0];
   return `
     ${hrat.length ? `<h2>Výzvy pro tebe</h2>${hrat.map(b => { const k = kamaradka(souperkaId(b, x.id)); const odMe = b.hraci[0] === x.id;
-      return `<div class="vyzva"><span class="avatar velky">${av(k, 60)}</span><div><b>${odMe ? `Tvoje výzva pro ${jmeno(k)}` : `${jmeno(k)} ${H.rod('[tě vyzval|tě vyzvala]', k)}!`}</b>
+      return `<div class="vyzva"><span class="avatar velky">${av(k, 60)}</span><div><b>${odMe ? `Tvoje výzva · ${jmeno(k)}` : `${jmeno(k)} ${H.rod('[tě vyzval|tě vyzvala]', k)}!`}</b>
         <span class="vyzva-en">${esc(vyzva(b)[0])}</span><small>${esc(vyzva(b)[1])}</small></div>
         <button class="btn" data-hrat="${b.id}">Hrát</button></div>`; }).join('')}` : ''}
     ${cekam.length ? `<div class="historie">${cekam.map(b => { const k = kamaradka(souperkaId(b, x.id)); const st = mojeVysl(b, k.id);
-      return `<div class="h-radek"><span>${st.odpovezeno ? `${jmeno(k)} právě hraje 🔥` : `Čeká se na ${jmeno(k)}`}</span><small>ty ⚡ ${mojeVysl(b, x.id).body}</small></div>`; }).join('')}</div>` : ''}
+      return `<div class="h-radek"><span>${st.odpovezeno ? `${jmeno(k)} právě hraje 🔥` : `Čeká se, až zahraje ${jmeno(k)}`}</span><small>ty ⚡ ${mojeVysl(b, x.id).body}</small></div>`; }).join('')}</div>` : ''}
     <h2>Kamarádi</h2>
     ${online.kamaradky.length ? `<div class="profily">${online.kamaradky.map(k => { const z = skore(k.id);
       return `<div class="profil-karta"><span class="avatar velky">${av(k, 70)}</span><b>${jmeno(k)}</b><small>${esc(H.titul(k.susenkyCelkem || 0, k))} · ${z.v}:${z.p}</small>
@@ -619,7 +619,7 @@ function napojOnlineSekci(x) {
 
 function vybratVyzvu(x, k) {
   obrazovka(`<section class="stranka">${zpet('#/battle')}
-    <div class="vyzva-hlava"><span class="avatar obri">${postavicka(k.vzhled, 120)}</span><h1>Výzva pro ${jmeno(k)}</h1>
+    <div class="vyzva-hlava"><span class="avatar obri">${postavicka(k.vzhled, 120)}</span><h1>Nová výzva ⚔️</h1><p class="titul">Soupeř: ${jmeno(k)}</p>
     <p class="drobne">Vyber hlášku, kterou ${H.rod('[mu|jí]', k)} pošleš. Pak hned hraješ ty, ${jmeno(k)} odehraje svoje kolo, až bude mít čas (nebo hned, když je online).</p></div>
     <div class="seznam">${VYZVY.map(([en, cz], i) => `<button class="moznost hlaska-vyzvy" data-i="${i}"><b>${esc(en)}</b><small>${esc(cz)}</small></button>`).join('')}</div>
   </section>`, { bezListy: true });
@@ -662,7 +662,7 @@ function cekaniNaVysledek(x, id, k, stopHra) {
     if (b && oboHotovo(b)) { stop(); return vysledekOnline(x, b, k); }
     const st = b ? mojeVysl(b, k.id) : {};
     obrazovka(`<section class="stranka konec cekani">${zpet('#/battle')}<span class="avatar obri">${postavicka(k.vzhled, 120)}</span>
-      <h1>${st.odpovezeno ? `${jmeno(k)} právě hraje 🔥` : `Čeká se na ${jmeno(k)}`}</h1>
+      <h1>${st.odpovezeno ? `${jmeno(k)} právě hraje 🔥` : `Čeká se, až zahraje ${jmeno(k)}`}</h1>
       <p class="hlaska">Tvoje body: ⚡ ${b ? mojeVysl(b, x.id).body : '…'}</p>
       <p class="drobne">Výsledek se ukáže, až ${jmeno(k)} dohraje. Klidně zatím dělej něco jiného, výsledek ti přijde.</p>
       <a class="btn velke" href="#/">Jdu dál</a></section>`, { bezListy: true });

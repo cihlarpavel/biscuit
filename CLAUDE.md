@@ -86,7 +86,12 @@ Učebnice **Happy Street 2, 3. vydání (Oxford, české vydání)**, Units 1–
 1. **Fáze A:** víc profilů na jednom zařízení (kamarádka na návštěvě), vše lokálně.
 2. **Fáze B:** kamarádi na vlastních telefonech přes Firebase (bezplatný režim Spark).
    Datový model připrav už ve fázi A tak, aby se B dalo napojit bez přepisu.
-   Ve fázi B přidat i battle na dálku (jedna rozehraje, druhá odehraje stejné otázky později).
+   **Hotovo 2. 10. 2026:** Firebase projekt `biscuit-37341` (tarif Spark zdarma, Firestore eur3,
+   anonymní přihlášení BEZ auto clean-up). Kód `js/online.js`, konfigurace `js/firebase-config.js`,
+   pravidla `firestore.rules` (při změně je Pavel vkládá do konzole: Firestore → Rules → Publish).
+   Online se zapíná v Pro rodiče per profil (souhlas rodiče). Kamarádky kódem, výzvy s hláškou
+   z pevného seznamu (VYZVY, v DB jen číslo), battle naživo i na později, společný žebříček.
+   Přezdívku neskloňovat – věty stavět tak, aby stála v 1. pádě.
 
 Pravidla pro fázi B (děti, neobcházet):
 - Jen přezdívka a kreslený avatar. Žádné skutečné jméno, fotka ani e-mail.
