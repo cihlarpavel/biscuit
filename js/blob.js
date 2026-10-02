@@ -1,15 +1,27 @@
-// Postavička ve stylu Pou – NÁVRH. Jednoduchá „kapka“ se silným obrysem a velkýma očima;
+// Postavička-sušenka – NÁVRH. Kulatá ručně „upečená“ sušenka s ukousnutým kouskem, silný obrys, velké oči;
 // legrace je v šílených kombinacích: převleky celého těla, oči, pusy, brýle, klobouky, mazlíčci.
 // viewBox 0 0 120 120. Vrstvy: za tělem (křídla) → tělo + vzor → oblečení → pusa → oči → brýle → klobouk → věci.
 
 const OB = '#1f1a24';
 const T = `stroke="${OB}" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"`;
 const T2 = `stroke="${OB}" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"`;
-const TELO = 'M60 20 C84 20 101 58 107 86 C111 105 97 113 60 113 C23 113 9 105 13 86 C19 58 36 20 60 20Z';
+// Obrys sušenky: kruh s nepravidelným, mírně zvlněným okrajem (jako upečená), střed 60/67.
+const CX = 60, CY = 67, R = 45;
+const TELO = Array.from({ length: 120 }, (_, i) => {
+  const a = i / 120 * Math.PI * 2, r = R + .8 * Math.sin(a * 7) + .9 * Math.sin(a * 3 + 1);
+  return `${i ? 'L' : 'M'}${(CX + Math.cos(a) * r).toFixed(1)} ${(CY + Math.sin(a) * r).toFixed(1)}`;
+}).join(' ') + 'Z';
+// Ukousnutý kousek vpravo nahoře – tři kruhy „zubů“.
+const KOUS = [[-48, 10], [-34, 7], [-62, 7]].map(([u, r]) => { const a = u * Math.PI / 180; return [CX + Math.cos(a) * (R + 3), CY + Math.sin(a) * (R + 3), r]; });
+const DROBKY = `<path d="M104 24 l4 -1 l1 4 l-4 1z M110 34 l3 0 l0 3 l-3 0z M98 14 l3 1 l-1 3 l-3 -1z" fill="currentColor" ${'stroke="#1f1a24" stroke-width="1.6" stroke-linejoin="round"'}/>`;
 let n = 0;
 
 // ---------- kůže / převleky celého těla ----------
 const KUZE = {
+  pernik: { barva: '#b0703f', vzor: `<circle cx="60" cy="67" r="37" fill="none" stroke="#fff" stroke-width="3.5" stroke-dasharray="7 4" stroke-linecap="round"/>${[[30, 96], [90, 96], [60, 106]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3" fill="#ff5b7a"/>`).join('')}` },
+  oreo: { barva: '#3a2a2e', vzor: `<circle cx="60" cy="67" r="38" fill="none" stroke="#56423f" stroke-width="2"/>${Array.from({ length: 16 }, (_, i) => { const a = i / 16 * Math.PI * 2; return `<circle cx="${(60 + Math.cos(a) * 32).toFixed(1)}" cy="${(67 + Math.sin(a) * 32).toFixed(1)}" r="2.4" fill="#56423f"/>`; }).join('')}<path d="M0 90 H120 V97 H0z" fill="#fff8ec"/>` },
+  poleva: { barva: '#d9a066', vzor: `<path d="M0 0 H120 V52 q-6 0 -8 10 q-2 8 -6 0 q-4 -10 -12 -6 q-6 4 -8 16 q-3 8 -6 -2 q-2 -12 -12 -10 q-8 2 -10 12 q-3 6 -6 -4 q-4 -12 -14 -8 q-8 4 -10 0 q-4 -6 -8 -4 V0z" fill="#ff8fc0" stroke="#1f1a24" stroke-width="2.4" stroke-linejoin="round"/>${[[30, 38, '#ffd34d', 20], [48, 30, '#4dabf7', -30], [72, 32, '#8fd36b', 50], [88, 44, '#fff', -10], [40, 50, '#4dabf7', 70], [64, 48, '#ffd34d', -60], [80, 26, '#fff', 15]].map(([x, y, c, r]) => `<rect x="${x}" y="${y}" width="7" height="2.6" rx="1.3" fill="${c}" transform="rotate(${r} ${x} ${y})"/>`).join('')}` },
+  posyp: { barva: '#f3dcb0', vzor: Array.from({ length: 30 }, (_, i) => `<rect x="${(i * 37) % 96 + 12}" y="${(i * 53) % 86 + 24}" width="6" height="2.4" rx="1.2" fill="${['#ff5b7a', '#4dabf7', '#ffd34d', '#8fd36b', '#b494f0'][i % 5]}" transform="rotate(${(i * 67) % 180} ${(i * 37) % 96 + 12} ${(i * 53) % 86 + 24})"/>`).join('') },
   susenka: { barva: '#d9a066', vzor: `${[[38, 40, 4], [80, 36, 3.5], [30, 78, 4.5], [88, 74, 4], [58, 98, 4], [44, 92, 3], [80, 96, 3.5]].map(([x, y, r]) => `<ellipse cx="${x}" cy="${y}" rx="${r}" ry="${r * .8}" fill="#5b3424"/>`).join('')}` },
   hneda: { barva: '#c8955f' }, modra: { barva: '#6fb6f2' }, ruzova: { barva: '#f7a1c4' }, zelena: { barva: '#8fd36b' }, fialova: { barva: '#b494f0' },
   beruska: { barva: '#e8352b', vzor: [[40, 46], [82, 44], [30, 74], [60, 66], [92, 76], [46, 98], [76, 100], [60, 30]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="6" fill="${OB}"/>`).join(''),
@@ -46,7 +58,7 @@ const OCI = {
 
 // ---------- pusy ----------
 const PUSY = {
-  usmev: `<path d="M34 66 q1 10 10 9" fill="none" ${T}/>`,
+  usmev: `<path d="M48 72 q12 10 24 0" fill="none" ${T}/>`,
   otevrena: `<path d="M44 72 q16 -6 32 0 q-4 18 -16 20 q-12 -2 -16 -20z" fill="#7a2e22" ${T2}/>`,
   jazyk: `<path d="M48 72 q12 8 24 0" fill="none" ${T}/><path d="M56 76 q4 10 8 0" fill="#ff6f8f" ${T2}/>`,
   zuby: `<path d="M44 70 h32 q-2 12 -16 12 q-14 0 -16 -12z" fill="#fff" ${T2}/><path d="M52 70 v6 M60 70 v7 M68 70 v6" stroke="${OB}" stroke-width="1.6"/>`,
@@ -91,10 +103,15 @@ export function blob(v, px = 160) {
   const pusa = v.vousy === 'knir' ? KNIR + (PUSY[v.pusa] || '') : (PUSY[v.pusa] || PUSY.usmev);
   return `<svg width="${px}" height="${px}" viewBox="0 -12 120 132" aria-hidden="true" style="color:${k.barva}">
     <clipPath id="${id}"><path d="${TELO}"/></clipPath>
+    <mask id="${id}m"><rect x="-20" y="-20" width="160" height="160" fill="#fff"/>${KOUS.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#000"/>`).join('')}</mask>
     ${k.za || ''}
-    <path d="${TELO}" fill="${k.barva}"/>
-    <g clip-path="url(#${id})">${k.vzor || ''}${OBLECENI[v.obleceni] || ''}<ellipse cx="44" cy="34" rx="12" ry="7" fill="#fff" opacity=".22" transform="rotate(-30 44 34)"/></g>
-    <path d="${TELO}" fill="none" ${T}/>
+    <g mask="url(#${id}m)">
+      <path d="${TELO}" fill="${k.barva}"/>
+      <g clip-path="url(#${id})">${k.vzor || ''}${OBLECENI[v.obleceni] || ''}<ellipse cx="40" cy="42" rx="12" ry="7" fill="#fff" opacity=".2" transform="rotate(-35 40 42)"/></g>
+      <path d="${TELO}" fill="none" ${T}/>
+    </g>
+    <g clip-path="url(#${id})">${KOUS.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="none" ${T}/>`).join('')}</g>
+    ${DROBKY}
     ${pusa}
     ${OCI[v.oci] || OCI.koukaci}
     ${BRYLE[v.bryle] || ''}
