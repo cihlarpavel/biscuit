@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Biscuit – postavička jako Pou</title>
+<style>
+  body { margin: 0; font-family: ui-rounded, "SF Pro Rounded", system-ui, sans-serif; color: #3b2a3f; background: #fff4f8; text-align: center; }
+  h1 { margin: 22px 0 4px; font-size: 26px; } p { margin: 0 16px 16px; color: #8a7891; }
+  .mrizka { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; max-width: 760px; margin: 0 auto 40px; padding: 0 14px; }
+  .mrizka div { background: #fff; border-radius: 22px; padding: 10px 6px 12px; box-shadow: 0 6px 16px rgba(150, 90, 140, .12); font-weight: 700; font-size: 14px; }
+  .mrizka svg { display: block; margin: 0 auto 4px; animation: dech 2.8s ease-in-out infinite; transform-origin: 50% 100%; }
+  .mrizka div:nth-child(odd) svg { animation-delay: -1.3s; }
+  @keyframes dech { 50% { transform: scale(1.03, .97); } }
+</style>
+</head>
+<body>
+  <h1>Biscuit jako Pou</h1>
+  <p>Jednoduchá postavička, šílené kombinace. Celé tělo je jeden kus, převleky, oči, pusy, brýle a klobouky se kombinují.</p>
+  <div class="mrizka" id="m"></div>
+<script type="module">
+  import { blob } from './js/blob.js';
+  const k = [
+    ['Základní sušenka', {}],
+    ['Plážový drsňák', { kuze: 'hneda', oci: 'koukaci', pusa: 'otevrena', obleceni: 'plavky', bryle: 'velke', vec: 'cokolada', mazlicek: 'hovinko' }],
+    ['Beruška', { kuze: 'beruska', oci: 'silene' }],
+    ['Tajný agent tučňák', { kuze: 'tucnak', pusa: 'zobak', bryle: 'lyzarske', hlava: 'fedora' }],
+    ['Pan Elegán', { kuze: 'susenka', oci: 'nahoru', obleceni: 'smoking', hlava: 'cylindr' }],
+    ['Meloun na párty', { kuze: 'meloun', pusa: 'jazyk', hlava: 'party' }],
+    ['Král zebra', { kuze: 'zebra', vousy: 'knir', hlava: 'korunka', oci: 'ospale' }],
+    ['Mimozemšťan', { kuze: 'galaxie', oci: 'kyklop', hlava: 'tykadla', pusa: 'zuby' }],
+    ['Leopardí kovboj', { kuze: 'leopard', bryle: 'srdickove', hlava: 'kovboj', pusa: 'otevrena' }],
+    ['Vrtulka', { kuze: 'modra', hlava: 'vrtulka', pusa: 'jazyk', mazlicek: 'kure' }],
+    ['Šéfkuchař', { kuze: 'susenka', hlava: 'kuchar', vec: 'lizatko', vousy: 'knir' }],
+    ['Kočička v šatech', { kuze: 'ruzova', hlava: 'ousko', obleceni: 'saty', oci: 'zamilovane' }],
+    ['Nerd v montérkách', { kuze: 'zelena', bryle: 'nerd', obleceni: 'monterky', pusa: 'zuby' }],
+    ['Fialový ospalec', { kuze: 'fialova', oci: 'ospale', hlava: 'cylindr', mazlicek: 'hovinko' }],
+  ];
+  document.getElementById('m').innerHTML = k.map(([n, v]) => `<div>${blob(v, 150)}${n}</div>`).join('');
+</script>
+</body>
+</html>
