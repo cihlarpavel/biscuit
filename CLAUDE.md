@@ -83,7 +83,7 @@ Učebnice **Happy Street 2, 3. vydání (Oxford, české vydání)**, Units 1–
 
 ## Kamarádi (pořadí kroků)
 
-1. **Fáze A:** víc profilů na jednom zařízení (kamarádka na návštěvě), vše lokálně.
+1. ~~Fáze A: víc profilů na jednom zařízení~~ – **zrušeno 2. 10. 2026 (Pavel): jeden telefon = jeden profil.** Výběr profilu a battle na jednom telefonu jsou pryč; starší telefony s více profily přepínají jen v Pro rodiče („Používat tento profil“).
 2. **Fáze B:** kamarádi na vlastních telefonech přes Firebase (bezplatný režim Spark).
    Datový model připrav už ve fázi A tak, aby se B dalo napojit bez přepisu.
    **Hotovo 2. 10. 2026:** Firebase projekt `biscuit-37341` (tarif Spark zdarma, Firestore eur3,
