@@ -6,6 +6,7 @@ const t = `stroke="${O}" stroke-width="2.6" stroke-linejoin="round" stroke-linec
 const jiskra = (x, y, r = 3, c = '#fff') => `<path d="M${x} ${y - r} l${r * .3} ${r * .7} l${r * .7} ${r * .3} l-${r * .7} ${r * .3} l-${r * .3} ${r * .7} l-${r * .3} -${r * .7} l-${r * .7} -${r * .3} l${r * .7} -${r * .3}z" fill="${c}"/>`;
 
 const PODKLAD = {
+  hra: '#fff1c2',
   'k-kuze': '#ffe3d6', 'k-uces': '#fff1c2', 'k-barva': '#e3d9ff', 'k-oci': '#d6ecff', 'k-duhovka': '#d6f5ec', 'k-pusa': '#ffd6e8', 'k-hlava': '#d6ecff', 'k-bryle': '#e3d9ff', 'k-nausnice': '#fff1c2', 'k-piercing': '#e3d9ff', 'k-nahrdelnik': '#ffd6e8', 'k-naramek': '#d6f5ec', 'k-vousy': '#ffe3d6', 'k-tvar': '#e3d9ff', 'k-maska': '#fff1c2', 'k-ruka': '#ffd6e8', 'k-pozadi': '#d6f5ec', 'o-prvni': '#e3d9ff', 'o-perfekt': '#fff1c2', 'o-kometa': '#ffe3d6', 'o-sopka': '#ffe3d6', 'o-kniha': '#d6f5ec', 'o-knihy': '#d6ecff', 'o-mozek': '#ffd6e8', 'o-stopky': '#e3d9ff', 'o-presypaci': '#fff1c2', 'o-rukavice': '#ffe3d6', 'o-sova': '#d6f5ec', 'o-svitani': '#ffd6e8',
   'tab-uceni': '#ffd6e8', 'tab-ja': '#e3d9ff', 'tab-battle': '#d6ecff', 'tab-drip': '#ffd6e8', 'tab-zebricek': '#fff1c2',
   domu: '#ffd6e8', battle: '#e3d9ff', zebricek: '#fff1c2', ja: '#d6f5ec',
@@ -59,6 +60,11 @@ const KRESBY = {
     <path d="M24 29 v5" ${t}/><rect x="15" y="34" width="18" height="7" rx="2.5" fill="#b69cff" ${t}/>
     <path d="M24 12.5 l1.6 3.3 l3.6 .5 l-2.6 2.5 l.6 3.6 l-3.2 -1.7 l-3.2 1.7 l.6 -3.6 l-2.6 -2.5 l3.6 -.5z" fill="#fff"/>
     <path d="M18 12 v6" stroke="#fff" stroke-opacity=".6" stroke-width="2.2" stroke-linecap="round"/>`,
+
+  hra: `<circle cx="17" cy="15" r="7" fill="#e6a65d" ${t}/><circle cx="30" cy="12" r="7" fill="#ffd34d" ${t}/>
+    <circle cx="15" cy="14" r="1.3" fill="${O}"/><circle cx="19" cy="17" r="1.3" fill="${O}"/><circle cx="29" cy="11" r="1.3" fill="#c9962c"/><circle cx="32" cy="14" r="1.3" fill="#c9962c"/>
+    <rect x="7" y="20" width="34" height="20" rx="5" fill="#ff8fc4" ${t}/><rect x="5" y="17" width="38" height="7" rx="3.5" fill="#c4a3ff" ${t}/>
+    <rect x="12" y="27" width="24" height="8" rx="3" fill="#ffd6e8"/><path d="M20 31 h8" stroke="${O}" stroke-width="2" stroke-linecap="round"/>`,
 
   // ---------- Kategorie v Drip shopu ----------
   'k-kuze': `<circle cx="17" cy="20" r="8" fill="#ffe9dc" ${t}/><circle cx="31" cy="20" r="8" fill="#f1c09b" ${t}/><circle cx="17" cy="32" r="8" fill="#c98d63" ${t}/><circle cx="31" cy="32" r="8" fill="#8d5a3b" ${t}/>`,

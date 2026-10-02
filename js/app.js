@@ -5,6 +5,7 @@ import { postavicka, KATEGORIE, VECI, vec, maVec, nahodnyVzhled, vzacnost } from
 import { sestav, sestavBattle, odemcene, zapis, postupBalicku, slabiny, UMI } from './lekce.js';
 import { hraj, nastavSoupere } from './hra.js';
 import * as O from './online.js';
+import * as HRA from './hra-susenky.js';
 import { nastavUceni } from './cas.js';
 import { odemkni, speak, zvukFanfara, zvukSpatne } from './speech.js';
 import { ODZNAKY, zkontroluj } from './odznaky.js';
@@ -30,7 +31,7 @@ const av = (x, px = 42) => postavicka(x.vzhled, px, 'hlava');
 
 // ---------- Navigace ----------
 const TRASY = {
-  '': domu, novy, balicek: detailBalicku, lekce: spustLekci, battle, zebricek, ja, obchod, rodic,
+  '': domu, novy, hra: hraZaOdmenu, balicek: detailBalicku, lekce: spustLekci, battle, zebricek, ja, obchod, rodic,
 };
 function route() {
   nastavUceni(false);
@@ -125,6 +126,7 @@ function domu() {
       const ted = b.unit === x.nastaveni.unit;
       return `<a class="balicek${zamceno ? ' zamceno' : ''}${ted ? ' ted' : ''}" style="--akc:${barvaIkony(b.id)}" href="${zamceno ? '#/' : '#/balicek/' + b.id}" ${zamceno ? 'data-zamceno="1"' : ''}>
         ${ted ? '<span class="stitek-ted">Teď ve škole</span>' : ''}
+        ${zamceno ? '' : `<span class="b-pozadi" aria-hidden="true">${ik(b.id, 120, { podklad: false })}${ik(b.id, 34, { podklad: false })}${ik(b.id, 26, { podklad: false })}</span>`}
         <span class="b-ikona">${zamceno ? ik('zamek', 44) : ikBalicku(b, 44)}</span>
         <span class="b-text">${b.unit ? `<small>Unit ${b.unit}</small>` : ''}<b>${esc(b.nazev)}</b>
         <span class="mini-prubeh"><i style="width:${celkem ? umi / celkem * 100 : 0}%"></i></span><span class="b-pocet">${umi}/${celkem}</span></span></a>`;
@@ -147,9 +149,81 @@ function domu() {
         <p>${unitTed ? `Nová slovíčka z Unit ${unitTed.unit} + opakování + něco navíc` : 'Opakování a něco navíc'}</p>
         <a class="btn" href="#/lekce">${hotovo ? 'Ještě jednu' : 'Jdeme na to'} →</a></div>
     </div>
+    ${kartaHry(x)}
     ${skupiny}</section>`, { tab: 'domu' });
   vlozSchovanou('domu');
   $$('[data-zamceno]').forEach(a => (a.onclick = e => { e.preventDefault(); toast('Tohle ve škole přijde později. Odemkne se v sekci Pro rodiče.'); }));
+}
+
+// ---------- Hra za odměnu: Chytej sušenky ----------
+// Odemkne se po splnění denního cíle učení. Dohromady 20 minut hraní denně, za každých 10 bodů 1 🍪 (max 20 🍪 za den).
+const HRA_LIMIT = 20 * 60, HRA_MAX_SUSENEK = 20;
+function hraDnes(x) {
+  if (x.hra?.den !== S.dnes()) x.hra = { den: S.dnes(), s: 0, susenky: 0, rekord: x.hra?.rekord || 0 };
+  return x.hra;
+}
+const hraOdemcena = x => S.den(x).s >= x.nastaveni.cil * 60;
+
+function kartaHry(x) {
+  const h = hraDnes(x), zbyva = Math.max(0, HRA_LIMIT - h.s);
+  const chybi = Math.max(0, Math.ceil((x.nastaveni.cil * 60 - S.den(x).s) / 60));
+  const stav = !hraOdemcena(x) ? `🔒 Odemkne se po dnešním učení (ještě ${chybi} min)` : zbyva <= 0 ? 'Na dnes dohráno. Zítra zase! 🌙' : `Zbývá ${Math.ceil(zbyva / 60)} min hraní · rekord ${h.rekord}`;
+  return `<a class="karta-hry${hraOdemcena(x) && zbyva > 0 ? ' odemcena' : ''}" href="#/hra">
+    <span class="b-ikona">${ik('hra', 52)}</span>
+    <span class="b-text"><small>Hra za odměnu</small><b>Chytej sušenky</b><span class="hra-stav">${stav}</span></span>
+    ${hraOdemcena(x) && zbyva > 0 ? '<span class="hra-hrat">Hrát ▶</span>' : ''}</a>`;
+}
+
+function hraZaOdmenu() {
+  const x = p();
+  const h = hraDnes(x);
+  const zbyva = HRA_LIMIT - h.s;
+  if (!hraOdemcena(x) || zbyva <= 0) {
+    const chybi = Math.max(0, Math.ceil((x.nastaveni.cil * 60 - S.den(x).s) / 60));
+    obrazovka(`<section class="stranka konec">${zpet('#/')}<div class="hra-logo">${ik('hra', 120)}</div><h1>Chytej sušenky</h1>
+      <p class="hlaska">${!hraOdemcena(x) ? `Hra se odemkne, až dnes splníš denní cíl učení. Chybí ti ještě ${chybi} min.` : 'Dnešních 20 minut je vyčerpaných. Hra se odemkne zase zítra po učení. 🌙'}</p>
+      <a class="btn velke" href="${!hraOdemcena(x) ? '#/lekce' : '#/'}">${!hraOdemcena(x) ? 'Jdu se učit' : 'Domů'}</a></section>`, { bezListy: true });
+    return;
+  }
+  obrazovka(`<section class="stranka konec">${zpet('#/')}<div class="hra-logo">${ik('hra', 120)}</div><h1>Chytej sušenky</h1>
+    <p class="hlaska">Posouvej krabičku prstem a chytej sušenky. Zlatá = 5 bodů. Brokolici se vyhni! 🥦</p>
+    <div class="hra-info"><span>⏱️ Zbývá ${Math.ceil(zbyva / 60)} min</span><span>🏆 Rekord ${h.rekord}</span><span>🍪 Dnes ${h.susenky}/${HRA_MAX_SUSENEK}</span></div>
+    <p class="drobne">Každých 10 bodů = 1 sušenka do aplikace (nejvýš ${HRA_MAX_SUSENEK} za den).</p>
+    <button class="btn velke" id="hraj">Hrát ▶</button></section>`, { bezListy: true });
+  $('#hraj').onclick = () => hrajHru(x);
+}
+
+function hrajHru(x) {
+  const h = hraDnes(x);
+  const a = obrazovka(`<section class="hra-platno"><div class="hra-hud"></div><div class="hra-zbyva"></div>
+    <button class="zavrit" aria-label="Konec">${ik('zavrit', 26, { podklad: false })}</button><canvas></canvas></section>`, { bezListy: true });
+  let zbyvaPred = HRA_LIMIT - h.s, ulozeno = 0;
+  const hra = HRA.spust(a.querySelector('canvas'), {
+    zbyva: zbyvaPred,
+    priTiku: zbyva => {
+      h.s = HRA_LIMIT - zbyva;
+      const el = a.querySelector('.hra-zbyva');
+      if (el) el.textContent = `⏱️ ${Math.floor(zbyva / 60)}:${String(Math.floor(zbyva % 60)).padStart(2, '0')}`;
+      if (h.s - ulozeno > 5) { ulozeno = h.s; S.uloz(); }
+    },
+    konec: v => {
+      const nove = Math.min(Math.floor(v.body / 10), HRA_MAX_SUSENEK - h.susenky);
+      if (nove > 0) { h.susenky += nove; S.pridej(x, nove); }
+      const rekord = v.body > h.rekord;
+      if (rekord) h.rekord = v.body;
+      S.uloz();
+      const zbyva = Math.max(0, HRA_LIMIT - h.s);
+      obrazovka(`<section class="stranka konec">${zpet('#/')}<div class="hra-logo">${ik('hra', 100)}</div>
+        <h1>${v.limit ? 'Čas na dnes vypršel ⏱️' : rekord ? 'Nový rekord! 🏆' : 'Konec hry!'}</h1>
+        <div class="odmena"><span>${v.body} bodů</span><small>level ${v.level}${v.zlate ? ` · ${v.zlate}× zlatá sušenka` : ''}</small></div>
+        <p class="hlaska">${nove > 0 ? `Do aplikace: ${ikS('susenka', 22)} +${nove}` : h.susenky >= HRA_MAX_SUSENEK ? 'Dnešní sušenky ze hry máš vybrané, ale rekord se počítá!' : 'Na sušenku do aplikace potřebuješ 10 bodů.'}</p>
+        ${zbyva > 0 ? `<button class="btn velke" id="znovu">Ještě jednou ▶</button><p class="drobne">Zbývá ${Math.ceil(zbyva / 60)} min hraní.</p>` : '<p class="drobne">Hra se odemkne zase zítra po učení. 🌙</p>'}
+        <a class="odkaz" href="#/">Domů</a></section>`, { bezListy: true });
+      if (rekord || nove > 0) { konfety(); zvukFanfara(); }
+      $('#znovu')?.addEventListener('click', () => hrajHru(x));
+    },
+  });
+  a.querySelector('.zavrit').onclick = () => hra.zastav();
 }
 
 // ---------- Balíček ----------

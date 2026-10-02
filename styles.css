@@ -754,3 +754,48 @@ body.noc .tabs a:not(.stred) span { background-color: #f4ecff; }
 body.noc .tabs a.on:not(.stred) span { background-color: var(--akc); }
 body.noc .balicek .b-ikona { background: #f4ecff; }
 body.noc .sekce-hlava .ik, body.noc .s-ikonou .ik { filter: drop-shadow(0 0 0 #fff); }
+
+/* ---------- Hra za odměnu ---------- */
+.karta-hry { position: relative; display: flex; align-items: center; gap: 12px; margin: 16px 0 4px; padding: 12px 14px; border-radius: 24px;
+  border: 2.5px solid #fff; background: #fff var(--papir); box-shadow: var(--stin-papir); animation: naskok .45s .12s cubic-bezier(.3, 1.4, .5, 1) both; rotate: .6deg; }
+.karta-hry .b-ikona { flex: none; width: 62px; height: 62px; display: grid; place-items: center; border-radius: 18px; background: #fff;
+  box-shadow: 0 0 0 2.5px #ffe08a inset, 0 3px 0 #e0b84a; }
+.karta-hry .b-text { flex: 1; min-width: 0; }
+.karta-hry small { color: #c98a00; font-weight: 900; font-size: 11.5px; }
+.karta-hry b { display: block; font-size: 18px; }
+.hra-stav { display: block; font-size: 12.5px; color: var(--tlumene); font-weight: 800; margin-top: 2px; }
+.karta-hry.odemcena { background-image: var(--papir), linear-gradient(135deg, #fffbe6, #ffe9a8); border-color: #ffe08a; }
+.karta-hry:not(.odemcena) { filter: saturate(.5); opacity: .85; }
+.hra-hrat { flex: none; font-family: 'Fredoka', sans-serif; font-weight: 600; color: #fff; padding: 9px 14px; border-radius: 99px; border: 2.5px solid #fff;
+  background: linear-gradient(180deg, #ffd34d, #ffae2b); box-shadow: 0 4px 0 #d98a00; animation: hop 1.6s infinite; }
+.hra-logo { display: grid; place-items: center; margin-top: 34px; animation: zlataPrilet .7s cubic-bezier(.3, 1.6, .5, 1) both; }
+.hra-info { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 6px 0; }
+.hra-info span { background: #fff var(--papir); border: 2.5px solid #fff; box-shadow: var(--stin-papir); padding: 6px 12px; border-radius: 99px; font-weight: 800; font-size: 14px; }
+.hra-platno { position: fixed; inset: 0; background: linear-gradient(180deg, #bfe6ff 0%, #ffe3f1 70%, #fff4dc 100%); }
+.hra-platno::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 26px; background: #9be08a; border-top: 3px solid #3b2a3f; }
+.hra-platno canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; z-index: 1; }
+.hra-hud { position: absolute; z-index: 2; top: calc(12px + env(safe-area-inset-top)); left: 60px; right: 12px; display: flex; gap: 8px; justify-content: flex-end; pointer-events: none; }
+.hra-hud span, .hra-zbyva { background: #fff; border: 2.5px solid #fff; border-radius: 99px; padding: 5px 11px; font-family: 'Fredoka', sans-serif; font-weight: 600;
+  box-shadow: 0 3px 0 rgba(150, 90, 140, .2); font-size: 15px; }
+.hra-zbyva { position: absolute; z-index: 2; top: calc(54px + env(safe-area-inset-top)); right: 12px; pointer-events: none; }
+.hra-platno .zavrit { position: absolute; z-index: 3; top: calc(10px + env(safe-area-inset-top)); left: 12px; width: 42px; height: 42px; border-radius: 50%; background: #fff; box-shadow: 0 3px 0 rgba(150, 90, 140, .2); }
+body.noc .karta-hry { background-color: var(--karta); border-color: rgba(255, 255, 255, .13); }
+body.noc .karta-hry.odemcena { background-image: var(--papir), linear-gradient(135deg, #3a2f20, #5a4512); border-color: #8a6a10; }
+body.noc .karta-hry .b-ikona { background: #f4ecff; }
+body.noc .hra-info span { background-color: var(--karta); }
+
+/* ---------- Karty balíčků: vystředěné, s pozadím podle tématu ---------- */
+.tabs a:not(.stred) span { display: grid !important; place-items: center; }
+.balicek { align-items: center; text-align: center; overflow: hidden; isolation: isolate; min-height: 150px; padding: 14px 12px 10px; }
+.balicek .b-text { display: flex; flex-direction: column; align-items: center; }
+.balicek .mini-prubeh { width: 100%; }
+.b-pocet { text-align: center; }
+.b-pozadi { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
+.b-pozadi .ik { position: absolute; opacity: .16; }
+.b-pozadi .ik:nth-child(1) { width: 120px; height: 120px; right: -26px; bottom: -22px; rotate: -14deg; opacity: .13; }
+.b-pozadi .ik:nth-child(2) { left: 8px; top: 30px; rotate: 18deg; }
+.b-pozadi .ik:nth-child(3) { right: 14px; top: 10px; rotate: -24deg; opacity: .22; }
+.balicek .b-ikona { position: relative; z-index: 1; width: 64px; height: 64px; border-radius: 20px; rotate: -3deg; }
+.balicek:nth-child(even) .b-ikona { rotate: 3deg; }
+.balicek .b-ikona .ik { width: 48px; height: 48px; }
+.balicek .b-text b { font-size: 16px; }

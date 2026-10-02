@@ -1,10 +1,10 @@
 // Offline režim. Strategie „nejdřív síť“: s internetem se vždy načte aktuální verze všech souborů
 // najednou (jinak by se po aktualizaci smíchaly nové a staré moduly), mezipaměť je jen záloha.
 // Po změně souborů zvyš CACHE.
-const CACHE = 'biscuit-v25';
+const CACHE = 'biscuit-v27';
 const SHELL = ['./', 'index.html', 'styles.css', 'manifest.webmanifest',
   'js/app.js', 'js/data.js', 'js/store.js', 'js/speech.js', 'js/cas.js', 'js/lekce.js', 'js/hra.js',
-  'js/odznaky.js', 'js/postavicka.js', 'js/ikony.js', 'js/svety.js', 'js/online.js', 'js/firebase-config.js', 'js/maskot.js', 'js/hlasky.js', 'js/ui.js', 'icons/icon-180.png', 'icons/icon-192.png'];
+  'js/odznaky.js', 'js/postavicka.js', 'js/ikony.js', 'js/svety.js', 'js/hra-susenky.js', 'js/online.js', 'js/firebase-config.js', 'js/maskot.js', 'js/hlasky.js', 'js/ui.js', 'icons/icon-180.png', 'icons/icon-192.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE)
