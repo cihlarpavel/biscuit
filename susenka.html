@@ -16,11 +16,19 @@
 </head>
 <body>
   <h1>Postavička sušenka</h1>
-  <p>Každá postavička je ukousnutá sušenka. Mění se těsto, poleva a posyp, k tomu oči, pusy, brýle, klobouky a mazlíčci.</p>
+  <p>Každá postavička je ukousnutá sušenka – nahoře holky a kluci s vlasy, ručičkama a nožičkama, dole holé sušenky. Mění se těsto, poleva, posyp, vlasy, oči, pusy, brýle, klobouky a mazlíčci.</p>
   <div class="mrizka" id="m"></div>
 <script type="module">
   import { blob } from './js/blob.js';
   const k = [
+    ['Holka s ofinou', { rod: 'z', vlasy: 'ofina', barvaVlasu: '#5b3424', boty: '#ff5fa2' }],
+    ['Kluk rozcuch', { rod: 'm', vlasy: 'rozcuch', barvaVlasu: '#2b2230', pihy: true }],
+    ['Culíky a poleva', { rod: 'z', kuze: 'poleva', vlasy: 'culiky', barvaVlasu: '#f2c94c', pusa: 'jazyk' }],
+    ['Kluk s čírem', { rod: 'm', vlasy: 'ciro', barvaVlasu: '#45d07a', bryle: 'velke', pusa: 'zuby', boty: '#ffd34d' }],
+    ['Drdol a mašle', { rod: 'z', vlasy: 'drdol', masle: true, barvaVlasu: '#c0392b', oci: 'zamilovane', obleceni: 'saty' }],
+    ['Kudrnatý oreo', { rod: 'm', kuze: 'oreo', vlasy: 'kudrny', barvaVlasu: '#ff8a3d', bryle: 'nerd', boty: '#e8352b' }],
+    ['Dlouhé fialové', { rod: 'z', kuze: 'posyp', vlasy: 'dlouhe', barvaVlasu: '#9b6bff', bryle: 'srdickove', mazlicek: 'hovinko' }],
+    ['Perníkový frajer', { rod: 'm', kuze: 'pernik', vlasy: 'rozcuch', barvaVlasu: '#ffd34d', obleceni: 'smoking', vousy: 'knir' }],
     ['Základní sušenka', {}],
     ['Polevová princezna', { kuze: 'poleva', oci: 'zamilovane', hlava: 'korunka', pusa: 'jazyk' }],
     ['Oreo agent', { kuze: 'oreo', bryle: 'lyzarske', hlava: 'fedora', pusa: 'zuby' }],

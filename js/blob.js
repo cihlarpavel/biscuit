@@ -11,9 +11,9 @@ const TELO = Array.from({ length: 120 }, (_, i) => {
   const a = i / 120 * Math.PI * 2, r = R + .8 * Math.sin(a * 7) + .9 * Math.sin(a * 3 + 1);
   return `${i ? 'L' : 'M'}${(CX + Math.cos(a) * r).toFixed(1)} ${(CY + Math.sin(a) * r).toFixed(1)}`;
 }).join(' ') + 'Z';
-// Ukousnutý kousek vpravo nahoře – tři kruhy „zubů“.
-const KOUS = [[-48, 10], [-34, 7], [-62, 7]].map(([u, r]) => { const a = u * Math.PI / 180; return [CX + Math.cos(a) * (R + 3), CY + Math.sin(a) * (R + 3), r]; });
-const DROBKY = `<path d="M104 24 l4 -1 l1 4 l-4 1z M110 34 l3 0 l0 3 l-3 0z M98 14 l3 1 l-1 3 l-3 -1z" fill="currentColor" ${'stroke="#1f1a24" stroke-width="1.6" stroke-linejoin="round"'}/>`;
+// Ukousnutý kousek vlevo dole – tři kruhy „zubů“. Nahoře by se pletl s vlasy a klobouky.
+const KOUS = [[140, 10], [126, 7], [154, 7]].map(([u, r]) => { const a = u * Math.PI / 180; return [CX + Math.cos(a) * (R + 3), CY + Math.sin(a) * (R + 3), r]; });
+const DROBKY = `<path d="M8 112 l4 -1 l1 4 l-4 1z M2 102 l3 0 l0 3 l-3 0z M16 120 l3 1 l-1 3 l-3 -1z" fill="currentColor" ${'stroke="#1f1a24" stroke-width="1.6" stroke-linejoin="round"'}/>`;
 let n = 0;
 
 // ---------- kůže / převleky celého těla ----------
@@ -93,15 +93,47 @@ const VECI = {
   lizatko: `<path d="M100 108 L100 76" ${T}/><circle cx="100" cy="68" r="10" fill="#ff6fae" ${T2}/><path d="M100 68 m0 -6 a6 6 0 1 1 -6 6 a3.5 3.5 0 1 1 3.5 -3.5" fill="none" stroke="#fff" stroke-width="2.4"/>`,
 };
 const MAZLICCI = {
-  hovinko: `<g transform="translate(16 92)"><path d="M0 18 q-2 -8 6 -9 q-2 -8 7 -9 q2 -6 6 -9 q3 6 2 9 q8 0 7 8 q8 2 6 10 z" fill="#7b3ee0" ${T2}/><circle cx="9" cy="8" r="3.4" fill="#fff" ${T2}/><circle cx="17" cy="8" r="3.4" fill="#fff" ${T2}/><circle cx="10" cy="9" r="1.4" fill="${OB}"/><circle cx="18" cy="9" r="1.4" fill="${OB}"/></g>`,
-  kure: `<g transform="translate(14 92)"><circle cx="10" cy="10" r="10" fill="#ffd84d" ${T2}/><circle cx="7" cy="8" r="1.6" fill="${OB}"/><circle cx="13" cy="8" r="1.6" fill="${OB}"/><path d="M8 12 l2 3 l2 -3z" fill="#ffae2b"/></g>`,
+  hovinko: `<g transform="translate(90 94)"><path d="M0 18 q-2 -8 6 -9 q-2 -8 7 -9 q2 -6 6 -9 q3 6 2 9 q8 0 7 8 q8 2 6 10 z" fill="#7b3ee0" ${T2}/><circle cx="9" cy="8" r="3.4" fill="#fff" ${T2}/><circle cx="17" cy="8" r="3.4" fill="#fff" ${T2}/><circle cx="10" cy="9" r="1.4" fill="${OB}"/><circle cx="18" cy="9" r="1.4" fill="${OB}"/></g>`,
+  kure: `<g transform="translate(92 98)"><circle cx="10" cy="10" r="10" fill="#ffd84d" ${T2}/><circle cx="7" cy="8" r="1.6" fill="${OB}"/><circle cx="13" cy="8" r="1.6" fill="${OB}"/><path d="M8 12 l2 3 l2 -3z" fill="#ffae2b"/></g>`,
 };
+
+// ---------- holka / kluk: vlasy, ručičky, nožičky ----------
+// Vlasy mají přední část (přes čelo, ukousne se s sušenkou) a zadní část (za tělem).
+const CEPICE = 'M14 64 C10 34 30 16 60 16 C90 16 110 34 106 64 C104 50 98 40 90 34 C82 38 72 38 64 30 C58 36 46 38 38 34 C32 38 24 44 20 52 C17 56 15 60 14 64Z';
+const BODLINY = 'M14 64 C10 40 20 26 30 20 L26 6 L40 15 L42 0 L54 12 L62 -3 L68 12 L80 2 L82 17 L96 10 L92 26 C104 34 110 48 106 64 C102 48 96 40 88 36 C80 40 70 38 62 32 C54 38 44 38 36 34 C28 40 20 50 14 64Z';
+const kudrny = c => { const b = Array.from({ length: 11 }, (_, i) => { const a = Math.PI * (1.05 + i * .09); return [60 + Math.cos(a) * 44, 58 + Math.sin(a) * 40]; });
+  return b.map(([x, y]) => `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="11" fill="${c}" stroke="${OB}" stroke-width="6"/>`).join('') + b.map(([x, y]) => `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="11" fill="${c}"/>`).join(''); };
+const VLASY = {
+  ofina: { pred: c => `<path d="${CEPICE}" fill="${c}" ${T}/>`, za: c => `<path d="M10 70 C4 30 30 12 60 12 C90 12 116 30 110 70 L112 92 C100 96 92 92 90 86 L30 86 C28 92 20 96 8 92z" fill="${c}" ${T}/>` },
+  dlouhe: { pred: c => `<path d="${CEPICE}" fill="${c}" ${T}/>`, za: c => `<path d="M12 60 C6 26 32 12 60 12 C88 12 114 26 108 60 C112 84 116 104 104 116 C98 110 96 104 92 100 L28 100 C24 104 22 110 16 116 C4 104 8 84 12 60z" fill="${c}" ${T}/>` },
+  culiky: { pred: c => `<path d="${CEPICE}" fill="${c}" ${T}/>`, za: c => `<g ${T}><ellipse cx="4" cy="58" rx="11" ry="19" fill="${c}" transform="rotate(25 4 58)"/><ellipse cx="116" cy="58" rx="11" ry="19" fill="${c}" transform="rotate(-25 116 58)"/></g><circle cx="13" cy="44" r="4.5" fill="#ff5fa2" ${T2}/><circle cx="107" cy="44" r="4.5" fill="#ff5fa2" ${T2}/>` },
+  drdol: { pred: c => `<path d="${CEPICE}" fill="${c}" ${T}/>`, za: c => `<circle cx="60" cy="8" r="13" fill="${c}" ${T}/>` },
+  rozcuch: { pred: c => `<path d="${BODLINY}" fill="${c}" ${T}/>` },
+  kudrny: { pred: c => kudrny(c) + `<path d="${CEPICE}" fill="${c}"/>` },
+  ciro: { pred: c => `<path d="M42 26 L40 4 L50 16 L54 -6 L60 14 L66 -6 L70 16 L80 4 L78 26 C66 20 54 20 42 26Z" fill="${c}" ${T}/>` },
+};
+const MASLE = `<g transform="translate(30 20) rotate(-20)" ${T2}><path d="M0 0 L-12 -8 L-12 8z M0 0 L12 -8 L12 8z" fill="#ff5fa2"/><circle r="3.5" fill="#ff5fa2"/></g>`;
+const OCI_POZ = [[46, 48, 11], [73, 46, 12]];
+const RASY = OCI_POZ.map(([x, y, r]) => `<path d="M${x - r * .8} ${y - r * .55} l-4 -3 M${x - r * .35} ${y - r * .92} l-2 -4.5 M${x + r * .2} ${y - r} l0 -4.5" fill="none" ${T2}/>`).join('');
+const TVARE = `<ellipse cx="31" cy="66" rx="6" ry="4" fill="#ff7aa8" opacity=".55"/><ellipse cx="90" cy="64" rx="6" ry="4" fill="#ff7aa8" opacity=".55"/>`;
+const PIHY = [[29, 62], [34, 66], [27, 68], [87, 60], [92, 64], [86, 66]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="1.3" fill="#7a4a1e"/>`).join('');
+const koncetina = (d, w = 8) => `<path d="${d}" fill="none" stroke="${OB}" stroke-width="${w + 5}" stroke-linecap="round"/><path d="${d}" fill="none" stroke="currentColor" stroke-width="${w}" stroke-linecap="round"/>`;
+// Mává levou rukou – pravý horní roh patří ukousnutí.
+const ruce = (mavani) => koncetina('M101 78 Q112 86 114 98') + `<circle cx="114" cy="100" r="6.5" fill="currentColor" ${T2}/>`
+  + (mavani ? koncetina('M19 76 Q8 66 6 52') + `<circle cx="6" cy="50" r="6.5" fill="currentColor" ${T2}/>` : koncetina('M19 78 Q8 86 6 98') + `<circle cx="6" cy="100" r="6.5" fill="currentColor" ${T2}/>`);
+const nohy = (boty) => koncetina('M48 108 L47 122') + koncetina('M72 108 L73 122')
+  + `<path d="M36 126 q0 -8 10 -8 q8 0 8 8z M66 126 q0 -8 8 -8 q10 0 10 8z" fill="${boty}" ${T2}/><path d="M36 126 h18 M66 126 h18" stroke="#fff" stroke-width="2.5"/>`;
 
 export function blob(v, px = 160) {
   const k = KUZE[v.kuze] || KUZE.susenka;
   const id = 'b' + (++n);
   const pusa = v.vousy === 'knir' ? KNIR + (PUSY[v.pusa] || '') : (PUSY[v.pusa] || PUSY.usmev);
-  return `<svg width="${px}" height="${px}" viewBox="0 -12 120 132" aria-hidden="true" style="color:${k.barva}">
+  const vl = VLASY[v.vlasy], cv = v.barvaVlasu || '#5b3424', tela = !!(v.rod || vl);
+  const predVlasy = vl ? vl.pred(cv) : '';
+  return `<svg width="${px}" height="${px}" viewBox="${tela ? '-12 -14 144 146' : '0 -12 120 132'}" aria-hidden="true" style="color:${k.barva}">
+    <clipPath id="${id}k"><path d="${TELO}"/>${vl ? (v.vlasy === 'rozcuch' ? `<path d="${BODLINY}"/>` : `<path d="${CEPICE}"/>`) : ''}</clipPath>
+    ${tela ? nohy(v.boty || '#4dabf7') : ''}
+    ${vl && vl.za ? vl.za(cv) : ''}
     <clipPath id="${id}"><path d="${TELO}"/></clipPath>
     <mask id="${id}m"><rect x="-20" y="-20" width="160" height="160" fill="#fff"/>${KOUS.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#000"/>`).join('')}</mask>
     ${k.za || ''}
@@ -109,11 +141,17 @@ export function blob(v, px = 160) {
       <path d="${TELO}" fill="${k.barva}"/>
       <g clip-path="url(#${id})">${k.vzor || ''}${OBLECENI[v.obleceni] || ''}<ellipse cx="40" cy="42" rx="12" ry="7" fill="#fff" opacity=".2" transform="rotate(-35 40 42)"/></g>
       <path d="${TELO}" fill="none" ${T}/>
+      ${predVlasy}
     </g>
-    <g clip-path="url(#${id})">${KOUS.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="none" ${T}/>`).join('')}</g>
+    ${tela ? ruce(v.mavani !== false) : ''}
+    <mask id="${id}v"><rect x="-20" y="-20" width="160" height="160" fill="#fff"/>${KOUS.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="#000"/>`).join('')}</mask>
+    <g clip-path="url(#${id}k)"><g mask="url(#${id}v)">${KOUS.map(([x, y, r]) => `<circle cx="${x}" cy="${y}" r="${r}" fill="none" stroke="${OB}" stroke-width="6"/>`).join('')}</g></g>
     ${DROBKY}
+    ${v.rod === 'z' ? TVARE : ''}${v.pihy ? PIHY : ''}
     ${pusa}
     ${OCI[v.oci] || OCI.koukaci}
+    ${v.rod === 'z' && (!v.oci || OCI_POZ && v.oci !== 'kyklop') ? RASY : ''}
+    ${v.masle ? MASLE : ''}
     ${BRYLE[v.bryle] || ''}
     ${HLAVA[v.hlava] || ''}
     ${VECI[v.vec] || ''}
