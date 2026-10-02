@@ -10,7 +10,7 @@ import { nastavUceni } from './cas.js';
 import { odemkni, speak, zvukFanfara, zvukSpatne } from './speech.js';
 import { ODZNAKY, zkontroluj } from './odznaky.js';
 import { maskot } from './maskot.js';
-import { SVETY, nastavSvet, odemcene as odemceneSvety, svetPro, nasbirano, nahledSveta } from './svety.js';
+import { SVETY, nastavSvet, odemcene as odemceneSvety, svetPro, nasbirano, nahledSveta, scena } from './svety.js';
 import * as H from './hlasky.js';
 import { obrazovka, esc, $, $$, kolecko, minuty, toast, konfety, zpet } from './ui.js';
 import { ik, maIkonu, barvaIkony } from './ikony.js';
@@ -134,7 +134,8 @@ function domu() {
 
   obrazovka(`${hlavicka(x)}<section class="stranka domu">
     <div class="hero">
-      <div class="hero-postava">${postavicka(x.vzhled, 124, 'cela', true)}</div>
+      <div class="hero-scena">${scena(jeNoc() ? 'noc' : svetPro(x).id)}</div>
+      <div class="hero-postava">${postavicka(x.vzhled, 140, 'cela', true, { bezPozadi: true })}</div>
       <div class="hero-text">
         <div class="bublina">${esc(pozdrav)}</div>
         <div class="uroven"><div class="uroven-radek"><b>${esc(H.titul(n, x))}</b>

@@ -799,3 +799,13 @@ body.noc .hra-info span { background-color: var(--karta); }
 .balicek:nth-child(even) .b-ikona { rotate: 3deg; }
 .balicek .b-ikona .ik { width: 48px; height: 48px; }
 .balicek .b-text b { font-size: 16px; }
+
+/* ---------- Scénka na hlavní kartě ---------- */
+.hero, body.noc .hero { background: #ffe1ef; }
+.hero::after { display: none; }
+.hero-scena { position: absolute; inset: 0; z-index: 0; }
+.hero-scena svg { width: 100%; height: 100%; display: block; }
+.hero-postava { margin-bottom: -16px; margin-left: -4px; }
+.hero-postava .postavicka { filter: drop-shadow(0 0 0 #fff) drop-shadow(3px 4px 0 rgba(59, 42, 63, .25)); }
+.hero .bublina { box-shadow: 3px 4px 0 rgba(59, 42, 63, .18); }
+.hero .uroven { box-shadow: 3px 4px 0 rgba(59, 42, 63, .18); }

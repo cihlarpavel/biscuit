@@ -300,10 +300,10 @@ function obleceni(id, defs) {
 // --- oči ---
 function oci(id, iris = '#7a4a2a') {
   // Oko: bělmo s obrysem, barevná duhovka, zornice, dva odlesky a horní víčko.
-  const oko = (cx, k = 1) => `<ellipse cx="${cx}" cy="52" rx="${4.6 * k}" ry="${5.3 * k}" fill="#fff" stroke="${H}" stroke-width="1.2"/>
-    <circle cx="${cx}" cy="${52.6}" r="${3.3 * k}" fill="${iris}"/><circle cx="${cx}" cy="52.6" r="${1.7 * k}" fill="#1e1420"/>
-    <circle cx="${cx + 1.3 * k}" cy="${51 - .3 * k}" r="${1.2 * k}" fill="#fff"/><circle cx="${cx - 1.1 * k}" cy="${54.2 + .2 * k}" r="${.55 * k}" fill="#fff"/>
-    <path d="M${cx - 4.9 * k} ${51.2 - k} q${4.9 * k} ${-5.2 * k} ${9.8 * k} 0" stroke="${H}" stroke-width="1.9" fill="none" stroke-linecap="round"/>`;
+  // Oko: ovál v barvě duhovky s obrysem, tmavá zornice a velký odlesk (bez bílého bělma – působilo vykuleně).
+  const oko = (cx, k = 1) => `<ellipse cx="${cx}" cy="52.6" rx="${3.9 * k}" ry="${4.9 * k}" fill="${iris}" stroke="${H}" stroke-width="1.3"/>
+    <ellipse cx="${cx}" cy="${53.5}" rx="${2.5 * k}" ry="${3.3 * k}" fill="#1e1420" opacity=".88"/>
+    <circle cx="${cx + 1.4 * k}" cy="${50.7}" r="${1.65 * k}" fill="#fff"/><circle cx="${cx - 1.3 * k}" cy="${55.3}" r="${.75 * k}" fill="#fff"/>`;
   const zornicky = () => oko(50, 1.18) + oko(70, 1.18);
   const rasy = `<path d="M45 49.4 l-2.8 -2.2 M46.6 47.6 l-1.6 -2.8 M75 49.4 l2.8 -2.2 M73.4 47.6 l1.6 -2.8" stroke="${H}" stroke-width="1.5" stroke-linecap="round"/>`;
   switch (id) {
@@ -338,7 +338,7 @@ function pusa(id) {
     case 'zlaty-zub': return `<path d="M52 62 q8 9 16 0 z" fill="#fff" stroke="${H}" stroke-width="2" stroke-linejoin="round"/><rect x="61" y="62.5" width="3.5" height="3.5" rx=".8" fill="#ffd34d" stroke="#c9962c" stroke-width=".6"/>` + hvezdicka(67, 60, 2.2, '#ffd34d');
     case 'duhovy-jazyk': return `<path d="M53 63 q7 8 14 0" stroke="${H}" stroke-width="2.4" fill="none" stroke-linecap="round"/>` +
       DUHA.map((c, i) => `<rect x="57" y="${66 + i * 2.2}" width="6" height="2.3" fill="${c}"/>`).join('') + `<path d="M57 79 q3 3 6 0" fill="${DUHA[5]}"/>`;
-    default: return `<path d="M51.5 62.5 q8.5 11 17 0 z" fill="#8a2f4a" stroke="${H}" stroke-width="2" stroke-linejoin="round"/><path d="M55.5 68 q4.5 -3.6 9 0 q-4.5 3.4 -9 0z" fill="#ff8fab"/>`;
+    default: return `<path d="M54.5 62.6 q5.5 7.6 11 0 z" fill="#8a2f4a" stroke="${H}" stroke-width="1.8" stroke-linejoin="round"/><path d="M57.2 66.6 q2.8 -2.3 5.6 0 q-2.8 2.1 -5.6 0z" fill="#ff8fab"/>`;
   }
 }
 
@@ -552,7 +552,7 @@ function pozadi(id, defs) {
 }
 
 // velikost v px; vyrez: 'cela' (celá postavička) nebo 'hlava' (malý avatar v seznamech)
-export function postavicka(vzhled = VYCHOZI, velikost = 120, vyrez = 'cela', pohyb = velikost >= 90) {
+export function postavicka(vzhled = VYCHOZI, velikost = 120, vyrez = 'cela', pohyb = velikost >= 90, { bezPozadi = false } = {}) {
   const z = { ...VYCHOZI, ...vzhled };
   const defs = [];
   const kx = vec(z.kuze) || vec('k1');
@@ -584,7 +584,7 @@ export function postavicka(vzhled = VYCHOZI, velikost = 120, vyrez = 'cela', poh
 
   const hlava = celaMaska ? '' : `
     ${kapucova ? '' : `<g class="pv-vlasy">${vlasy(vlasyVzadu(z.uces, c))}</g>`}
-    <ellipse cx="35" cy="58" rx="4" ry="6" fill="${kuze}" ${OBRYS}/><ellipse cx="85" cy="58" rx="4" ry="6" fill="${kuze}" ${OBRYS}/>
+    <ellipse cx="36" cy="59" rx="3.2" ry="4.8" fill="${kuze}" ${OBRYS}/><ellipse cx="84" cy="59" rx="3.2" ry="4.8" fill="${kuze}" ${OBRYS}/>
     <ellipse cx="60" cy="56" rx="25" ry="26" fill="${kuze}" ${OBRYS}/>
     ${kapucova || !sOfinou ? '' : `<g clip-path="url(#${fid})"><g transform="translate(0 3.5)" opacity=".16">${vlasyVpredu(z.uces, '#000')}</g></g>`}
     <path d="M59.5 56.5 q2.4 2.8 -.6 3.8" stroke="${kx.c ? odstin(kx.c, -.35) : H}" stroke-width="1.4" fill="none" stroke-linecap="round"/>
@@ -607,9 +607,9 @@ export function postavicka(vzhled = VYCHOZI, velikost = 120, vyrez = 'cela', poh
   // aby dvě postavičky vedle sebe nemrkaly naráz.
   const hybe = pohyb ? ` hybe" style="--d:${(-Math.random() * 6).toFixed(2)}s` : '';
   return `<svg class="postavicka${hybe}" width="${velikost}" height="${velikost}" viewBox="${viewBox}" aria-hidden="true">
-    <clipPath id="${id}"><circle cx="60" cy="60" r="60"/></clipPath>
+    <clipPath id="${id}">${bezPozadi ? '<rect x="-20" y="-40" width="160" height="160"/>' : '<circle cx="60" cy="60" r="60"/>'}</clipPath>
     <g clip-path="url(#${id})">
-    ${pozadi(z.pozadi, defs)}
+    ${bezPozadi ? '' : pozadi(z.pozadi, defs)}
     <g class="pv-telo">
     <g transform="translate(60 120) scale(.86 .9) translate(-60 -120)">
     ${obleceni(z.obleceni, defs)}
@@ -627,9 +627,9 @@ export function postavicka(vzhled = VYCHOZI, velikost = 120, vyrez = 'cela', poh
     </g></g></g>
     <g class="pv-ruka">
     ${ruka ? `<text x="96" y="110" font-size="26" text-anchor="middle">${ruka}</text>` : ''}
-    ${ruka || z.naramek ? `<path d="M78.5 106 q-1 -6 5 -7 q6 0 6.5 5 q0 5 -5.5 6 q-5 0 -6 -4z" fill="${kuze}" stroke="${H}" stroke-width="1.2" stroke-opacity=".6"/><path d="M80.5 103 q2 -1.6 4 -.6" stroke="${H}" stroke-width="1" stroke-opacity=".5" fill="none" stroke-linecap="round"/>` : ''}
+    ${z.naramek ? `<path d="M78.5 106 q-1 -6 5 -7 q6 0 6.5 5 q0 5 -5.5 6 q-5 0 -6 -4z" fill="${kuze}" stroke="${H}" stroke-width="1.2" stroke-opacity=".6"/><path d="M80.5 103 q2 -1.6 4 -.6" stroke="${H}" stroke-width="1" stroke-opacity=".5" fill="none" stroke-linecap="round"/>` : ''}
     ${naramek(z.naramek, kuze)}
     </g>
     ${mazl ? `<text class="pv-mazl" x="25" y="106" font-size="24" text-anchor="middle">${mazl}</text>` : ''}
-    </g><circle cx="60" cy="60" r="58.6" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="2.4"/><defs>${defs.join('')}</defs></svg>`;
+    </g>${bezPozadi ? '' : '<circle cx="60" cy="60" r="58.6" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="2.4"/>'}<defs>${defs.join('')}</defs></svg>`;
 }

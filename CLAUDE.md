@@ -25,7 +25,8 @@ v `sw.js`, commit, `git push` (`gh` je v `~/.local/bin/gh`). Ve škole jsou na s
 - `js/svety.js` – pozadí aplikace („světy“) se odemyká podle sušenek nasbíraných **celkem**
   (`susenkyCelkem`, utrácení ho nesnižuje; tituly i žebříček jedou podle něj). Sušenky přidávat jen
   přes `S.pridej(p, n)`, jinak se celkový součet nepohne.
-- Postavička má obrysy (`OBRYS`), stínování pleti a oblečení, oči s duhovkou (kategorie Barva očí) a obočí.
+- Postavička má obrysy (`OBRYS`), stínování pleti a oblečení, oválné oči v barvě duhovky (bez bělma – s bělmem působily vykuleně) a obočí. Věc v ruce bez ruky; ruka jen s náramkem.
+- Hlavní karta na úvodní obrazovce: scénka podle světa (`scena()` v svety.js, v noci noční) a postavička bez kulatého pozadí (`postavicka(..., { bezPozadi: true })`).
 - Vzhled: písmo Fredoka (nadpisy, tlačítka) + Nunito z Google Fonts, papírové karty (`--papir`),
   plastická tlačítka, barevné karty balíčků (`--akc` = barva podkladu ikony, `barvaIkony()`).
 - Noční režim: `body.noc`, automaticky 20:00–6:30, nebo volba v Já (`nastaveni.noc`). Nové světlé
