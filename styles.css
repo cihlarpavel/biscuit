@@ -439,6 +439,12 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .kat span { line-height: 0; }
 .btn .ik { display: inline-block; vertical-align: middle; }
 
+/* =========================================================================
+   Funkce přidané po vzhledu z 1. 10. večer (vzhled zůstává původní).
+   ========================================================================= */
+:root { --papir: none; --stin-papir: var(--stin); }
+.ik { display: block; flex: none; }
+
 /* ---------- Délka battlu ---------- */
 .delky { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 8px 0 4px; }
 .delka { background: #fff; border-radius: 16px; padding: 12px 6px; box-shadow: var(--stin); border: 3px solid transparent; display: flex; flex-direction: column; align-items: center; gap: 2px; }
@@ -446,219 +452,6 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
 .delka small { font-size: 12px; color: var(--tlumene); font-weight: 600; }
 .delka.on { border-color: var(--ruzova); background: var(--ruzova-svetla); }
 
-/* =========================================================================
-   Papírový a plastický vzhled: karty jako vystřižený papír (struktura, bílý okraj,
-   posunutý stín, lehce nakřivo), tlačítka jako lesklé plastové bonbony.
-   ========================================================================= */
-:root {
-  /* jemná papírová zrnitost (SVG šum) */
-  --papir: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45  0 0 0 0 .3  0 0 0 0 .4  0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  --stin-papir: 0 1px 0 rgba(255, 255, 255, .9) inset, 3px 4px 0 rgba(150, 90, 140, .16), 0 8px 18px rgba(150, 90, 140, .10);
-}
-
-/* Karty a dlaždice = papír */
-.balicek, .dnes-karta, .profil-karta, .z-karta, .vec, .odznak, .bublina, .otazka, .karta-nova,
-.slovo-radek, .cisla div, .graf, .historie, .prazdne, .r-karta, .vyzva, .delka, .svet, .odmena,
-.novy-odznak, .b-hracka, .muj-kod, .moznost, .stat, .kat, .zpet-btn, .hra-skore, .hra-cas, .souper {
-  background-image: var(--papir);
-  border: 2.5px solid #fff;
-  box-shadow: var(--stin-papir);
-}
-.balicek:nth-child(odd), .odznak:nth-child(3n+1), .vec:nth-child(4n+1), .profil-karta:nth-child(odd) { rotate: -.7deg; }
-.balicek:nth-child(even), .odznak:nth-child(3n+2), .vec:nth-child(4n+3), .profil-karta:nth-child(even) { rotate: .6deg; }
-.z-karta:nth-child(odd) { rotate: -.4deg; }
-.z-karta:nth-child(even) { rotate: .4deg; }
-
-/* Při klepnutí se papír „přimáčkne“ */
-.balicek, .profil-karta, .vec, .svet, .delka, .moznost, .kat { transition: transform .12s, box-shadow .12s, rotate .2s; }
-.balicek:active, .profil-karta:active, .vec:active, .svet:active, .delka:active, .moznost:active, .kat:active {
-  transform: translate(2px, 3px); box-shadow: 0 1px 0 rgba(255, 255, 255, .9) inset, 1px 1px 0 rgba(150, 90, 140, .18);
-}
-
-/* Washi páska na hlavní kartě a na bublině maskotky */
-.dnes-karta, .bublina { position: relative; }
-.dnes-karta::before {
-  content: ''; position: absolute; top: -11px; left: 50%; width: 92px; height: 22px; translate: -50% 0; rotate: -3deg;
-  background: repeating-linear-gradient(45deg, rgba(255, 143, 191, .55) 0 6px, rgba(255, 255, 255, .55) 6px 12px);
-  border-radius: 3px; box-shadow: 0 1px 2px rgba(0, 0, 0, .08);
-}
-.z-karta { position: relative; }
-.z-karta::before {
-  content: ''; position: absolute; top: -9px; right: 18px; width: 56px; height: 18px; rotate: 6deg;
-  background: repeating-linear-gradient(-45deg, rgba(182, 156, 255, .5) 0 5px, rgba(255, 255, 255, .5) 5px 10px); border-radius: 3px;
-}
-
-/* Tlačítka = lesklý plast */
-.btn {
-  position: relative; overflow: hidden;
-  background: linear-gradient(180deg, #ff9fcc 0%, #ff6fae 55%, #f2559a 100%);
-  border: 2.5px solid #fff;
-  box-shadow: 0 6px 0 #d94a8c, 0 10px 18px rgba(217, 74, 140, .28), inset 0 -3px 0 rgba(0, 0, 0, .08);
-  text-shadow: 0 1px 0 rgba(160, 30, 90, .35);
-}
-.btn::after { /* odlesk nahoře */
-  content: ''; position: absolute; left: 10%; right: 10%; top: 3px; height: 38%;
-  border-radius: 999px; background: linear-gradient(180deg, rgba(255, 255, 255, .55), rgba(255, 255, 255, 0)); pointer-events: none;
-}
-.btn:active { transform: translateY(4px); box-shadow: 0 2px 0 #d94a8c, 0 4px 8px rgba(217, 74, 140, .25); }
-.btn.vedlejsi {
-  background: linear-gradient(180deg, #f6f1ff 0%, #e7dcff 100%); color: #6b4fd8; text-shadow: none;
-  box-shadow: 0 5px 0 #cbb8ff, 0 9px 16px rgba(155, 123, 255, .2);
-}
-.btn.vedlejsi:active { box-shadow: 0 2px 0 #cbb8ff; }
-.repro { border: 2.5px solid #fff; background: linear-gradient(180deg, #f6f1ff, #e3d9ff); box-shadow: 0 4px 0 #cbb8ff, 0 6px 12px rgba(155, 123, 255, .2); }
-.dlazdice { border: 2.5px solid #fff; background: #fff var(--papir); box-shadow: 0 4px 0 #e4d6ff, 2px 6px 10px rgba(150, 90, 140, .12); }
-
-/* Spodní lišta jako papírový proužek */
-.tabs { background: rgba(255, 255, 255, .94) var(--papir); border-top: 2.5px solid #fff; box-shadow: 0 -3px 0 rgba(150, 90, 140, .08), 0 -8px 20px rgba(150, 90, 140, .10); }
-
-/* Postavičky jako nálepky s bílým okrajem */
-.postavicka { filter: drop-shadow(0 0 0 #fff) drop-shadow(2px 3px 0 rgba(150, 90, 140, .18)); }
-.satnik-nahled svg { filter: drop-shadow(3px 5px 0 rgba(150, 90, 140, .18)) drop-shadow(0 10px 20px rgba(150, 90, 140, .18)); }
-/* Karty, které měly vlastní přechod: papír přes původní barvu */
-.dnes-karta { background-image: var(--papir), linear-gradient(135deg, #fff, var(--lila-svetla)); }
-.novy-odznak { background-image: var(--papir), linear-gradient(135deg, #fff6d8, #ffe9f3); }
-.muj-kod { background-color: var(--lila-svetla); }
-.vyzva, .z-karta, .odmena, .b-hracka, .prazdne, .r-karta, .historie, .graf, .cisla div, .karta-nova, .otazka, .slovo-radek { background-color: #fff; }
-
-/* =========================================================================
-   Vymazlený vzhled: hravé písmo, barevné karty, hlavní karta s postavičkou,
-   ukazatel úrovně, výrazné nadpisy sekcí, tlusté barevné odpovědi, animace.
-   ========================================================================= */
-body { font-family: 'Nunito', ui-rounded, "SF Pro Rounded", system-ui, sans-serif; font-weight: 700; }
-h1, h2, h3, .btn, .bublina, .b-text b, .zadani, .kol-text b, .stat, .tabs a, .kdo b, .moznost, .dlazdice,
-.karta-nova .en, .otazka .en, .cz-velke, .titul, .z-jmeno, .profil-karta b, .delka b, .vyzva b, .hlaska, .odmena span,
-.cisla b, .zpet-btn, .kat, .vec small, .svet b, .stitek-ted, .uroven b, .drip-nadpis, .b-body, .muj-kod b {
-  font-family: 'Baloo 2', 'Nunito', ui-rounded, system-ui, sans-serif;
-}
-h1 { font-weight: 700; font-size: 30px; }
-h2, h3 { font-weight: 600; }
-.btn { font-weight: 600; letter-spacing: .2px; }
-.drobne { font-weight: 700; }
-
-/* ---------- Hlavní karta s postavičkou ---------- */
-.hero {
-  position: relative; display: flex; align-items: flex-end; gap: 4px; margin: 6px 0 22px; padding: 14px 14px 16px 6px;
-  border-radius: 30px; border: 3px solid #fff; overflow: hidden;
-  background: radial-gradient(circle at 15% 20%, rgba(255, 255, 255, .55) 0 18%, transparent 19%),
-              radial-gradient(circle at 92% 90%, rgba(255, 255, 255, .35) 0 14%, transparent 15%),
-              linear-gradient(135deg, #ff9ccb 0%, #c4a3ff 55%, #8fd3ff 100%);
-  box-shadow: 4px 6px 0 rgba(150, 90, 140, .22), 0 14px 28px rgba(150, 90, 140, .18);
-}
-.hero::after { content: ''; position: absolute; inset: 0; background: var(--papir); opacity: .8; pointer-events: none; }
-.hero-postava { flex: none; margin-bottom: -18px; z-index: 1; }
-.hero-postava .postavicka { filter: drop-shadow(0 0 0 #fff) drop-shadow(3px 4px 0 rgba(80, 40, 110, .25)); }
-.hero-text { flex: 1; min-width: 0; z-index: 1; display: flex; flex-direction: column; gap: 10px; }
-.hero .bublina { margin: 0; font-size: 16px; padding: 10px 14px; border-radius: 18px 18px 18px 4px; }
-.uroven { background: rgba(255, 255, 255, .88); border-radius: 18px; padding: 8px 12px 9px; border: 2px solid #fff; }
-.uroven-radek { display: flex; justify-content: space-between; align-items: center; gap: 6px; font-size: 13px; }
-.uroven-radek b { font-size: 15px; line-height: 1.1; color: #8b3fd1; }
-.uroven-radek span { white-space: nowrap; flex: none; display: inline-flex; align-items: center; gap: 3px; color: var(--tlumene); font-weight: 800; }
-.uroven small { display: block; font-size: 11.5px; color: var(--tlumene); margin-top: 4px; font-weight: 800; }
-.xp { height: 14px; border-radius: 99px; background: #efe8ff; overflow: hidden; margin-top: 5px; box-shadow: inset 0 2px 3px rgba(80, 40, 110, .12); }
-.xp i { display: block; height: 100%; min-width: 14px; border-radius: 99px;
-  background: repeating-linear-gradient(-45deg, rgba(255, 255, 255, .35) 0 6px, transparent 6px 12px), linear-gradient(90deg, #ffc94d, #ff8a3d);
-  background-size: 17px 17px, 100% 100%; animation: pruhy 1.2s linear infinite; box-shadow: inset 0 -2px 0 rgba(0, 0, 0, .1); }
-@keyframes pruhy { to { background-position: 17px 0, 0 0; } }
-
-/* ---------- Karta Dnešní lekce ---------- */
-.dnes-karta { padding: 18px 16px; border-radius: 26px; gap: 14px; }
-.dnes-text h3 { font-size: 23px; }
-.dnes-text .btn { width: 100%; font-size: 18px; padding: 13px 16px; }
-.kolecko svg { filter: drop-shadow(0 3px 0 rgba(150, 90, 140, .12)); }
-.kol-pozadi { stroke: #f6e3ef; }
-.kol-text b { font-size: 34px; }
-
-/* ---------- Nadpisy sekcí ---------- */
-.sekce-hlava { display: flex; align-items: center; gap: 10px; margin: 30px 0 12px; }
-.sekce-hlava h2 { margin: 0; font-size: 23px; line-height: 1.1; display: inline-block; padding-bottom: 6px;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='8'%3E%3Cpath d='M0 4 q5 -4 10 0 t10 0 t10 0 t10 0' fill='none' stroke='%23ff8fc4' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E") repeat-x left bottom / 40px 8px; }
-.sekce-hlava p { margin: 2px 0 0; font-size: 13px; color: var(--tlumene); }
-
-/* ---------- Barevné karty balíčků ---------- */
-.balicky { gap: 12px; }
-.balicek {
-  position: relative; flex-direction: column; align-items: flex-start; gap: 8px; padding: 12px 12px 12px; min-height: 132px;
-  border-radius: 22px; background-color: #fff;
-  background-image: var(--papir), linear-gradient(160deg, #fff 38%, var(--akc, #ffd6e8) 100%);
-}
-.balicek .b-ikona { width: 56px; height: 56px; display: grid; place-items: center; border-radius: 18px;
-  background: #fff; box-shadow: 0 3px 0 color-mix(in srgb, var(--akc, #ffd6e8) 70%, #8a6a90), 0 0 0 2.5px var(--akc, #ffd6e8) inset; }
-.balicek .b-ikona .ik rect:first-child { display: none; } /* podklad ikony nahrazuje bublina */
-.balicek .b-text { width: 100%; }
-.balicek .b-text small { color: color-mix(in srgb, var(--akc) 35%, #6b3f86); font-weight: 900; font-size: 11.5px; }
-.balicek .b-text b { font-size: 15.5px; margin: 1px 0 6px; }
-.balicek .mini-prubeh { height: 9px; background: rgba(255, 255, 255, .85); box-shadow: inset 0 1px 2px rgba(80, 40, 110, .15); }
-.balicek .mini-prubeh i { background: linear-gradient(90deg, #7fd8c4, #3fbf9a); }
-.b-pocet { display: block; text-align: right; font-size: 11px; color: var(--tlumene); margin-top: 3px; font-weight: 900; }
-.balicek.ted { outline: none; border-color: var(--ruzova); box-shadow: 0 0 0 3px #fff, 4px 6px 0 rgba(255, 111, 174, .35), 0 10px 20px rgba(255, 111, 174, .2); }
-.stitek-ted { position: absolute; top: -10px; right: 10px; background: linear-gradient(180deg, #ff9fcc, #ff6fae); color: #fff; font-size: 11px; font-weight: 600;
-  padding: 3px 9px; border-radius: 99px; border: 2px solid #fff; box-shadow: 0 2px 0 #d94a8c; rotate: 4deg; }
-.balicek.zamceno { opacity: .6; filter: saturate(.3); }
-
-/* ---------- Lekce: tlusté barevné odpovědi ---------- */
-.moznost { --m: #ffd6e8; background-color: #fff; background-image: var(--papir), linear-gradient(180deg, #fff 55%, var(--m));
-  box-shadow: 0 5px 0 color-mix(in srgb, var(--m) 60%, #8a6a90), 0 8px 14px rgba(150, 90, 140, .12); border-width: 3px; }
-.mrizka .moznost:nth-child(4n+1), .seznam .moznost:nth-child(4n+1) { --m: #ffd6e8; }
-.mrizka .moznost:nth-child(4n+2), .seznam .moznost:nth-child(4n+2) { --m: #e3d9ff; }
-.mrizka .moznost:nth-child(4n+3), .seznam .moznost:nth-child(4n+3) { --m: #d6f5ec; }
-.mrizka .moznost:nth-child(4n+4), .seznam .moznost:nth-child(4n+4) { --m: #fff1c2; }
-.moznost:active { transform: translateY(4px); box-shadow: 0 1px 0 color-mix(in srgb, var(--m) 60%, #8a6a90); }
-.spravne-volba { --m: #9ff0c9 !important; border-color: #3fbf9a !important; animation: radost .5s; }
-.spatne-volba { --m: #ffc2c9 !important; border-color: var(--cervena) !important; }
-@keyframes radost { 30% { transform: scale(1.07) rotate(-1deg); } 60% { transform: scale(.98); } }
-.prubeh { height: 18px; border: 2.5px solid #fff; box-shadow: inset 0 2px 3px rgba(80, 40, 110, .12), 0 2px 0 rgba(150, 90, 140, .12); }
-.prubeh i { background: repeating-linear-gradient(-45deg, rgba(255, 255, 255, .3) 0 6px, transparent 6px 12px), linear-gradient(90deg, var(--ruzova), var(--lila));
-  background-size: 17px 17px, 100% 100%; animation: pruhy 1.2s linear infinite; }
-.zadani { font-size: 22px; font-weight: 600; }
-.karta-nova .en { font-size: 36px; }
-
-/* ---------- Naskakování při otevření obrazovky ---------- */
-@keyframes naskok { from { opacity: 0; transform: translateY(14px) scale(.96); } }
-.hero, .dnes-karta, .sekce-hlava, .balicek, .z-karta, .odznak, .vec, .svet, .profil-karta, .vyzva, .cisla div, .moznost, .karta-nova, .otazka {
-  animation: naskok .45s cubic-bezier(.3, 1.4, .5, 1) both;
-}
-.balicky > :nth-child(2), .odznaky > :nth-child(2), .veci > :nth-child(2), .mrizka > :nth-child(2), .seznam > :nth-child(2) { animation-delay: .05s; }
-.balicky > :nth-child(3), .odznaky > :nth-child(3), .veci > :nth-child(3), .mrizka > :nth-child(3), .seznam > :nth-child(3) { animation-delay: .1s; }
-.balicky > :nth-child(4), .odznaky > :nth-child(4), .veci > :nth-child(4), .mrizka > :nth-child(4), .seznam > :nth-child(4) { animation-delay: .15s; }
-.balicky > :nth-child(n+5), .odznaky > :nth-child(n+5), .veci > :nth-child(n+5) { animation-delay: .2s; }
-.dnes-karta { animation-delay: .08s; }
-@media (prefers-reduced-motion: reduce) { * { animation-duration: .01s !important; } }
-
-/* ---------- Lekce: maskotka se zadáním, zářící přehrávání, kostičky ---------- */
-.zadani-radek { display: flex; align-items: flex-end; gap: 4px; margin: 6px 0 16px; }
-.zadani-radek .maskot { flex: none; }
-.zadani-radek .zadani { margin: 0 0 22px; font-size: 19px; padding: 10px 16px; background: #fff var(--papir); border: 2.5px solid #fff;
-  border-radius: 20px 20px 20px 6px; box-shadow: var(--stin-papir); animation: naskok .4s cubic-bezier(.3, 1.4, .5, 1) both; }
-.repro-radek.velky .repro:not(.maly) { background: radial-gradient(circle at 35% 30%, #fff 0 18%, #e3d9ff 60%, #c9b6ff 100%);
-  box-shadow: 0 6px 0 #a98cf5, 0 0 0 0 rgba(155, 123, 255, .45); animation: zare 2.2s ease-out infinite; }
-@keyframes zare { 0% { box-shadow: 0 6px 0 #a98cf5, 0 0 0 0 rgba(155, 123, 255, .45); } 70%, 100% { box-shadow: 0 6px 0 #a98cf5, 0 0 0 18px rgba(155, 123, 255, 0); } }
-.dlazdice-box .dlazdice:not(.slovo) { min-width: 50px; height: 56px; font-size: 28px; color: #5b3a1e; background: #fff4dc var(--papir);
-  border: 2.5px solid #fff; box-shadow: 0 5px 0 #e2bf86, 0 8px 12px rgba(150, 100, 40, .15); text-transform: lowercase; }
-.dlazdice-box .dlazdice:nth-child(odd) { rotate: -2deg; }
-.dlazdice-box .dlazdice:nth-child(even) { rotate: 2deg; }
-.dlazdice.slovo { background: #fff var(--papir); }
-.sloty i { width: 42px; height: 52px; border: 3px dashed #c9b6ff; border-radius: 12px; background: rgba(255, 255, 255, .6); }
-.sloty i.plne { border-style: solid; border-color: #e2bf86; background: #fff4dc; color: #5b3a1e; box-shadow: 0 4px 0 #e2bf86; }
-.sloty.ok i { border-color: #3fbf9a; background: #d9fbe9; box-shadow: 0 4px 0 #3fbf9a; }
-.sloty.chyba i { border-color: var(--cervena); background: #ffe5e8; box-shadow: 0 4px 0 var(--cervena); }
-.veta-radek { border: 3px dashed #c9b6ff; border-radius: 18px; background: rgba(255, 255, 255, .6); }
-.vysledek { border-top: 3px solid #fff; box-shadow: 0 -6px 20px rgba(150, 90, 140, .15); }
-.vysledek.ok { background: #d9fbe9 var(--papir); }
-.vysledek.chyba { background: #ffe5e8 var(--papir); }
-
-/* ---------- Já ---------- */
-.hero-ja { position: relative; margin: 4px 0 18px; padding: 18px 12px 16px; border-radius: 30px; border: 3px solid #fff; overflow: hidden;
-  background: radial-gradient(circle at 85% 15%, rgba(255, 255, 255, .5) 0 16%, transparent 17%), linear-gradient(135deg, #ff9ccb 0%, #c4a3ff 55%, #8fd3ff 100%);
-  box-shadow: 4px 6px 0 rgba(150, 90, 140, .22), 0 14px 28px rgba(150, 90, 140, .18); }
-.hero-ja::after { content: ''; position: absolute; inset: 0; background: var(--papir); pointer-events: none; }
-.hero-ja > * { position: relative; z-index: 1; }
-.hero-ja .avatar.obri { width: 150px; height: 150px; background: none; box-shadow: none; margin-top: 0; }
-.hero-ja h1 { color: #fff; text-shadow: 0 2px 0 rgba(120, 50, 140, .35); font-size: 32px; }
-.hero-ja .titul { display: inline-block; background: #fff; padding: 4px 14px; border-radius: 99px; box-shadow: 0 3px 0 rgba(150, 90, 140, .2); }
-.cisla div { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px 4px;
-  background-image: var(--papir), linear-gradient(180deg, #fff 45%, var(--akc, #fff)); }
-.cisla b { font-size: 24px; }
 
 /* ---------- Vyskakovací výsledek battlu ---------- */
 .popup-pozadi { position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; padding: 20px 16px;
@@ -686,6 +479,37 @@ h2, h3 { font-weight: 600; }
 .popup-karta .odmena { margin: 6px 0 4px; }
 .popup-karta .btn.velke { margin: 12px 0 2px; }
 .popup-karta .odkaz { width: 100%; }
+
+
+/* ---------- Hra za odměnu ---------- */
+.karta-hry { position: relative; display: flex; align-items: center; gap: 12px; margin: 16px 0 4px; padding: 12px 14px; border-radius: 24px;
+  border: 2.5px solid #fff; background: #fff var(--papir); box-shadow: var(--stin-papir); animation: naskok .45s .12s cubic-bezier(.3, 1.4, .5, 1) both; rotate: .6deg; }
+.karta-hry .b-ikona { flex: none; width: 62px; height: 62px; display: grid; place-items: center; border-radius: 18px; background: #fff;
+  box-shadow: 0 0 0 2.5px #ffe08a inset, 0 3px 0 #e0b84a; }
+.karta-hry .b-text { flex: 1; min-width: 0; }
+.karta-hry small { color: #c98a00; font-weight: 900; font-size: 11.5px; }
+.karta-hry b { display: block; font-size: 18px; }
+.hra-stav { display: block; font-size: 12.5px; color: var(--tlumene); font-weight: 800; margin-top: 2px; }
+.karta-hry.odemcena { background-image: var(--papir), linear-gradient(135deg, #fffbe6, #ffe9a8); border-color: #ffe08a; }
+.karta-hry:not(.odemcena) { filter: saturate(.5); opacity: .85; }
+.hra-hrat { flex: none; font-family: 'Baloo 2', sans-serif; font-weight: 600; color: #fff; padding: 9px 14px; border-radius: 99px; border: 2.5px solid #fff;
+  background: linear-gradient(180deg, #ffd34d, #ffae2b); box-shadow: 0 4px 0 #d98a00; animation: hop 1.6s infinite; }
+.hra-logo { display: grid; place-items: center; margin-top: 34px; animation: zlataPrilet .7s cubic-bezier(.3, 1.6, .5, 1) both; }
+.hra-info { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 6px 0; }
+.hra-info span { background: #fff var(--papir); border: 2.5px solid #fff; box-shadow: var(--stin-papir); padding: 6px 12px; border-radius: 99px; font-weight: 800; font-size: 14px; }
+.hra-platno { position: fixed; inset: 0; background: linear-gradient(180deg, #bfe6ff 0%, #ffe3f1 70%, #fff4dc 100%); }
+.hra-platno::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 26px; background: #9be08a; border-top: 3px solid #3b2a3f; }
+.hra-platno canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; z-index: 1; }
+.hra-hud { position: absolute; z-index: 2; top: calc(12px + env(safe-area-inset-top)); left: 60px; right: 12px; display: flex; gap: 8px; justify-content: flex-end; pointer-events: none; }
+.hra-hud span, .hra-zbyva { background: #fff; border: 2.5px solid #fff; border-radius: 99px; padding: 5px 11px; font-family: 'Baloo 2', sans-serif; font-weight: 600;
+  box-shadow: 0 3px 0 rgba(150, 90, 140, .2); font-size: 15px; }
+.hra-zbyva { position: absolute; z-index: 2; top: calc(54px + env(safe-area-inset-top)); right: 12px; pointer-events: none; }
+.hra-platno .zavrit { position: absolute; z-index: 3; top: calc(10px + env(safe-area-inset-top)); left: 12px; width: 42px; height: 42px; border-radius: 50%; background: #fff; box-shadow: 0 3px 0 rgba(150, 90, 140, .2); }
+body.noc .karta-hry { background-color: var(--karta); border-color: rgba(255, 255, 255, .13); }
+body.noc .karta-hry.odemcena { background-image: var(--papir), linear-gradient(135deg, #3a2f20, #5a4512); border-color: #8a6a10; }
+body.noc .karta-hry .b-ikona { background: #f4ecff; }
+body.noc .hra-info span { background-color: var(--karta); }
+
 
 /* =========================================================================
    Noční režim (body.noc): tmavě fialová noc, karty jako tmavý papír.
@@ -742,179 +566,6 @@ body.noc .drip-nadpis { background: linear-gradient(90deg, #ff9fcc, #c4a3ff, #8f
 body.noc .sekce-hlava h2 { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='8'%3E%3Cpath d='M0 4 q5 -4 10 0 t10 0 t10 0 t10 0' fill='none' stroke='%23c4a3ff' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E"); }
 body.noc .balicek .mini-prubeh, body.noc .xp { background: rgba(255, 255, 255, .12); }
 
-/* ---------- Ikony lišty jako dlaždice balíčků ---------- */
-.tabs a:not(.stred) span { width: 46px; height: 42px; border-radius: 14px; opacity: 1; filter: none; background: #fff var(--papir);
-  box-shadow: 0 0 0 2.5px var(--akc) inset, 0 3px 0 color-mix(in srgb, var(--akc) 70%, #8a6a90); }
-.tabs a:not(.stred) span .ik { width: 32px; height: 32px; }
-.tabs a:not(.on):not(.stred) span { opacity: .8; }
-.tabs a.on:not(.stred) span { background: var(--akc) var(--papir); transform: translateY(-5px) rotate(-5deg) scale(1.08);
-  box-shadow: 0 0 0 2.5px #fff inset, 0 5px 0 color-mix(in srgb, var(--akc) 60%, #8a6a90), 0 8px 14px rgba(150, 90, 140, .25); }
-/* V noci zůstávají dlaždice ikon světlé jako nálepky, jinak tmavé obrysy ikon zaniknou. */
-body.noc .tabs a:not(.stred) span { background-color: #f4ecff; }
-body.noc .tabs a.on:not(.stred) span { background-color: var(--akc); }
-body.noc .balicek .b-ikona { background: #f4ecff; }
-body.noc .sekce-hlava .ik, body.noc .s-ikonou .ik { filter: drop-shadow(0 0 0 #fff); }
-
-/* ---------- Hra za odměnu ---------- */
-.karta-hry { position: relative; display: flex; align-items: center; gap: 12px; margin: 16px 0 4px; padding: 12px 14px; border-radius: 24px;
-  border: 2.5px solid #fff; background: #fff var(--papir); box-shadow: var(--stin-papir); animation: naskok .45s .12s cubic-bezier(.3, 1.4, .5, 1) both; rotate: .6deg; }
-.karta-hry .b-ikona { flex: none; width: 62px; height: 62px; display: grid; place-items: center; border-radius: 18px; background: #fff;
-  box-shadow: 0 0 0 2.5px #ffe08a inset, 0 3px 0 #e0b84a; }
-.karta-hry .b-text { flex: 1; min-width: 0; }
-.karta-hry small { color: #c98a00; font-weight: 900; font-size: 11.5px; }
-.karta-hry b { display: block; font-size: 18px; }
-.hra-stav { display: block; font-size: 12.5px; color: var(--tlumene); font-weight: 800; margin-top: 2px; }
-.karta-hry.odemcena { background-image: var(--papir), linear-gradient(135deg, #fffbe6, #ffe9a8); border-color: #ffe08a; }
-.karta-hry:not(.odemcena) { filter: saturate(.5); opacity: .85; }
-.hra-hrat { flex: none; font-family: 'Baloo 2', sans-serif; font-weight: 600; color: #fff; padding: 9px 14px; border-radius: 99px; border: 2.5px solid #fff;
-  background: linear-gradient(180deg, #ffd34d, #ffae2b); box-shadow: 0 4px 0 #d98a00; animation: hop 1.6s infinite; }
-.hra-logo { display: grid; place-items: center; margin-top: 34px; animation: zlataPrilet .7s cubic-bezier(.3, 1.6, .5, 1) both; }
-.hra-info { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 6px 0; }
-.hra-info span { background: #fff var(--papir); border: 2.5px solid #fff; box-shadow: var(--stin-papir); padding: 6px 12px; border-radius: 99px; font-weight: 800; font-size: 14px; }
-.hra-platno { position: fixed; inset: 0; background: linear-gradient(180deg, #bfe6ff 0%, #ffe3f1 70%, #fff4dc 100%); }
-.hra-platno::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 26px; background: #9be08a; border-top: 3px solid #3b2a3f; }
-.hra-platno canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; z-index: 1; }
-.hra-hud { position: absolute; z-index: 2; top: calc(12px + env(safe-area-inset-top)); left: 60px; right: 12px; display: flex; gap: 8px; justify-content: flex-end; pointer-events: none; }
-.hra-hud span, .hra-zbyva { background: #fff; border: 2.5px solid #fff; border-radius: 99px; padding: 5px 11px; font-family: 'Baloo 2', sans-serif; font-weight: 600;
-  box-shadow: 0 3px 0 rgba(150, 90, 140, .2); font-size: 15px; }
-.hra-zbyva { position: absolute; z-index: 2; top: calc(54px + env(safe-area-inset-top)); right: 12px; pointer-events: none; }
-.hra-platno .zavrit { position: absolute; z-index: 3; top: calc(10px + env(safe-area-inset-top)); left: 12px; width: 42px; height: 42px; border-radius: 50%; background: #fff; box-shadow: 0 3px 0 rgba(150, 90, 140, .2); }
-body.noc .karta-hry { background-color: var(--karta); border-color: rgba(255, 255, 255, .13); }
-body.noc .karta-hry.odemcena { background-image: var(--papir), linear-gradient(135deg, #3a2f20, #5a4512); border-color: #8a6a10; }
-body.noc .karta-hry .b-ikona { background: #f4ecff; }
-body.noc .hra-info span { background-color: var(--karta); }
-
-/* ---------- Karty balíčků: vystředěné, s pozadím podle tématu ---------- */
-.tabs a:not(.stred) span { display: grid !important; place-items: center; }
-.balicek { align-items: center; text-align: center; overflow: hidden; isolation: isolate; min-height: 150px; padding: 14px 12px 10px; }
-.balicek .b-text { display: flex; flex-direction: column; align-items: center; }
-.balicek .mini-prubeh { width: 100%; }
-.b-pocet { text-align: center; }
-.b-pozadi { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
-.b-pozadi .ik { position: absolute; opacity: .16; }
-.b-pozadi .ik:nth-child(1) { width: 120px; height: 120px; right: -26px; bottom: -22px; rotate: -14deg; opacity: .13; }
-.b-pozadi .ik:nth-child(2) { left: 8px; top: 30px; rotate: 18deg; }
-.b-pozadi .ik:nth-child(3) { right: 14px; top: 10px; rotate: -24deg; opacity: .22; }
-.balicek .b-ikona { position: relative; z-index: 1; width: 64px; height: 64px; border-radius: 20px; rotate: -3deg; }
-.balicek:nth-child(even) .b-ikona { rotate: 3deg; }
-.balicek .b-ikona .ik { width: 48px; height: 48px; }
-.balicek .b-text b { font-size: 16px; }
-
-/* ---------- Scénka na hlavní kartě ---------- */
-.hero, body.noc .hero { background: #ffe1ef; }
-.hero::after { display: none; }
-.hero-scena { position: absolute; inset: 0; z-index: 0; }
-.hero-scena svg { width: 100%; height: 100%; display: block; }
-.hero-postava { margin-bottom: -16px; margin-left: -4px; }
-.hero-postava .postavicka { filter: drop-shadow(0 0 0 #fff) drop-shadow(3px 4px 0 rgba(59, 42, 63, .25)); }
-.hero .bublina { box-shadow: 3px 4px 0 rgba(59, 42, 63, .18); }
-.hero .uroven { box-shadow: 3px 4px 0 rgba(59, 42, 63, .18); }
-
-/* =========================================================================
-   SEŠIT NA STOLE (podle předlohy): krémový papír, modrá jako hlavní barva,
-   karty jako stránky sešitu (kroužky, sponka, páska), čtverečkovaný papír,
-   plné barvy bez přechodů. Malované pozadí stolu z ilustrace/pozadi-*.webp.
-   ========================================================================= */
-:root {
-  --bg: #f3eadb; --text: #22305a; --tlumene: #6f7591; --karta: #fffaf1;
-  --modra: #3f6fe0; --modra-tm: #2c53b8; --modra-sv: #dfe8ff; --cervena-sesit: #e5534b; --zluta: #f2c14b;
-  --ruzova: #3f6fe0; --ruzova-svetla: #e4ebff; --lila: #7d9cf0; --lila-svetla: #e9eeff;
-  --mata: #57b38a; --mata-svetla: #ddf3e8;
-  --stin-papir: 0 1px 0 rgba(255, 255, 255, .8) inset, 0 2px 2px rgba(80, 60, 30, .08), 0 10px 18px -8px rgba(80, 60, 30, .3);
-  --ctverecky: linear-gradient(rgba(63, 111, 224, .07) 1px, transparent 1px) 0 0 / 16px 16px, linear-gradient(90deg, rgba(63, 111, 224, .07) 1px, transparent 1px) 0 0 / 16px 16px;
-}
-body { background-color: var(--bg); color: var(--text); }
-body.stul { background: var(--bg) var(--stul) center top / cover fixed no-repeat; }
-body.stul #app { background: none; }
-
-/* Plné barvy místo přechodů */
-.btn, .btn.velke { background: var(--modra) var(--papir); box-shadow: 0 5px 0 var(--modra-tm), 0 10px 16px -6px rgba(44, 83, 184, .45); border-color: #fff; text-shadow: none; }
-.btn::after { display: none; }
-.btn:active { box-shadow: 0 2px 0 var(--modra-tm); }
-.btn.vedlejsi { background: #fff var(--papir); color: var(--modra-tm); box-shadow: 0 4px 0 #c9d6f5, 0 8px 14px -6px rgba(44, 83, 184, .25); }
-.prubeh i, .xp i, .balicek .mini-prubeh i { background: var(--modra); animation: none; }
-.xp i { background: var(--zluta); }
-.balicek .mini-prubeh i { background: var(--mata); }
-.stitek-ted, .popup-stuha { background: var(--cervena-sesit); box-shadow: 0 3px 0 #b8403a; }
-.hra-hrat { background: var(--zluta); box-shadow: 0 4px 0 #c9962c; color: var(--text); }
-.drip-nadpis { background: none; -webkit-background-clip: border-box; background-clip: border-box; color: var(--text); }
-.zlata-pruh { background: var(--zluta); }
-.kol-plneni { stroke: var(--modra); }
-.kol-plneni.hotovo { stroke: var(--mata); }
-.kol-pozadi { stroke: #ece4d6; }
-.sekce-hlava h2 { background-image: none; padding-bottom: 0; }
-.uroven-radek b, .titul, .kdo small { color: var(--modra-tm); }
-.spravne-volba { --m: #bfe8d2 !important; border-color: var(--mata) !important; }
-
-/* Hlavní karta: papírová scénka v rámečku z papíru s páskou */
-.hero, body.noc .hero { background: var(--karta); border: 6px solid var(--karta); border-radius: 22px; box-shadow: var(--stin-papir); overflow: visible; }
-.hero-scena { inset: 0; border-radius: 16px; overflow: hidden; }
-.hero::before { content: ''; position: absolute; z-index: 3; top: -12px; right: 18px; width: 70px; height: 22px; rotate: 8deg;
-  background: rgba(125, 156, 240, .55); clip-path: polygon(3% 0, 97% 5%, 100% 50%, 96% 100%, 2% 95%, 0 50%); }
-.hero .bublina, .hero .uroven { background: var(--karta); border-color: var(--karta); }
-
-/* Stránka sešitu: kroužková vazba vlevo, čtverečky, sponka */
-.dnes-karta, .karta-hry, .z-karta, .r-karta, .vyzva, .historie, .prazdne {
-  background-color: var(--karta); background-image: var(--ctverecky); border-color: var(--karta); }
-.dnes-karta { padding-left: 34px; border-radius: 18px; box-shadow: var(--stin-papir), -4px 6px 0 -2px #efe4d0, -8px 12px 0 -4px #e6d8c0; }
-.dnes-karta::before { /* kroužky vazby místo washi pásky */
-  content: ''; position: absolute; left: 8px; top: 16px; bottom: 16px; width: 18px; translate: 0; rotate: 0deg; border-radius: 0;
-  background: radial-gradient(circle at 9px 9px, #fffaf1 0 4px, #8a93ad 4.5px 6.5px, transparent 7px) 0 0 / 18px 26px repeat-y; box-shadow: none; }
-.dnes-karta::after { /* sponka */
-  content: ''; position: absolute; top: -14px; left: 46px; width: 22px; height: 46px; rotate: -8deg;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 46'%3E%3Cpath d='M6 40 V10 a5 5 0 0 1 10 0 V36 a8 8 0 0 1 -16 0 V14' fill='none' stroke='%238a93ad' stroke-width='2.6' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat; }
-.karta-hry { border-radius: 18px; rotate: 0deg; }
-.karta-hry.odemcena { background-color: #fff6dc; background-image: var(--ctverecky); border-color: #fff6dc; }
-
-/* Karty balíčků: papír se čtverečky, bez barevného přechodu */
-.balicek { background-color: var(--karta); background-image: var(--ctverecky); border-color: var(--karta); }
-.balicek .b-ikona { background: #fff; box-shadow: 0 0 0 2px var(--akc) inset, 0 3px 0 color-mix(in srgb, var(--akc) 75%, #6a5a40); }
-.b-pozadi .ik { opacity: .12; }
-.balicek.ted { border-color: var(--karta); box-shadow: 0 0 0 3px var(--modra), var(--stin-papir); }
-
-/* Nadpisy sekcí na papírové stužce */
-.sekce-hlava h2 { background: var(--zluta) var(--papir); padding: 2px 12px; border-radius: 6px; rotate: -1.5deg; box-shadow: 0 2px 0 rgba(80, 60, 30, .15); }
-
-/* Odpovědi: papírové kartičky s barevným proužkem nahoře */
-.moznost { background-color: var(--karta); background-image: linear-gradient(var(--m), var(--m)) 0 0 / 100% 7px no-repeat, var(--ctverecky);
-  border-color: var(--karta); box-shadow: 0 5px 0 color-mix(in srgb, var(--m) 70%, #6a5a40), var(--stin-papir); }
-.mrizka .moznost:nth-child(4n+1), .seznam .moznost:nth-child(4n+1) { --m: #8fb0f5; }
-.mrizka .moznost:nth-child(4n+2), .seznam .moznost:nth-child(4n+2) { --m: #f3a19b; }
-.mrizka .moznost:nth-child(4n+3), .seznam .moznost:nth-child(4n+3) { --m: #8fd1b0; }
-.mrizka .moznost:nth-child(4n+4), .seznam .moznost:nth-child(4n+4) { --m: #f2c14b; }
-
-/* Já: místo růžovofialového přechodu papírová karta se scénkou */
-.hero-ja, body.noc .hero-ja { background: var(--karta); background-image: var(--ctverecky); }
-.hero-ja::after { display: none; }
-.hero-ja h1 { color: var(--text); text-shadow: none; }
-.hero-ja .titul { background: var(--modra-sv); }
-
-/* Spodní lišta: krémový papír */
-.tabs { background: var(--karta) var(--papir); border-top: 0; box-shadow: 0 -2px 0 #e9dfcd, 0 -10px 20px -8px rgba(80, 60, 30, .3); }
-.tabs a.on { color: var(--modra-tm); }
-.tabs a.stred span { border-color: var(--modra); box-shadow: 0 6px 16px rgba(44, 83, 184, .3); background: var(--karta); }
-
-/* Vyskakovací okna a výsledky bez přechodů */
-.popup-karta, .popup-karta.vyhra, .popup-karta.prohra, .popup-karta.remiza { background-color: var(--karta); background-image: var(--ctverecky); }
-.popup-karta.vyhra { border-color: var(--zluta); }
-.vysledek.ok { background: #ddf3e8 var(--papir); }
-.vysledek.chyba { background: #fde3e1 var(--papir); }
-.hra.zlata { background: #fff6dc; }
-
-/* Malované ilustrace */
-.ilu { display: block; object-fit: contain; filter: drop-shadow(0 3px 3px rgba(80, 60, 30, .18)); }
-.maskot.ilu { filter: drop-shadow(0 4px 4px rgba(80, 60, 30, .2)); }
-
-/* ---------- Noc ---------- */
-body.noc { --bg: #1e2340; --karta: #2b3157; --text: #eef1ff; --tlumene: #aab2d6;
-  --ctverecky: linear-gradient(rgba(255, 255, 255, .05) 1px, transparent 1px) 0 0 / 16px 16px, linear-gradient(90deg, rgba(255, 255, 255, .05) 1px, transparent 1px) 0 0 / 16px 16px; }
-body.noc .dnes-karta { box-shadow: var(--stin-papir), -4px 6px 0 -2px #262b4d, -8px 12px 0 -4px #22274a; }
-body.noc .dnes-karta::before { background: radial-gradient(circle at 9px 9px, #1e2340 0 4px, #8a93ad 4.5px 6.5px, transparent 7px) 0 0 / 18px 26px repeat-y; }
-body.noc :is(.balicek, .moznost, .dnes-karta, .karta-hry, .z-karta, .hero, .hero-ja) { background-color: var(--karta); border-color: var(--karta); }
-body.noc .balicek .b-ikona { background: #f4ecff; }
-body.noc .sekce-hlava h2 { color: #22305a; }
-/* Pozadí: klidný krémový papír (světy už neurčují barvu ani čmáranice – ty patří ke starému stylu) */
-body, body.noc { background-color: var(--bg); background-image: var(--papir); background-size: auto; }
-body.stul { background: var(--bg) var(--stul) center top / cover fixed no-repeat; }
-.dnes-karta::before { height: auto; }
-body:not(.noc) { --bg: #f3eadb; }
+body.noc .balicek .mini-prubeh, body.noc .xp { background: rgba(255, 255, 255, .12); }
+body.noc .tabs a span { filter: none; }
+.popup-karta .odkaz { width: 100%; }

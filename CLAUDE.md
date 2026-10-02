@@ -27,15 +27,15 @@ v `sw.js`, commit, `git push` (`gh` je v `~/.local/bin/gh`). Ve škole jsou na s
   přes `S.pridej(p, n)`, jinak se celkový součet nepohne.
 - Postavička má obrysy (`OBRYS`), stínování pleti a oblečení, oválné oči v barvě duhovky (bez bělma – s bělmem působily vykuleně) a obočí. Věc v ruce bez ruky; ruka jen s náramkem.
 - Hlavní karta na úvodní obrazovce: scénka podle světa (`scena()` v svety.js, v noci noční) a postavička bez kulatého pozadí (`postavicka(..., { bezPozadi: true })`).
-- Vzhled: písmo Baloo 2 (nadpisy, tlačítka) + Nunito z Google Fonts (Fredoka NEPOUŽÍVAT – nemá české háčky ě č ř), papírové karty (`--papir`),
-  plastická tlačítka, barevné karty balíčků (`--akc` = barva podkladu ikony, `barvaIkony()`).
-- **Styl „sešit na stole“ (3. 10. 2026, podle Pavlovy předlohy):** krémový papír, modrá jako hlavní barva,
-  karty jako stránky sešitu (kroužky, sponka, páska, čtverečky), ŽÁDNÉ přechody (Pavel je nemá rád).
-  Postavičky v papírovém stylu (`papir: true` je výchozí: bez obrysů, vrstvy se stínem). Scénka na hlavní
-  kartě je `scenaPapir()` z js/papir.js. Blok „SEŠIT NA STOLE“ je na konci styles.css a přepisuje starší pravidla.
-- **Malované ilustrace:** Pavel je generuje v ChatGPT/Gemini podle `ILUSTRACE-ZADANI.md` do `ilustrace/*.png`,
-  pak `python3 tools/ilustrace.py` (zmenší → .webp + seznam.json). `ik()` i `maskot()` použijí obrázek, pokud
-  existuje (js/obrazky.js), jinak kreslenou ikonu. Pozadí stolu: `pozadi-den` / `pozadi-noc`. PNG nejdou do gitu.
+- Písmo je systémové (ui-rounded). Kdyby se přidávalo webové písmo: Fredoka NEPOUŽÍVAT – nemá české háčky ě č ř.
+- **Vzhled = stav z 1. 10. 2026 večer (commit c01a673), vrácený na Pavlovo přání 2. 10.** Návrhy „vymazlený“
+  (scénky, Baloo), „papírová koláž“ a „sešit na stole“ Pavel odmítl. Funkce přidané potom zůstaly
+  (hra za odměnu, online battle s délkou, vyskakovací výsledek, noční režim, jeden profil, ikona Battle se
+  dvěma obličeji); jejich CSS je na konci styles.css v bloku „Funkce přidané po vzhledu z 1. 10. večer“.
+  Soubory papir.html, js/papir.js, js/obrazky.js, ILUSTRACE-ZADANI.md a tools/ilustrace.py zůstaly jako
+  neaktivní pozůstatek návrhů (ilustrace se použijí, jen kdyby je Pavel dodal do ilustrace/).
+- Pozor: `node --check soubor.js` nebere soubor jako modul a syntaktické chyby v modulech propustí.
+  Kontrolovat zkopírováním do `.mjs` (nebo importem).
 - Noční režim: `body.noc`, automaticky 20:00–6:30, nebo volba v Já (`nastaveni.noc`). Nové světlé
   prvky (bílé pozadí) je potřeba doplnit i do bloku `body.noc` ve styles.css.
 - Výsledek online battlu je vyskakovací okno (`ukazVysledek`, fronta `frontaVysledku`), ukáže se,
