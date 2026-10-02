@@ -110,6 +110,12 @@ Učebnice **Happy Street 2, 3. vydání (Oxford, české vydání)**, Units 1–
   odpověď na první pokus = 1 🍪 (`ZA_KOLIK_SPRAVNYCH` v hra.js), zlatá otázka +3, lekce +2, bez chyby +3,
   denní cíl +5 (`ODMENY` v app.js), battle 8/11/15 za výhru, hra za odměnu 25 bodů = 1 🍪 (max 6/den).
   Ceny v Drip shopu i hranice vzácnosti ×2. Tlačítko „Náhodný mix“ v Drip shopu zrušeno.
+- **Úroveň postavičky** (`uroven()` v postavicka.js, Pavel 3. 10.): podle nejdražší věci na sobě – zdarma bílé
+  pozadí, Cool nádech + mátový kroužek, Epické fialový + třpytky, Legendární zlatá záře, Bizár duhová aura.
+  Věci zdarma jsou schválně obyčejné (tričko bez hvězdy, perník placený). Barva vlasů = kolečka v sekci Účes
+  (`vUcesu`). Věci „V ruce“ (kromě čokolády a lízátka) drží v mávající ruce (`V_RUCE` v blob.js).
+- Hra za odměnu: chycení podle skutečné velikosti (zlatá je větší), brokolice jen když padne dovnitř;
+  krabička je `DOLE` px nad spodkem kvůli prstu; při skryté appce se hra zastaví.
 - Drip shop: za sušenky těsta, účesy, barvy vlasů, oči, pusy, oblečení, klobouky, brýle, boty, mazlíčci.
 - Battle 1:1 na jednom telefonu (stejné otázky, body za správnost + rychlost, vtipné vyhodnocení,
   odveta). Žebříček kamarádek s vtipnými komentáři. Tituly podle sušenek, odznaky.

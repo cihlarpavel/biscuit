@@ -66,7 +66,9 @@ export function spust(platno, { zbyva, priTiku = () => {}, konec }) {
   const SZ = S * 1.2; // zlaté jsou větší
   const SPR = { susenka: sprite(S, (c, s) => susenka(c, s, false)), zlata: sprite(SZ, (c, s) => susenka(c, s, true)), srdce: sprite(S, srdce) };
 
-  const krab = { x: W / 2, sirka: Math.min(130, W * .32), vyska: 56 };
+  // Krabička stojí výš nad spodkem – pod ní je místo na prst (DOLE px), aby ji prst nezakrýval.
+  const DOLE = Math.max(84, H * .12);
+  const krab = { x: W / 2, sirka: Math.min(130, W * .32), vyska: 58 };
   let cil = krab.x;
   const tah = e => { const r = platno.getBoundingClientRect(); const t = e.touches ? e.touches[0] : e; cil = t.clientX - r.left; };
   platno.addEventListener('pointerdown', tah);
@@ -104,7 +106,8 @@ export function spust(platno, { zbyva, priTiku = () => {}, konec }) {
     if (!bezi) return;
     const dt = Math.min(.05, (ted - posledni) / 1000);
     posledni = ted;
-    if (document.visibilityState === 'visible') {
+    if (document.visibilityState !== 'visible') { requestAnimationFrame(krok); return; } // schovaná appka = pauza
+    {
       zbyvaS -= dt;
       priTiku(zbyvaS);
       if (zbyvaS <= 0) return skonci(true);
@@ -117,11 +120,15 @@ export function spust(platno, { zbyva, priTiku = () => {}, konec }) {
     const tempo = zpomaleni ? ZPOMALENI_NA : 1;
     doDalsi -= dt * 1000 * tempo; // při zpomalení padají i méně často
     if (doDalsi <= 0) { pridej(); doDalsi = Math.max(260, 900 - level * 70) * (.6 + Math.random() * .7); }
-    const kY = H - 26 - krab.vyska;
+    const kY = H - DOLE - krab.vyska;
     for (let i = veci.length - 1; i >= 0; i--) {
       const v = veci[i];
       v.y += v.v * dt * tempo; v.rot += v.vr * dt * tempo;
-      const chycena = v.y + S * .35 > kY && v.y < kY + 20 && Math.abs(v.x - krab.x) < krab.sirka / 2 + S * .15;
+      // Chycení podle skutečné velikosti: sušenky (i větší zlatá) se počítají, i když krabičku jen trefí okrajem;
+      // brokolice až když opravdu padne dovnitř – dřív brala život i ta, co krabičku těsně minula.
+      const vel = v.druh === 'zlata' ? SZ : S;
+      const okraj = v.druh === 'brokolice' ? -S * .15 : vel * .4;
+      const chycena = v.y + vel * .4 > kY && v.y < kY + 26 && Math.abs(v.x - krab.x) < krab.sirka / 2 + okraj;
       if (chycena) {
         veci.splice(i, 1);
         if (v.druh === 'brokolice') { if (uber(1, v.x, kY - 10, 'Fuj! 🥦')) return skonci(false); }
@@ -168,14 +175,29 @@ export function spust(platno, { zbyva, priTiku = () => {}, konec }) {
       if (v.druh === 'zlata') { g.strokeStyle = 'rgba(255,211,77,.7)'; g.lineWidth = 3; g.beginPath(); g.arc(0, 0, SZ * .62, 0, Math.PI * 2); g.stroke(); }
       g.restore();
     }
-    // krabička od sušenek
-    const x = krab.x - krab.sirka / 2, y = H - 26 - krab.vyska, w = krab.sirka, h = krab.vyska;
-    g.lineWidth = 3; g.strokeStyle = OBRYS; g.lineJoin = 'round';
-    g.fillStyle = '#ff8fc4'; obdelnik(x, y + 8, w, h - 8, 14); g.fill(); g.stroke();
-    g.fillStyle = '#ffd6e8'; obdelnik(x + 8, y + 18, w - 16, h - 30, 8); g.fill();
-    g.fillStyle = '#c4a3ff'; obdelnik(x - 6, y, w + 12, 14, 7); g.fill(); g.stroke();
-    g.fillStyle = OBRYS; g.font = `700 ${Math.round(h * .3)}px "Baloo 2", system-ui`; g.textAlign = 'center'; g.textBaseline = 'middle';
-    g.fillText('Biscuit', krab.x, y + 18 + (h - 30) / 2);
+    // krabička od sušenek: plechovka s víčkem stejně širokým jako tělo, štítek, sušenky vykukující nahoře
+    const x = krab.x - krab.sirka / 2, y = H - DOLE - krab.vyska, w = krab.sirka, h = krab.vyska;
+    g.lineJoin = 'round';
+    // vykukující sušenky (za okrajem)
+    g.drawImage(SPR.susenka, x + w * .18, y - S * .32, S * .62, S * .62);
+    g.drawImage(SPR.susenka, x + w * .48, y - S * .4, S * .7, S * .7);
+    // tělo s jemným přechodem
+    const tg = g.createLinearGradient(x, 0, x + w, 0);
+    tg.addColorStop(0, '#ff9fcd'); tg.addColorStop(.5, '#ffc2df'); tg.addColorStop(1, '#ff8ac0');
+    g.fillStyle = tg; g.strokeStyle = OBRYS; g.lineWidth = 2.6;
+    obdelnik(x, y + 6, w, h - 6, 16); g.fill(); g.stroke();
+    // lem nahoře (stejně široký jako tělo) a proužek dole
+    g.fillStyle = '#c4a3ff'; obdelnik(x, y, w, 13, 8); g.fill(); g.stroke();
+    g.fillStyle = 'rgba(255,255,255,.45)'; obdelnik(x + 8, y + 3, w * .35, 3, 2); g.fill();
+    g.fillStyle = '#ff6fae'; obdelnik(x + 1.3, y + h - 12, w - 2.6, 10.7, 6); g.fill();
+    // puntíky
+    g.fillStyle = 'rgba(255,255,255,.55)';
+    for (const [px, py] of [[.12, .45], [.88, .42], [.1, .72], [.9, .7]]) { g.beginPath(); g.arc(x + w * px, y + h * py, 3, 0, Math.PI * 2); g.fill(); }
+    // štítek
+    g.fillStyle = '#fff'; g.strokeStyle = OBRYS; g.lineWidth = 2;
+    g.beginPath(); g.ellipse(krab.x, y + h * .56, w * .3, h * .2, 0, 0, Math.PI * 2); g.fill(); g.stroke();
+    g.fillStyle = OBRYS; g.font = `800 ${Math.round(h * .24)}px system-ui`; g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.fillText('Biscuit', krab.x, y + h * .57);
     // texty +1 apod.
     for (const e of efekty) {
       g.globalAlpha = Math.max(0, e.zivot); g.fillStyle = e.barva; g.strokeStyle = '#fff'; g.lineWidth = 5;

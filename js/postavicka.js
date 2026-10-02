@@ -20,7 +20,7 @@ export const vzacnost = cena => VZACNOST.filter(v => cena >= v.od).pop();
 export const KATEGORIE = [
   { id: 'kuze', nazev: 'Těsto', ik: 'susenka', povinne: true },
   { id: 'uces', nazev: 'Účes', ik: 'k-uces', povinne: true, hlava: true },
-  { id: 'barva', nazev: 'Barva vlasů', ik: 'k-barva', povinne: true, hlava: true },
+  { id: 'barva', nazev: 'Barva vlasů', ik: 'k-barva', povinne: true, hlava: true, vUcesu: true }, // kolečka v sekci Účes
   { id: 'oci', nazev: 'Oči', ik: 'k-oci', povinne: true, hlava: true },
   { id: 'pusa', nazev: 'Pusa', ik: 'k-pusa', povinne: true, hlava: true },
   { id: 'obleceni', nazev: 'Oblečení', ik: 'obleceni' },
@@ -37,7 +37,7 @@ const v = (kat, id, nazev, cena, extra = {}) => ({ kat, id, nazev, cena, ...extr
 export const VECI = [
   // Těsto
   v('kuze', 't-susenka', 'Sušenka', 0, { b: 'susenka' }), v('kuze', 't-maslova', 'Máslová', 0, { b: 'maslova' }),
-  v('kuze', 't-cokoladova', 'Čokoládová', 0, { b: 'cokoladova' }), v('kuze', 't-pernik', 'Perník', 0, { b: 'pernik' }),
+  v('kuze', 't-cokoladova', 'Čokoládová', 0, { b: 'cokoladova' }), v('kuze', 't-pernik', 'Perník', 120, { b: 'pernik' }),
   v('kuze', 't-posyp', 'S posypem', 120, { b: 'posyp' }), v('kuze', 't-poleva', 'S polevou', 180, { b: 'poleva' }),
   v('kuze', 't-oreo', 'Oreo', 280, { b: 'oreo' }), v('kuze', 't-ruzova', 'Růžová', 300, { b: 'ruzova' }),
   v('kuze', 't-modra', 'Modrá', 300, { b: 'modra' }), v('kuze', 't-zelena', 'Zelená', 400, { b: 'zelena' }),
@@ -50,7 +50,7 @@ export const VECI = [
   // Účes
   v('uces', 'u-ofina', 'Ofina', 0, { b: 'ofina' }), v('uces', 'u-dlouhe', 'Dlouhé', 0, { b: 'dlouhe' }),
   v('uces', 'u-culiky', 'Culíky', 0, { b: 'culiky' }), v('uces', 'u-rozcuch', 'Rozcuch', 0, { b: 'rozcuch' }),
-  v('uces', 'u-kudrny', 'Kudrny', 0, { b: 'kudrny' }), v('uces', 'u-zadne', 'Holá sušenka', 0, { b: '' }),
+  v('uces', 'u-kudrny', 'Kudrny', 0, { b: 'kudrny' }), v('uces', 'u-fluffy', 'Fluffy', 0, { b: 'fluffy' }), v('uces', 'u-zadne', 'Holá sušenka', 0, { b: '' }),
   v('uces', 'u-drdol', 'Drdol', 80, { b: 'drdol' }), v('uces', 'u-ciro', 'Číro', 240, { b: 'ciro' }),
 
   // Barva vlasů
@@ -72,7 +72,7 @@ export const VECI = [
   v('pusa', 'p-zobak', 'Zobák', 500, { b: 'zobak' }), v('pusa', 'p-vampir', 'Upír', 600, { b: 'vampir' }),
 
   // Oblečení
-  v('obleceni', 'ob-tricko', 'Tričko', 0, { b: 'tricko' }), v('obleceni', 'ob-mikina', 'Mikina', 0, { b: 'mikina' }),
+  v('obleceni', 'ob-tricko', 'Tričko', 0, { b: 'tricko' }), v('obleceni', 'ob-tricko-hvezda', 'Tričko s hvězdou', 50, { b: 'tricko-hvezda' }), v('obleceni', 'ob-mikina', 'Mikina', 0, { b: 'mikina' }),
   v('obleceni', 'ob-saty', 'Šaty', 60, { b: 'saty' }), v('obleceni', 'ob-monterky', 'Montérky', 120, { b: 'monterky' }),
   v('obleceni', 'ob-plavky', 'Plavky', 160, { b: 'plavky' }), v('obleceni', 'ob-smoking', 'Smoking', 800, { b: 'smoking' }),
 
@@ -95,11 +95,18 @@ export const VECI = [
   v('boty', 'bo-cervene', 'Červené', 60, { c: '#e8352b' }), v('boty', 'bo-zlute', 'Žluté', 60, { c: '#ffd34d' }),
   v('boty', 'bo-cerne', 'Černé', 100, { c: '#2b2230' }), v('boty', 'bo-zlate', 'Zlaté', 1400, { c: '#e0a800' }),
 
-  // V ruce
-  v('ruka', 'r-cokolada', 'Čokoláda', 60, { b: 'cokolada' }), v('ruka', 'r-lizatko', 'Lízátko', 80, { b: 'lizatko' }),
+  // V ruce (čokoláda v puse, lízátko v pravé ruce, ostatní v mávající ruce)
+  v('ruka', 'r-kytka', 'Kytička', 40, { b: 'kytka' }), v('ruka', 'r-cokolada', 'Čokoláda', 60, { b: 'cokolada' }),
+  v('ruka', 'r-balonek', 'Balónek', 60, { b: 'balonek' }), v('ruka', 'r-lizatko', 'Lízátko', 80, { b: 'lizatko' }),
+  v('ruka', 'r-zmrzlina', 'Zmrzlina', 100, { b: 'zmrzlina' }), v('ruka', 'r-mobil', 'Mobil', 160, { b: 'mobil' }),
+  v('ruka', 'r-mikrofon', 'Mikrofon', 300, { b: 'mikrofon' }), v('ruka', 'r-hulka', 'Kouzelná hůlka', 900, { b: 'hulka' }),
 
   // Mazlíček
-  v('mazlicek', 'm-kure', 'Kuřátko', 300, { b: 'kure' }), v('mazlicek', 'm-hovinko', 'Hovínko', 1000, { b: 'hovinko' }),
+  v('mazlicek', 'm-rybicka', 'Rybička', 160, { b: 'rybicka' }), v('mazlicek', 'm-kocka', 'Kočička', 240, { b: 'kocka' }),
+  v('mazlicek', 'm-pejsek', 'Pejsek', 240, { b: 'pejsek' }), v('mazlicek', 'm-kure', 'Kuřátko', 300, { b: 'kure' }),
+  v('mazlicek', 'm-zajic', 'Zajíček', 300, { b: 'zajic' }), v('mazlicek', 'm-dino', 'Dinosaurek', 500, { b: 'dino' }),
+  v('mazlicek', 'm-robot', 'Robot', 700, { b: 'robot' }), v('mazlicek', 'm-hovinko', 'Hovínko', 1000, { b: 'hovinko' }),
+  v('mazlicek', 'm-jednorozec', 'Jednorožec', 2400, { b: 'jednorozec' }),
 ];
 
 export const vec = id => VECI.find(x => x.id === id);
@@ -112,7 +119,7 @@ export const STARE_CENY = {"k-mata":150,"k-modra":200,"k-fialova":250,"k-zelena"
 const nahodna = a => a[Math.floor(Math.random() * a.length)];
 export function nahodnyVzhled(rod) {
   const zdarma = kat => VECI.filter(x => x.kat === kat && x.cena === 0).map(x => x.id);
-  const uces = rod === 'm' ? ['u-rozcuch', 'u-kudrny', 'u-ofina'] : rod === 'z' ? ['u-ofina', 'u-dlouhe', 'u-culiky', 'u-kudrny'] : zdarma('uces').filter(u => u !== 'u-zadne');
+  const uces = rod === 'm' ? ['u-rozcuch', 'u-kudrny', 'u-fluffy', 'u-ofina'] : rod === 'z' ? ['u-ofina', 'u-dlouhe', 'u-culiky', 'u-kudrny'] : zdarma('uces').filter(u => u !== 'u-zadne');
   return { ...VYCHOZI, rod, kuze: nahodna(zdarma('kuze')), uces: nahodna(uces), barva: nahodna(zdarma('barva')), oci: nahodna(zdarma('oci')),
     pusa: nahodna(zdarma('pusa')), obleceni: nahodna(zdarma('obleceni')), boty: rod === 'm' ? 'bo-modre' : rod === 'z' ? 'bo-ruzove' : nahodna(zdarma('boty')) };
 }
@@ -185,12 +192,44 @@ export const noveSeminko = () => Math.random().toString(36).slice(2, 10);
 export function postavicka(vzhled = VYCHOZI, velikost = 120, vyrez = 'cela', pohyb = velikost >= 90, _volby = {}) {
   const z = { ...VYCHOZI, ...vzhled };
   const id = 'cl' + (++n);
-  const viewBox = vyrez === 'hlava' ? '14 6 92 92' : '0 0 120 120';
+  // Výřez hlavy je taky kulatý (jinak měl v seznamech useknuté rohy).
+  const [cx, cy, r, viewBox] = vyrez === 'hlava' ? [60, 50, 44, '16 6 88 88'] : [60, 60, 60, '0 0 120 120'];
+  const t = uroven(z);
   // Pohyb (mrkání, mávání, dech…) jen u větších postaviček; každá má jiné zpoždění, aby dvě vedle sebe nemrkaly naráz.
   const hybe = pohyb ? ` hybe" style="--d:${(-Math.random() * 6).toFixed(2)}s` : '';
-  return `<svg class="postavicka${hybe}" width="${velikost}" height="${velikost}" viewBox="${viewBox}" aria-hidden="true">
-    <clipPath id="${id}"><circle cx="60" cy="60" r="60"/></clipPath>
-    <g clip-path="url(#${id})">${pozadi(z)}
-      <svg x="7" y="9" width="106" height="108" viewBox="${SUSENKA_VIEWBOX}">${susenkaObsah(proKresleni(z))}</svg></g>
-    <circle cx="60" cy="60" r="59" fill="none" stroke="#ece6f0" stroke-width="2"/></svg>`;
+  return `<svg class="postavicka uroven-${t.id}${hybe}" width="${velikost}" height="${velikost}" viewBox="${viewBox}" aria-hidden="true">
+    <defs>${t.defs(id)}</defs>
+    <clipPath id="${id}"><circle cx="${cx}" cy="${cy}" r="${r}"/></clipPath>
+    <g clip-path="url(#${id})">${pozadi(z)}${t.pod(id)}
+      <svg x="7" y="9" width="106" height="108" viewBox="${SUSENKA_VIEWBOX}">${susenkaObsah(proKresleni(z))}</svg>${t.nad}</g>
+    <circle cx="${cx}" cy="${cy}" r="${r - 1}" fill="none" ${t.kruh(id)}/></svg>`;
+}
+
+// ---------- Úroveň postavičky (Pavel 3. 10. 2026: zdarma má vypadat jinak než drahé) ----------
+// Řídí se nejdražší věcí, kterou má na sobě: zdarma = bílé pozadí, Cool = jemný nádech a barevný
+// kroužek, Epické = třpytky, Legendární = zlatá záře, Bizár = otáčející se duhová aura.
+const jiskra = (x, y, s, i) => `<path class="pv-jiskra" style="--j:${i}" d="M${x} ${y - s} q${s * .15} ${s * .85} ${s} ${s} q${-s * .85} ${s * .15} ${-s} ${s} q${-s * .15} ${-s * .85} ${-s} ${-s} q${s * .85} ${-s * .15} ${s} ${-s}z" fill="#fff" stroke="#f2c94c" stroke-width=".8"/>`;
+const JISKRY = [[16, 30, 5], [104, 26, 4], [108, 84, 5], [14, 88, 4], [96, 104, 3]].map(([x, y, s], i) => jiskra(x, y, s, i)).join('');
+const UROVNE = {
+  zdarma: { pod: () => '', nad: '', defs: () => '', kruh: () => 'stroke="#ece6f0" stroke-width="2"' },
+  bezne: { pod: () => '', nad: '', defs: () => '', kruh: () => 'stroke="#ece6f0" stroke-width="2"' },
+  cool: { pod: () => '<rect width="120" height="120" fill="#3fb59a" opacity=".08"/>', nad: '', defs: () => '', kruh: () => 'stroke="#7fd8c2" stroke-width="3"' },
+  epicke: { pod: () => '<rect width="120" height="120" fill="#8b6cf0" opacity=".1"/>', nad: JISKRY, defs: () => '', kruh: () => 'stroke="#a98cf5" stroke-width="3.5"' },
+  legendarni: {
+    pod: id => `<circle cx="60" cy="64" r="58" fill="url(#${id}z)"/>`, nad: JISKRY,
+    defs: id => `<radialGradient id="${id}z"><stop offset="0" stop-color="#ffe58a" stop-opacity=".95"/><stop offset=".6" stop-color="#ffd34d" stop-opacity=".35"/><stop offset="1" stop-color="#ffd34d" stop-opacity="0"/></radialGradient>
+      <linearGradient id="${id}k" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff1b0"/><stop offset=".5" stop-color="#e0a800"/><stop offset="1" stop-color="#ffd34d"/></linearGradient>`,
+    kruh: id => `stroke="url(#${id}k)" stroke-width="4"`,
+  },
+  bizar: {
+    pod: () => `<g class="pv-aura">${['#ff6b7a', '#ffa94d', '#ffe066', '#69db7c', '#4dabf7', '#9775fa'].map((c, i) => `<path d="M60 64 L${(60 + Math.cos(i * Math.PI / 3) * 90).toFixed(1)} ${(64 + Math.sin(i * Math.PI / 3) * 90).toFixed(1)} A90 90 0 0 1 ${(60 + Math.cos((i + 1) * Math.PI / 3) * 90).toFixed(1)} ${(64 + Math.sin((i + 1) * Math.PI / 3) * 90).toFixed(1)}Z" fill="${c}" opacity=".3"/>`).join('')}</g>`,
+    nad: JISKRY,
+    defs: id => `<linearGradient id="${id}k" x1="0" y1="0" x2="1" y2="1">${['#ff6b7a', '#ffa94d', '#ffe066', '#69db7c', '#4dabf7', '#9775fa'].map((c, i) => `<stop offset="${i / 5}" stop-color="${c}"/>`).join('')}</linearGradient>`,
+    kruh: id => `stroke="url(#${id}k)" stroke-width="4.5"`,
+  },
+};
+export function uroven(z) {
+  const max = Math.max(0, ...KATEGORIE.map(k => { const w = vec(z[k.id]); return w && w.kat === k.id ? w.cena : 0; }));
+  const id = max ? vzacnost(max).id : 'zdarma';
+  return { id, ...UROVNE[id] };
 }

@@ -45,6 +45,10 @@ function route() {
   // Semínko pro losování pozadí avatara (nastaví se jednou, odejde i kamarádkám online).
   if (x0 && !x0.vzhled.seminko) { x0.vzhled.seminko = noveSeminko(); S.uloz(); }
   if (x0 && x0.vzhled.verze !== 2) prevedNaSusenku(x0);
+  // Perník byl do 3. 10. zdarma – kdo ho nosí, dostane ho jako koupený.
+  if (x0 && x0.vzhled.kuze === 't-pernik' && !x0.koupeno.includes('t-pernik')) { x0.koupeno.push('t-pernik'); S.uloz(); }
+  // Denní cíl 10 min je málo (Pavel 3. 10. 2026) – výchozí je 15; kdo měl 10, dostane jednou 15.
+  if (x0 && !x0.nastaveni.cil15) { if (x0.nastaveni.cil === 10) x0.nastaveni.cil = 15; x0.nastaveni.cil15 = true; S.uloz(); }
   // Holka/kluk se kreslí z vzhled.rod (řasy, tvářičky) – vzhled odchází i kamarádkám online.
   if (x0 && x0.rod && x0.vzhled.rod !== x0.rod) { x0.vzhled.rod = x0.rod; S.uloz(); }
   // Zasněné oči (koukají nahoru) byly první den zdarma a losovaly se – kdo si je nekoupil, kouká zase na tebe.
@@ -290,7 +294,7 @@ function battle() {
   const x = p();
   obrazovka(`${hlavicka(x)}<section class="stranka">
     <h1 class="s-ikonou">${ik('tab-battle', 44)} Battle</h1>
-    ${x.online && O.nakonfigurovano() ? onlineSekce(x) : `<div class="prazdne">${maskot(90, 'hmm')}<p>Battle se hraje s kamarádkou, každá na svém mobilu. Ať ti rodič zapne <b>Kamarádi online</b> v sekci Pro rodiče (Já → Pro rodiče).</p></div>`}
+    ${x.online && O.nakonfigurovano() ? onlineSekce(x) : `<div class="prazdne">${maskot(90, 'hmm')}<p>Battle se hraje s kamarádkou nebo kamarádem, každý na svém mobilu. Ať ti rodič zapne <b>Kamarádi online</b> v sekci Pro rodiče (Já → Pro rodiče).</p></div>`}
   </section>`, { tab: 'battle' });
   vlozSchovanou('battle');
   napojOnlineSekci(x);
@@ -334,14 +338,17 @@ function zebricek() {
 function ja() {
   const x = p();
   const dny = [];
+  // Týden od pondělí do neděle (dny, které teprve přijdou, jsou prázdné).
   const d = new Date();
-  d.setDate(d.getDate() - 6);
+  d.setDate(d.getDate() - (d.getDay() + 6) % 7);
   for (let i = 0; i < 7; i++) { dny.push({ k: S.dnes(d), nazev: d.toLocaleDateString('cs-CZ', { weekday: 'short' }) }); d.setDate(d.getDate() + 1); }
   const maxMin = Math.max(x.nastaveni.cil, ...dny.map(k => minuty(x.dny[k.k]?.s || 0)));
   const ziskane = ODZNAKY.filter(o => x.odznaky[o.id]);
   const zbyvajici = ODZNAKY.filter(o => !x.odznaky[o.id] && !o.id.startsWith('mistr-'));
   obrazovka(`${hlavicka(x)}<section class="stranka">
-    <div class="ja-hlava"><span class="avatar obri">${postavicka(x.vzhled, 120)}</span><h1>${jmeno(x)}</h1><p class="titul">${esc(H.titul(nasbirano(x), x))}</p>
+    <h1 class="drip-nadpis">Můj profil</h1>
+    <div class="ja-hlava"><span class="avatar obri">${postavicka(x.vzhled, 120)}</span>
+      <h1 class="jmeno-edit" id="jmeno" role="button" title="Klepni a změň přezdívku">${jmeno(x)}<span class="tuzka" aria-hidden="true">✏️</span></h1><p class="titul">${esc(H.titul(nasbirano(x), x))}</p>
       <a class="btn" href="#/obchod">${ik('tab-drip', 28, { podklad: false })} Drip shop</a></div>
     <div class="cisla">
       <div><b>${S.serie(x)}</b><small>🔥 série</small></div>
@@ -353,9 +360,7 @@ function ja() {
     <div class="graf">${dny.map(k => { const m = minuty(x.dny[k.k]?.s || 0); return `<div class="sloupec${m >= x.nastaveni.cil ? ' splneno' : ''}">
       <span>${m || ''}</span><i style="height:${m / maxMin * 100}%"></i><small>${k.nazev}</small></div>`; }).join('')}
       <div class="cil-cara" style="bottom:calc(${x.nastaveni.cil / maxMin} * (100% - 34px) + 20px)"></div></div>
-    <h2>Můj profil</h2>
-    <div class="profil-jmeno"><input id="nova-prezdivka" class="pole" maxlength="14" value="${jmeno(x)}" placeholder="Přezdívka" autocomplete="off">
-      <button class="btn" id="ulozit-jmeno">Uložit</button></div>
+    <h2>Jsem</h2>
     <div class="rod-volba">${[['z', '👧 Holka'], ['m', '👦 Kluk']].map(([k, t]) => `<button data-novy-rod="${k}" class="${x.rod === k ? 'on' : ''}">${t}</button>`).join('')}</div>
     <h2>Noční režim</h2>
     <div class="delky noc-volba">${[['auto', 'Automaticky', 'večer od 20:00'], ['on', 'Vždy tmavý', '🌙'], ['off', 'Vždy světlý', '☀️']].map(([k, t, m]) =>
@@ -366,21 +371,31 @@ function ja() {
     <div class="tlacitka">
       <a class="odkaz" href="#/rodic">Pro rodiče</a></div>
   </section>`, { tab: 'ja' });
-  $$('[data-noc]').forEach(b => (b.onclick = () => { x.nastaveni.noc = b.dataset.noc; S.uloz(); nastavSvet(x); nastavNoc(); ja(); }));
-  // Změna přezdívky a holka/kluk: hned se uloží a pošle kamarádům online (rod mění i řasy postavičky).
-  const ulozJmeno = () => {
-    const n = $('#nova-prezdivka').value.trim();
-    if (!n) return toast('Napiš přezdívku 🙂');
-    if (n === x.prezdivka) return;
-    x.prezdivka = n; S.uloz(); posledniZverejneni = 0; zverejniPozdeji();
-    toast('Uloženo ✨'); ja();
+  // Překreslení bez odskoku nahoru (volby uprostřed stránky).
+  const prekresli = () => { const app = document.getElementById('app'), top = app.scrollTop; ja(); app.scrollTop = top; };
+  $$('[data-noc]').forEach(b => (b.onclick = () => { x.nastaveni.noc = b.dataset.noc; S.uloz(); nastavSvet(x); nastavNoc(); prekresli(); }));
+  // Přezdívka se mění klepnutím na jméno; holka/kluk tlačítky. Obojí se hned uloží a pošle kamarádům online.
+  $('#jmeno').onclick = () => {
+    const h = $('#jmeno');
+    h.outerHTML = `<div class="jmeno-pole"><input id="nova-prezdivka" class="pole" maxlength="14" value="${jmeno(x)}" autocomplete="off" enterkeyhint="done"><button class="btn" id="ulozit-jmeno" aria-label="Uložit">✓</button></div>`;
+    const i = $('#nova-prezdivka');
+    i.focus(); i.select();
+    let hotovo = false;
+    const uloz = () => {
+      if (hotovo) return; hotovo = true;
+      const n = i.value.trim();
+      if (n && n !== x.prezdivka) { x.prezdivka = n; S.uloz(); posledniZverejneni = 0; zverejniPozdeji(); toast('Uloženo ✨'); }
+      else if (!n) toast('Přezdívka nemůže být prázdná 🙂');
+      prekresli();
+    };
+    i.onkeydown = e => { if (e.key === 'Enter') uloz(); if (e.key === 'Escape') { i.value = x.prezdivka; uloz(); } };
+    i.onblur = () => setTimeout(uloz, 150); // klepnutí na ✓ má přednost
+    $('#ulozit-jmeno').onpointerdown = e => { e.preventDefault(); uloz(); };
   };
-  $('#ulozit-jmeno').onclick = ulozJmeno;
-  $('#nova-prezdivka').onkeydown = e => { if (e.key === 'Enter') ulozJmeno(); };
   $$('[data-novy-rod]').forEach(b => (b.onclick = () => {
     if (x.rod === b.dataset.novyRod) return;
     x.rod = x.vzhled.rod = b.dataset.novyRod; S.uloz(); posledniZverejneni = 0; zverejniPozdeji();
-    tabJa(); ja();
+    tabJa(); prekresli();
   }));
   vlozSchovanou('ja');
 }
@@ -390,16 +405,21 @@ let satnikKat = 'obleceni';
 function obchod() {
   const x = p();
   let zkouska = { ...x.vzhled };
-  const kat = KATEGORIE.find(k => k.id === satnikKat);
+  const kat = KATEGORIE.find(k => k.id === satnikKat && !k.vUcesu) || KATEGORIE[0];
+  // Kategorie zobrazené na téhle kartě: u Účesu i barva vlasů (kolečka nahoře).
+  const katyKarty = [kat.id, ...KATEGORIE.filter(k => k.vUcesu && kat.id === 'uces').map(k => k.id)];
 
   const vykresli = () => {
     const veci = VECI.filter(v => v.kat === kat.id).sort((a, b) => a.cena - b.cena);
-    const zkousenaVec = vec(zkouska[kat.id]);
-    const nekoupena = zkousenaVec && !maVec(x, zkousenaVec) ? zkousenaVec : null;
+    const nekoupena = katyKarty.map(k => vec(zkouska[k])).find(w => w && !maVec(x, w)) || null;
+    const barvy = kat.id === 'uces' ? VECI.filter(v => v.kat === 'barva').sort((a, b) => a.cena - b.cena) : [];
+    const kolecko = c => c === 'duha' ? 'conic-gradient(#ff6b7a, #ffa94d, #ffe066, #69db7c, #4dabf7, #9775fa, #ff6b7a)' : c;
     obrazovka(`${hlavicka(x)}<section class="stranka satnik">
       <h1 class="drip-nadpis">Drip shop</h1>
       <div class="satnik-nahled">${postavicka(zkouska, 250)}</div>
-      <div class="kategorie">${KATEGORIE.map(k => `<button class="kat${k.id === kat.id ? ' on' : ''}" data-k="${k.id}"><span>${ik(k.ik, 28)}</span>${esc(k.nazev)}</button>`).join('')}</div>
+      <div class="kategorie">${KATEGORIE.filter(k => !k.vUcesu).map(k => `<button class="kat${k.id === kat.id ? ' on' : ''}" data-k="${k.id}"><span>${ik(k.ik, 28)}</span>${esc(k.nazev)}</button>`).join('')}</div>
+      ${barvy.length ? `<div class="barvy-vlasu">${barvy.map(v => `<button class="barva-vlasu${zkouska.barva === v.id ? ' on' : ''}${maVec(x, v) ? '' : ' cizi'}" data-v="${v.id}" data-kat="barva" aria-label="${esc(v.nazev)}" title="${esc(v.nazev)}">
+          <i style="background:${kolecko(v.c)}"></i>${maVec(x, v) ? '' : `<small>${v.cena}</small>`}</button>`).join('')}</div>` : ''}
       <div class="veci">
         ${kat.povinne ? '' : `<button class="vec${!zkouska[kat.id] ? ' on' : ''}" data-v=""><span class="vec-nic">✕</span><small>Nic</small></button>`}
         ${veci.map(v => `<button class="vec${zkouska[kat.id] === v.id ? ' on' : ''}${maVec(x, v) ? '' : ' cizi'}" data-v="${v.id}">
@@ -413,11 +433,12 @@ function obchod() {
 
     $('.kat.on')?.scrollIntoView({ inline: 'center', block: 'nearest' });
     $$('.kat').forEach(b => (b.onclick = () => { satnikKat = b.dataset.k; obchod(); }));
-    $$('.vec').forEach(b => (b.onclick = () => {
+    $$('.vec, .barva-vlasu').forEach(b => (b.onclick = () => {
       const v = b.dataset.v ? vec(b.dataset.v) : null;
-      zkouska = { ...zkouska, [kat.id]: v?.id || null };
+      const k = b.dataset.kat || kat.id;
+      zkouska = { ...zkouska, [k]: v?.id || null };
       // Co už má, si rovnou oblékne (a uloží). Nekoupené jen zkouší.
-      if (!v || maVec(x, v)) { x.vzhled = { ...x.vzhled, [kat.id]: v?.id || null }; S.uloz(); }
+      if (!v || maVec(x, v)) { x.vzhled = { ...x.vzhled, [k]: v?.id || null }; S.uloz(); }
       const top = document.getElementById('app').scrollTop;
       vykresli();
       tabJa();
@@ -428,7 +449,7 @@ function obchod() {
       if (x.susenky < nekoupena.cena) return toast('Ještě pár lekcí a je to tvoje 💪');
       x.susenky -= nekoupena.cena;
       x.koupeno.push(nekoupena.id);
-      x.vzhled = { ...x.vzhled, [kat.id]: nekoupena.id };
+      x.vzhled = { ...x.vzhled, [nekoupena.kat]: nekoupena.id };
       S.uloz();
       konfety(); zvukFanfara();
       toast(`${nekoupena.nazev} je tvoje! ✨`);
