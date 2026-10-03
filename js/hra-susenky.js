@@ -1,6 +1,6 @@
 // „Chytej sušenky“ – hra za odměnu. Krabička dole se ovládá prstem, shora padají sušenky.
 // Sušenka 1 bod (propadne = −½ života), zlatá 5 bodů (propadne = −1 život), chycená brokolice −1 život,
-// vzácné srdíčko dá život navíc (i nad 3, nejvýš ZIVOTY_MAX), šnek na chvíli všechno zpomalí. Každých 15 bodů nový level.
+// černé srdce doplní do plna (3), vzácné srdíčko dá život navíc (i nad 3, nejvýš ZIVOTY_MAX), šnek na chvíli všechno zpomalí. Každých 15 bodů nový level.
 // Ztráta života je vidět i koutkem oka: červené okraje obrazovky, velké „−1 ❤️“ a zatřesení srdíček.
 // Hra běží na <canvas> v rozlišení displeje (ostrá i na Retině).
 //
@@ -60,12 +60,12 @@ function snek(g, s) {
 }
 
 // Červené srdíčko (život navíc) ve stejném stylu jako sušenky: obrys a lesk.
-function srdce(g, s) {
+function srdce(g, s, barva = '#e8283c') {
   g.translate(s / 2, s / 2 + s * .04);
   const k = s / 26;
   g.scale(k, k);
   const p = new Path2D('M0 10 C-3 7 -11 2 -11 -4 C-11 -9 -6 -11 -3 -10 C-1.5 -9.5 -.5 -8.5 0 -7 C.5 -8.5 1.5 -9.5 3 -10 C6 -11 11 -9 11 -4 C11 2 3 7 0 10 Z');
-  g.fillStyle = '#e8283c'; g.fill(p);
+  g.fillStyle = barva; g.fill(p);
   g.lineWidth = 2.5 / k * .8; g.strokeStyle = OBRYS; g.lineJoin = 'round'; g.stroke(p);
   g.fillStyle = 'rgba(255,255,255,.55)';
   g.beginPath(); g.ellipse(-5.5, -5, 2.6, 1.5, -.7, 0, Math.PI * 2); g.fill();
@@ -86,7 +86,7 @@ export function spust(platno, { zbyva, priTiku = () => {}, konec }) {
 
   const S = Math.max(40, Math.min(58, W / 8));
   const SZ = S * 1.2; // zlaté jsou větší
-  const SPR = { susenka: sprite(S, (c, s) => susenka(c, s, false)), zlata: sprite(SZ, (c, s) => susenka(c, s, true)), srdce: sprite(S, srdce), brokolice: sprite(S, brokolice), snek: sprite(S, snek) };
+  const SPR = { susenka: sprite(S, (c, s) => susenka(c, s, false)), zlata: sprite(SZ, (c, s) => susenka(c, s, true)), srdce: sprite(S, srdce), cerne: sprite(S * 1.1, (c, s) => { srdce(c, s, '#241c2b'); c.fillStyle = '#ffd34d'; c.font = '7px system-ui'; c.textAlign = 'center'; c.fillText('✦', 6, -6); }), brokolice: sprite(S, brokolice), snek: sprite(S, snek) };
 
   // Krabička stojí výš nad spodkem – pod ní je místo na prst (DOLE px), aby ji prst nezakrýval.
   // Krabička stojí na zemi; pod její horní hranou je pruh trávy na swipe prstem (DOLE px).
@@ -106,7 +106,8 @@ export function spust(platno, { zbyva, priTiku = () => {}, konec }) {
     const r = Math.random();
     const brokolice = Math.min(.12 + level * .03, .32);
     // srdíčko opravdu vzácně (asi 1 ze 125 padajících věcí)
-    const druh = r < .06 ? 'zlata' : r < .06 + brokolice ? 'brokolice' : (r > .992 && zivoty < ZIVOTY_MAX) ? 'srdce'
+    // černé srdce (doplní do plna = 3 srdíčka) ještě vzácněji, jen když nějaké chybí
+    const druh = r < .06 ? 'zlata' : r < .06 + brokolice ? 'brokolice' : (r > .996 && zivoty < 3) ? 'cerne' : (r > .992 && zivoty < ZIVOTY_MAX) ? 'srdce'
       : (r > .962 && r <= .992 && !zpomaleni) ? 'snek' : 'susenka';
     const x = S / 2 + Math.random() * (W - S);
     let v = 140 + level * 28 + Math.random() * 60;
@@ -178,6 +179,12 @@ export function spust(platno, { zbyva, priTiku = () => {}, konec }) {
         veci.splice(i, 1);
         if (v.druh === 'brokolice') { if (uber(1, v.x, kY - 10, 'Fuj, brokolice!', true)) return konecHry(); }
         else if (v.druh === 'snek') { zpomaleni = ZPOMALENI_S; text('Zpomalení 🐌', W / 2, H * .4, '#3b8fd9', true); }
+        else if (v.druh === 'cerne') {
+          zivoty = Math.max(zivoty, 3);
+          text('Plné zdraví! 🖤', W / 2, H * .45, '#241c2b', true);
+          const zv = platno.parentElement.querySelector('.hra-hud .zivoty');
+          if (zv) { zv.classList.remove('jupi'); void zv.offsetWidth; zv.classList.add('jupi'); }
+        }
         else if (v.druh === 'srdce') {
           zivoty = Math.min(ZIVOTY_MAX, zivoty + 1);
           text('+1 ❤️', W / 2, H * .45, '#e8283c', true);
@@ -218,6 +225,7 @@ export function spust(platno, { zbyva, priTiku = () => {}, konec }) {
       if (v.druh === 'susenka') g.drawImage(SPR.susenka, -S / 2, -S / 2, S, S);
       else if (v.druh === 'zlata') g.drawImage(SPR.zlata, -SZ / 2, -SZ / 2, SZ, SZ);
       else if (v.druh === 'srdce') { g.rotate(-v.rot); g.drawImage(SPR.srdce, -S / 2, -S / 2, S, S); }
+      else if (v.druh === 'cerne') { g.rotate(-v.rot); g.shadowColor = '#ffd34d'; g.shadowBlur = 14; g.drawImage(SPR.cerne, -S * .55, -S * .55, S * 1.1, S * 1.1); g.shadowBlur = 0; }
       else g.drawImage(SPR[v.druh], -S / 2, -S / 2, S, S);
       if (v.druh === 'zlata') { g.strokeStyle = 'rgba(255,211,77,.7)'; g.lineWidth = 3; g.beginPath(); g.arc(0, 0, SZ * .62, 0, Math.PI * 2); g.stroke(); }
       g.restore();

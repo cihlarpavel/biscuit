@@ -192,7 +192,7 @@ function hraZaOdmenu() {
     return;
   }
   obrazovka(`<section class="stranka konec">${zpet('#/')}<div class="hra-logo">${ik('hra', 120)}</div><h1>Chytej sušenky</h1>
-    <p class="hlaska">Posouvej krabičku prstem a chytej sušenky. Každá sušenka, která spadne na zem, bere půl srdíčka – zlatá (5 bodů) celé. Chycená brokolice bere celé srdíčko 🥦, šnek 🐌 všechno na chvíli zpomalí. A když hodně vzácně spadne srdíčko ❤️, chyť ho – je to život navíc!</p>
+    <p class="hlaska">Posouvej krabičku prstem a chytej sušenky. Každá sušenka, která spadne na zem, bere půl srdíčka – zlatá (5 bodů) celé. Chycená brokolice bere celé srdíčko 🥦, šnek 🐌 všechno na chvíli zpomalí. Hodně vzácně spadne srdíčko ❤️ (život navíc) a ještě vzácněji černé srdce 🖤, které doplní srdíčka do plna!</p>
     <div class="hra-info"><span>⏱️ Zbývá ${Math.ceil(zbyva / 60)} min</span><span>🏆 Rekord ${h.rekord}</span><span>🍪 Dnes ${h.susenky}/${HRA_MAX_SUSENEK}</span></div>
     <p class="drobne">Každých ${HRA_BODU_NA_SUSENKU} bodů = 1 sušenka do aplikace (nejvýš ${HRA_MAX_SUSENEK} za den).</p>
     <button class="btn velke" id="hraj">Hrát ▶</button></section>`, { bezListy: true });
