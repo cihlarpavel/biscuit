@@ -5,7 +5,10 @@
 //   hraci/{profilId}       veřejný profil: přezdívka, postavička, rod, statistiky, owner = uid zařízení
 //   kody/{KOD}             kód kamarádky -> profilId (jen get, seznam nejde vypsat)
 //   pratelstvi/{a_b}       { clenove: [a, b], vlastnici: [uidA, uidB] }
-//   battly/{id}            { hraci: [a, b], vlastnici: [uidA, uidB], ulohy, hlaska, stav, vysledky: { a: {...}, b: {...} } }
+//   battly/{id}            { typ: 'kviz' | 'double' | 'dama', hraci: [a, b], vlastnici: [uidA, uidB], ulohy, hlaska, stav,
+//                            vysledky: { a: {...}, b: {...}, dama?: JSON stavu desky } }
+//   Dáma i Double jedou ve stejné kolekci jako kvíz – pravidla Firestore se kvůli nim nemusela měnit
+//   (update smí jen „vysledky“ a „stav“, stav dámy je proto vnořený ve vysledky.dama).
 // Do databáze nejde žádný volný text kromě přezdívky. Hláška k výzvě je jen číslo z pevného seznamu.
 import { FIREBASE_CONFIG } from './firebase-config.js';
 
@@ -91,18 +94,27 @@ export function sledujKamaradky(p, cb) {
 }
 
 // ---------- Battly ----------
-export async function vyzvi(p, kamaradka, ulohy, hlaska) {
+export async function vyzvi(p, kamaradka, ulohy, hlaska, typ = 'kviz', navic = {}) {
   const { db, uid, f } = await pripoj();
   const ref = f.doc(f.collection(db, 'battly'));
   await f.setDoc(ref, {
-    hraci: [p.id, kamaradka.id], vlastnici: [uid, kamaradka.owner],
+    typ, hraci: [p.id, kamaradka.id], vlastnici: [uid, kamaradka.owner],
     ulohy: JSON.stringify(ulohy), hlaska, stav: 'hraje', vytvoreno: f.serverTimestamp(),
-    vysledky: { [p.id]: { body: 0, spravne: 0, odpovezeno: 0, hotovo: false }, [kamaradka.id]: { body: 0, spravne: 0, odpovezeno: 0, hotovo: false } },
+    vysledky: { [p.id]: { body: 0, spravne: 0, odpovezeno: 0, hotovo: false }, [kamaradka.id]: { body: 0, spravne: 0, odpovezeno: 0, hotovo: false }, ...navic },
   });
   return ref.id;
 }
 
-const zBattlu = d => { const x = d.data(); return { id: d.id, ...x, ulohy: JSON.parse(x.ulohy || '[]'), vytvoreno: x.vytvoreno?.toMillis?.() || Date.now() }; };
+// Dáma: zapíše nový stav desky; po konci hry rovnou i výsledky obou hráčů (body 1 / 0, remíza 1 / 1).
+export async function zapisDamu(battleId, stav, konec = null) {
+  const { db, f } = await pripoj();
+  const pole = [new f.FieldPath('vysledky', 'dama'), JSON.stringify(stav)];
+  if (konec) for (const [id, v] of Object.entries(konec)) pole.push(new f.FieldPath('vysledky', id), v);
+  if (konec) pole.push('stav', 'hotovo');
+  await f.updateDoc(f.doc(db, 'battly', battleId), ...pole);
+}
+
+const zBattlu = d => { const x = d.data(); return { id: d.id, ...x, typ: x.typ || 'kviz', ulohy: JSON.parse(x.ulohy || '[]'), dama: x.vysledky?.dama ? JSON.parse(x.vysledky.dama) : null, vytvoreno: x.vytvoreno?.toMillis?.() || Date.now() }; };
 
 // Všechny battly profilu p (nejnovější první).
 export function sledujBattly(p, cb) {

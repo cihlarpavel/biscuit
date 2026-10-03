@@ -631,3 +631,49 @@ body.noc .drip-ceka b { background: none; -webkit-text-fill-color: #ff9fcc; colo
 .hlas-volba select { flex: 1; min-width: 0; padding: 10px; border-radius: 12px; font-size: 15px; }
 body.noc .sloty.ok i.plne { color: #2e9c84; }
 body.noc .sloty.chyba i.plne { color: #e0445a; }
+
+/* ---------- Double ---------- */
+.hra.double { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 16px 20px; }
+.hra.double .hra-hlava { display: flex; align-items: center; gap: 10px; width: 100%; max-width: 420px; }
+.dbl-nadpis { flex: 1; font-weight: 800; font-size: 20px; }
+.dbl-nadpis small { display: block; font-size: 12px; color: var(--tlumene); font-weight: 700; }
+.dbl-cas, .dbl-body { background: #fff; border-radius: 99px; padding: 5px 12px; font-weight: 800; box-shadow: var(--stin); }
+.dbl-cas.dochazi { color: var(--cervena); }
+.dbl-karta { position: relative; width: min(78vw, 300px); aspect-ratio: 1; border-radius: 50%; background: #fff;
+  border: 4px solid #e8dcf5; box-shadow: var(--stin); }
+.dbl-karta.dolni { border-color: var(--ruzova); }
+.dbl-karta.trest { animation: dblTrest .4s; opacity: .55; }
+@keyframes dblTrest { 25% { transform: translateX(-8px); } 50% { transform: translateX(8px); } 75% { transform: translateX(-4px); } }
+.dbl-pokyn { margin: 2px 0; font-size: 13px; color: var(--tlumene); text-align: center; }
+.dbl-symbol { position: absolute; transform: translate(-50%, -50%) rotate(var(--r)); background: none; border: 0; padding: 4px; color: #2b2348; }
+.dbl-obr { font-size: clamp(30px, 10vw, 42px); line-height: 1; }
+.dbl-slovo { display: inline-block; background: #eef5ff; border: 2px solid #b9d6ff; border-radius: 12px; padding: 3px 8px; font-weight: 800; font-size: 15px; white-space: nowrap; }
+.dbl-slovo.cz { background: #fff0f6; border-color: #ffc2dc; font-style: italic; }
+.dbl-symbol.trefa { animation: dblTrefa .5s; }
+.dbl-symbol.trefa .dbl-slovo, .dbl-symbol.trefa .dbl-obr { filter: drop-shadow(0 0 6px #3fbf9a); }
+@keyframes dblTrefa { 50% { transform: translate(-50%, -50%) rotate(var(--r)) scale(1.35); } }
+.dbl-symbol.vedle .dbl-slovo, .dbl-symbol.vedle .dbl-obr { filter: grayscale(1); opacity: .5; }
+body.noc .dbl-karta { background: #fffaf2; }
+body.noc .dbl-cas, body.noc .dbl-body { background: var(--karta); }
+
+/* ---------- Dáma ---------- */
+.dama-hra { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.dama-hra .zpet-btn { align-self: flex-start; }
+.dm-hrac { display: flex; align-items: center; gap: 8px; width: min(92vw, 380px); font-size: 15px; }
+.dm-hrac b { flex: 1; }
+.dm-hrac span { display: inline-flex; align-items: center; gap: 2px; font-weight: 800; }
+.dm-hrac span .dm-kamen { width: 22px; height: 26px; }
+.dm-deska { display: grid; grid-template-columns: repeat(8, 1fr); grid-template-rows: repeat(8, 1fr); width: min(92vw, 380px); aspect-ratio: 1; border-radius: 14px; overflow: hidden;
+  border: 5px solid #8a5a3c; box-shadow: var(--stin); }
+.dm-pole { border: 0; padding: 0; display: grid; place-items: center; position: relative; }
+.dm-pole.svetle { background: #fbe9d0; }
+.dm-pole.tmave { background: #c98d5a; }
+.dm-pole.posledni { box-shadow: inset 0 0 0 3px rgba(255, 255, 255, .45); }
+.dm-pole.vybrane { box-shadow: inset 0 0 0 4px #ffd34d; }
+.dm-pole.cil::after { content: ''; width: 34%; height: 34%; border-radius: 50%; background: rgba(63, 191, 154, .85); box-shadow: 0 0 0 3px #fff; }
+.dm-pole.musi .dm-kamen { animation: dmMusi 1s ease-in-out infinite; }
+@keyframes dmMusi { 50% { transform: scale(1.12); filter: drop-shadow(0 0 5px #ffd34d); } }
+.dm-kamen { width: 88%; height: 100%; }
+.dm-stav { font-weight: 800; font-size: 18px; margin: 4px 0; text-align: center; }
+.dm-stav.tah { color: var(--ruzova); }
+.hry-volba .zamcena { opacity: .55; }

@@ -121,6 +121,12 @@ Učebnice **Happy Street 2, 3. vydání (Oxford, české vydání)**, Units 1–
   po první minutě „Pokračuj“ → poslední 3 min „Dokonči dnešek“ → po splnění zeleně „Dnes máš splněno“ a zelené
   „Dát si extra 5 minut“ (`#/lekce/extra`, `sestavExtra`: ~10 těžších úloh cz→en / psaní / skládání ze známých slov,
   dvojnásobné sušenky přes `nasobek`, nejvýš `EXTRA_DENNE` = 2× denně, pak zase „Ještě jednu“).
+- **Hry s kamarádem** (Battle → Vyzvat → „Co budete hrát?“): Kvíz, **Double** (`js/double.js` + `hry-online.js`:
+  projektivní rovina řádu 5, 31 slovíček s emoji, shoda obrázek/anglicky/česky, 60 s, stejná kola pro oba) a
+  **Dáma** (`js/dama.js` česká pravidla: povinné skákání, řetězení, dáma jezdí daleko; 50 tahů bez brání = remíza).
+  Vše v kolekci `battly` s polem `typ`; stav dámy je ve `vysledky.dama` (pravidla Firestore se neměnila – update
+  smí jen `vysledky`/`stav`). Dámu jde vyzvat až po splnění denního cíle. Odměny `HRY` v app.js.
+  Testováno dvěma profily (Šarlotka, Ema) na jednom počítači přepínáním `S.prepni`.
 - Hra za odměnu: chycení podle skutečné velikosti (zlatá je větší), brokolice jen když padne dovnitř;
   krabička je `DOLE` px nad spodkem kvůli prstu; při skryté appce se hra zastaví.
 - Drip shop: za sušenky těsta, účesy, barvy vlasů, oči, pusy, oblečení, klobouky, brýle, boty, mazlíčci.
