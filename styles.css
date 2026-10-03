@@ -677,3 +677,7 @@ body.noc .dbl-cas, body.noc .dbl-body { background: var(--karta); }
 .dm-stav { font-weight: 800; font-size: 18px; margin: 4px 0; text-align: center; }
 .dm-stav.tah { color: var(--ruzova); }
 .hry-volba .zamcena { opacity: .55; }
+
+/* Text a tlačítko na kartě Dnešní lekce se nesmí roztáhnout přes okraj karty. */
+.dnes-text { min-width: 0; }
+.dnes-text .btn { max-width: 100%; }

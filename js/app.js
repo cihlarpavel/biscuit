@@ -152,7 +152,7 @@ function domu() {
       ${odpocet(x)}
       <div class="dnes-text"><h3>Dnešní lekce</h3>
         <p>${unitTed ? `Nová slovíčka z Unit ${unitTed.unit} + opakování + něco navíc` : 'Opakování a něco navíc'}</p>
-        ${hotovo && extraZbyva(x) > 0 ? '<a class="btn zelena" href="#/lekce/extra">Dát si extra 5 minut →</a><small class="extra-pozn">těžší úlohy · dvojité sušenky 🍪🍪</small>'
+        ${hotovo && extraZbyva(x) > 0 ? '<a class="btn zelena" href="#/lekce/extra">Extra 5 min</a><small class="extra-pozn">Těžší · dvojité sušenky</small>'
           : `<a class="btn" href="#/lekce">${hotovo ? 'Ještě jednu' : d.s < 60 ? 'Jdeme na to' : cil * 60 - d.s <= 180 ? 'Dokonči dnešek' : 'Pokračuj'} →</a>`}</div>
     </div>
     ${kartaHry(x)}
