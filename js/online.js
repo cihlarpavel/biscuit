@@ -122,7 +122,7 @@ export function sledujBattly(p, cb) {
   pripoj().then(({ db, uid, f }) => {
     if (zastaveno) return;
     const q = f.query(f.collection(db, 'battly'), f.where('vlastnici', 'array-contains', uid));
-    stop = f.onSnapshot(q, snap => cb(snap.docs.map(zBattlu).filter(b => b.hraci.includes(p.id)).sort((a, b) => b.vytvoreno - a.vytvoreno)), () => cb(null));
+    stop = f.onSnapshot(q, snap => cb(snap.docs.map(zBattlu).filter(b => b.hraci.includes(p.id) && b.stav !== 'zruseno').sort((a, b) => b.vytvoreno - a.vytvoreno)), () => cb(null));
   }).catch(() => cb(null));
   return () => { zastaveno = true; stop(); };
 }
@@ -134,6 +134,12 @@ export function sledujBattle(id, cb) {
     stop = f.onSnapshot(f.doc(db, 'battly', id), d => d.exists() && cb(zBattlu(d)));
   });
   return () => { zastaveno = true; stop(); };
+}
+
+// Zavřená výzva (kterýkoli hráč): zmizí oběma, nikdo nic nezíská. Pravidla dovolují měnit „stav“.
+export async function zrusBattle(battleId) {
+  const { db, f } = await pripoj();
+  await f.updateDoc(f.doc(db, 'battly', battleId), 'stav', 'zruseno');
 }
 
 export async function zapisPrubeh(battleId, hracId, stav, oboHotovo = false) {

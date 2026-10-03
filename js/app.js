@@ -758,7 +758,7 @@ function onlineSekce(x) {
     ${damy.length ? `<h2>Rozehraná dáma 🍪</h2>${damy.map(b => { const k = kamaradka(souperkaId(b, x.id)); const tah = damaNaTahu(b, x.id);
       return `<div class="vyzva dama-radek${tah ? ' na-tahu' : ''}"><span class="avatar velky">${av(k, 60)}</span><div><b>Dáma · ${jmeno(k)}</b>
         <small>${tah ? 'Jsi na tahu!' : `Na tahu je ${jmeno(k)}`}</small></div>
-        <button class="btn" data-hrat="${b.id}">${tah ? 'Táhnout' : 'Otevřít desku'}</button></div>`; }).join('')}` : ''}
+        <button class="btn" data-hrat="${b.id}">${tah ? 'Táhnout' : 'Otevřít desku'}</button><button class="zavrit-vyzvu" data-zrusit="${b.id}" aria-label="Zavřít hru">✕</button></div>`; }).join('')}` : ''}
     ${hrat.length ? `<h2>Výzvy pro tebe</h2>${hrat.map(b => { const k = kamaradka(souperkaId(b, x.id)); const odMe = b.hraci[0] === x.id;
       if (b.typ === 'dama') { const tah = damaNaTahu(b, x.id);
         return `<div class="vyzva"><span class="avatar velky">${av(k, 60)}</span><div><b>Dáma 🍪 · ${jmeno(k)}</b>
@@ -766,9 +766,9 @@ function onlineSekce(x) {
           <button class="btn${tah ? '' : ' vedlejsi'}" data-hrat="${b.id}">${tah ? 'Táhnout' : 'Deska'}</button></div>`; }
       return `<div class="vyzva"><span class="avatar velky">${av(k, 60)}</span><div><b>${odMe ? `Tvoje výzva · ${jmeno(k)}` : `${jmeno(k)} ${H.rod('[tě vyzval|tě vyzvala]', k)}!`}</b>
         <span class="vyzva-en">${esc(vyzva(b)[0])}</span><small>${esc(vyzva(b)[1])} · ${b.typ === 'double' ? 'Double 👀' : (DELKY.find(d => d.n === b.ulohy.length) || { nazev: b.ulohy.length + ' otázek' }).nazev}</small></div>
-        <button class="btn" data-hrat="${b.id}">Hrát</button></div>`; }).join('')}` : ''}
+        <button class="btn" data-hrat="${b.id}">Hrát</button><button class="zavrit-vyzvu" data-zrusit="${b.id}" aria-label="Zavřít výzvu">✕</button></div>`; }).join('')}` : ''}
     ${cekam.length ? `<div class="historie">${cekam.map(b => { const k = kamaradka(souperkaId(b, x.id)); const st = mojeVysl(b, k.id);
-      return `<div class="h-radek"><span>${st.odpovezeno ? `${jmeno(k)} právě hraje 🔥` : `Čeká se, až zahraje ${jmeno(k)}`}</span><small>ty ⚡ ${mojeVysl(b, x.id).body}</small></div>`; }).join('')}</div>` : ''}
+      return `<div class="h-radek"><span>${st.odpovezeno ? `${jmeno(k)} právě hraje 🔥` : `Čeká se, až zahraje ${jmeno(k)}`}</span><small>ty ⚡ ${mojeVysl(b, x.id).body}</small><button class="zavrit-vyzvu" data-zrusit="${b.id}" aria-label="Zavřít">✕</button></div>`; }).join('')}</div>` : ''}
     <h2>Kamarádi</h2>
     ${online.kamaradky.length ? `<div class="profily">${online.kamaradky.map(k => { const z = skore(k.id);
       return `<div class="profil-karta"><span class="avatar velky">${av(k, 70)}</span><b>${jmeno(k)}</b><small>${esc(H.titul(k.susenkyCelkem || 0, k))} · ${z.v}:${z.p}</small>
@@ -784,6 +784,12 @@ function onlineSekce(x) {
 function napojOnlineSekci(x) {
   if (!x.online || !O.nakonfigurovano()) return;
   $$('[data-hrat]').forEach(b => (b.onclick = () => hrajOnline(x, online.battly.find(v => v.id === b.dataset.hrat))));
+  $$('[data-zrusit]').forEach(b => (b.onclick = async () => {
+    if (!confirm('Zavřít tuhle hru? Zmizí tobě i kamarádovi a nikdo za ni nedostane sušenky.')) return;
+    b.disabled = true;
+    try { await O.zrusBattle(b.dataset.zrusit); online.battly = online.battly.filter(v => v.id !== b.dataset.zrusit); battle(); toast('Hra zavřená'); }
+    catch { b.disabled = false; toast('Nepovedlo se – jsi online?'); }
+  }));
   $$('[data-vyzvat], [data-odveta]').forEach(b => (b.onclick = () => vybratVyzvu(x, kamaradka(b.dataset.vyzvat || b.dataset.odveta), b.dataset.typ)));
   $('#sdilet')?.addEventListener('click', () => {
     const text = `Hraj se mnou Biscuit! Můj kód je ${x.kod}. https://cihlarpavel.github.io/biscuit/`;

@@ -696,3 +696,9 @@ body.noc .vec .cena.mas { color: #7fd8c4; }
 
 .vyzva.dama-radek { border: 3px solid #c98d5a; }
 .vyzva.dama-radek.na-tahu { border-color: var(--ruzova); }
+
+/* Zavření výzvy */
+.vyzva { position: relative; }
+.zavrit-vyzvu { flex: none; width: 30px; height: 30px; border-radius: 50%; border: 0; background: rgba(150, 120, 170, .15); color: var(--tlumene); font-size: 14px; font-weight: 800; margin-left: 6px; }
+.h-radek .zavrit-vyzvu { width: 26px; height: 26px; font-size: 12px; }
+body.noc .zavrit-vyzvu { background: rgba(255, 255, 255, .1); }
