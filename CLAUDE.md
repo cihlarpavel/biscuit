@@ -127,6 +127,10 @@ Učebnice **Happy Street 2, 3. vydání (Oxford, české vydání)**, Units 1–
   Vše v kolekci `battly` s polem `typ`; stav dámy je ve `vysledky.dama` (pravidla Firestore se neměnila – update
   smí jen `vysledky`/`stav`). Dámu jde vyzvat až po splnění denního cíle. Odměny `HRY` v app.js.
   Testováno dvěma profily (Šarlotka, Ema) na jednom počítači přepínáním `S.prepni`.
+- **Sušenkový tenis** (`js/tenis.js`, typ `tenis`): živý pong do 5 bodů. Každý telefon rozhoduje o chycení na své
+  straně a pošle odpal (`vysledky.tenis` JSON, seq); hráč „b“ vidí hřiště otočené. Přítomnost `vysledky.tenisPing_a/b`
+  každé 3 s, zakladatel začne, až soupeř pinguje. Trénink proti počítači v Battle → Hry. Zámek po cíli jako dáma.
+  Test: dvě karty prohlížeče (stejný původ), rAF v skrytém panelu neběží → v testu nahradit setTimeoutem.
 - Hra za odměnu: chycení podle skutečné velikosti (zlatá je větší), brokolice jen když padne dovnitř;
   krabička je `DOLE` px nad spodkem kvůli prstu; při skryté appce se hra zastaví.
 - Drip shop: za sušenky těsta, účesy, barvy vlasů, oči, pusy, oblečení, klobouky, brýle, boty, mazlíčci.

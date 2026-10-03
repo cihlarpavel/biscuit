@@ -3,6 +3,7 @@ import * as S from './store.js';
 import { SKUPINY, BALICKY, balicek, polozky } from './data.js';
 import { postavicka, KATEGORIE, VECI, vec, maVec, nahodnyVzhled, vzacnost, noveSeminko, STARE_CENY } from './postavicka.js';
 import { hrajDouble, hrajDamu } from './hry-online.js';
+import { hrajTenis } from './tenis.js';
 import { sestavDouble } from './double.js';
 import { sestav, sestavExtra, sestavBattle, odemcene, zapis, postupBalicku, slabiny, UMI } from './lekce.js';
 import { hraj, nastavSoupere } from './hra.js';
@@ -318,6 +319,7 @@ function battle() {
   vlozSchovanou('battle');
   napojOnlineSekci(x);
   $('#double-trenink')?.addEventListener('click', () => doubleTrenink(x));
+  $('#tenis-trenink')?.addEventListener('click', tenisTrenink);
   $$('[data-jak-hrat]').forEach(b => (b.onclick = () => {
     const prvni = online.kamaradky[0];
     if (x.online && prvni) return vybratVyzvu(x, prvni, b.dataset.jakHrat);
@@ -333,8 +335,21 @@ function hrySekce(x) {
     <div class="hra-karta"><b>⚔️ Kvíz</b><small>Stejné otázky pro oba, kdo víc</small><button class="btn maly vedlejsi" data-jak-hrat="kviz">S kamarádem</button></div>
     <div class="hra-karta"><b>👀 Double</b><small>Najdi shodu: obrázek, anglicky, česky${rekord ? ` · rekord ${rekord}` : ''}</small>
       <div class="hra-tlacitka"><button class="btn maly" id="double-trenink">Trénink</button><button class="btn maly vedlejsi" data-jak-hrat="double">S kamarádem</button></div></div>
+    <div class="hra-karta"><b>🏓 Sušenkový tenis</b><small>Odpinkej sušenku tak, ať ji soupeř nechytí${hraOdemcena(x) ? '' : ' · 🔒 s kamarádem po splnění cíle'}</small>
+      <div class="hra-tlacitka"><button class="btn maly" id="tenis-trenink">Trénink</button><button class="btn maly vedlejsi" data-jak-hrat="tenis">S kamarádem</button></div></div>
     <div class="hra-karta"><b>🍪 Dáma</b><small>Sušenky na šachovnici, na střídačku${hraOdemcena(x) ? '' : ' · 🔒 po splnění dnešního cíle'}</small><button class="btn maly vedlejsi" data-jak-hrat="dama">S kamarádem</button></div>
   </div>`;
+}
+
+// Tenis proti počítači: bez sušenek.
+function tenisTrenink() {
+  stopHry();
+  stopHry = hrajTenis({ trenink: true, konec: v => setTimeout(() => {
+    obrazovka(`<section class="stranka konec">${maskot(130, v.vyhra ? 'mrk' : 'hmm')}<h1>${v.vyhra ? 'Vyhráno! 🏓' : 'Počítač vyhrál'}</h1>
+      <p class="hlaska">${v.ja} : ${v.souper}</p><p class="drobne">V tréninku se sušenky nedávají – za ty si zahraj s kamarádem.</p>
+      <button class="btn velke" id="znovu">Znovu</button><a class="odkaz" href="#/battle">Zpět do Battle</a></section>`, { bezListy: true });
+    $('#znovu').onclick = tenisTrenink;
+  }, 1200) });
 }
 
 // Double samotně: bez sušenek (aby se nedaly nahánět), jen osobní rekord.
@@ -611,7 +626,9 @@ const HRY = {
   kviz: { nazev: 'Kvíz', ikona: '⚔️', popis: 'Stejné otázky, kdo víc' },
   double: { nazev: 'Double', ikona: '👀', popis: 'Najdi shodu na kartách · 60 s', odmena: { v: 6, r: 3, p: 2 } },
   dama: { nazev: 'Dáma', ikona: '🍪', popis: 'Sušenky na šachovnici, táhnete na střídačku', odmena: { v: 5, r: 3, p: 1 } },
+  tenis: { nazev: 'Sušenkový tenis', ikona: '🏓', popis: 'Odpinkávejte si sušenku – živě, oba naráz', odmena: { v: 5, r: 3, p: 1 } },
 };
+const jenPoCili = typ => typ === 'dama' || typ === 'tenis'; // hry bez učení – vyzvat až po splnění denního cíle
 const odmenaBattlu = b => (b.typ && b.typ !== 'kviz' ? HRY[b.typ].odmena : (DELKY.find(d => d.n === b.ulohy.length) || DELKY[0]).odmena);
 const stranaDamy = (b, id) => (b.hraci[0] === id ? 'a' : 'b');
 const damaNaTahu = (b, id) => b.typ === 'dama' && b.dama && !b.dama.v && b.dama.t === stranaDamy(b, id);
@@ -775,7 +792,7 @@ function onlineSekce(x) {
           <small>${tah ? 'Jsi na tahu!' : `Na tahu je ${jmeno(k)}`}</small></div>
           <button class="btn${tah ? '' : ' vedlejsi'}" data-hrat="${b.id}">${tah ? 'Táhnout' : 'Deska'}</button></div>`; }
       return `<div class="vyzva"><span class="avatar velky">${av(k, 60)}</span><div><b>${odMe ? `Tvoje výzva · ${jmeno(k)}` : `${jmeno(k)} ${H.rod('[tě vyzval|tě vyzvala]', k)}!`}</b>
-        <span class="vyzva-en">${esc(vyzva(b)[0])}</span><small>${esc(vyzva(b)[1])} · ${b.typ === 'double' ? 'Double 👀' : (DELKY.find(d => d.n === b.ulohy.length) || { nazev: b.ulohy.length + ' otázek' }).nazev}</small></div>
+        <span class="vyzva-en">${esc(vyzva(b)[0])}</span><small>${esc(vyzva(b)[1])} · ${b.typ === 'tenis' ? 'Sušenkový tenis 🏓 · živě' : b.typ === 'double' ? 'Double 👀' : (DELKY.find(d => d.n === b.ulohy.length) || { nazev: b.ulohy.length + ' otázek' }).nazev}</small></div>
         <button class="btn" data-hrat="${b.id}">Hrát</button>${zavrit(b)}</div>`; }).join('')}` : ''}
     ${cekam.length ? `<div class="historie">${cekam.map(b => { const k = kamaradka(souperkaId(b, x.id)); const st = mojeVysl(b, k.id);
       return `<div class="h-radek"><span>${st.odpovezeno ? `${jmeno(k)} právě hraje 🔥` : `Čeká se, až zahraje ${jmeno(k)}`}</span><small>ty ⚡ ${mojeVysl(b, x.id).body}</small>${b.hraci[0] === x.id ? `<button class="zavrit-vyzvu" data-zrusit="${b.id}" aria-label="Zavřít">✕</button>` : ''}</div>`; }).join('')}</div>` : ''}
@@ -823,25 +840,27 @@ function napojOnlineSekci(x) {
 let zvolenaHra = 'kviz';
 function vybratVyzvu(x, k, typ) {
   if (typ) zvolenaHra = typ;
-  const damaZamcena = !hraOdemcena(x);
+  const zamceno = typ0 => jenPoCili(typ0) && !hraOdemcena(x);
   obrazovka(`<section class="stranka">${zpet('#/battle')}
     <div class="vyzva-hlava"><span class="avatar obri">${postavicka(k.vzhled, 120)}</span><h1>Nová výzva ⚔️</h1><p class="titul">Soupeř: ${jmeno(k)}</p></div>
     <h3>Co budete hrát?</h3>
-    <div class="delky hry-volba">${Object.entries(HRY).map(([id, h]) => `<button class="delka hra-typ${id === zvolenaHra ? ' on' : ''}${id === 'dama' && damaZamcena ? ' zamcena' : ''}" data-typ="${id}">
-      <b>${h.ikona} ${h.nazev}</b><small>${id === 'dama' && damaZamcena ? '🔒 po splnění dnešního cíle' : h.popis}</small></button>`).join('')}</div>
-    ${zvolenaHra === 'kviz' ? `<h3>Jak dlouhý?</h3>${volbaDelky()}` : `<p class="drobne">${zvolenaHra === 'dama'
-      ? `Hrajete na střídačku, každý na svém mobilu – klidně i během dne. Začínáš ty (světlé sušenky). Výhra +${HRY.dama.odmena.v} 🍪.`
-      : `Oba dostanete stejné karty a máte 60 vteřin. Kdo najde víc shod, vyhraje. Výhra +${HRY.double.odmena.v} 🍪.`}</p>`}
+    <div class="delky hry-volba">${Object.entries(HRY).map(([id, h]) => `<button class="delka hra-typ${id === zvolenaHra ? ' on' : ''}${zamceno(id) ? ' zamcena' : ''}" data-typ="${id}">
+      <b>${h.ikona} ${h.nazev}</b><small>${zamceno(id) ? '🔒 po splnění dnešního cíle' : h.popis}</small></button>`).join('')}</div>
+    ${zvolenaHra === 'kviz' ? `<h3>Jak dlouhý?</h3>${volbaDelky()}` : `<p class="drobne">${{
+      dama: `Hrajete na střídačku, každý na svém mobilu – klidně i během dne. Začínáš ty (světlé sušenky). Výhra +${HRY.dama.odmena.v} 🍪.`,
+      double: `Oba dostanete stejné karty a máte 60 vteřin. Kdo najde víc shod, vyhraje. Výhra +${HRY.double.odmena.v} 🍪.`,
+      tenis: `Hraje se živě – kamarád musí mít hru otevřenou ve stejnou chvíli (domluvte se). Do 5 bodů. Výhra +${HRY.tenis.odmena.v} 🍪.`,
+    }[zvolenaHra]}</p>`}
     <h3>Hláška pro soupeře</h3>
     <div class="seznam">${VYZVY.map(([en, cz], i) => `<button class="moznost hlaska-vyzvy" data-i="${i}"><b>${esc(en)}</b><small>${esc(cz)}</small></button>`).join('')}</div>
   </section>`, { bezListy: true });
   napojVolbuDelky();
   $$('.hra-typ').forEach(b => (b.onclick = () => {
-    if (b.dataset.typ === 'dama' && damaZamcena) return toast('Dámu odemkneš splněním dnešních minut učení 💪');
+    if (zamceno(b.dataset.typ)) return toast('Tuhle hru odemkneš splněním dnešních minut učení 💪');
     zvolenaHra = b.dataset.typ; const app = document.getElementById('app'), top = app.scrollTop; vybratVyzvu(x, k); app.scrollTop = top;
   }));
   $$('.hlaska-vyzvy').forEach(b => (b.onclick = async () => {
-    if (zvolenaHra === 'dama' && damaZamcena) return toast('Dámu odemkneš splněním dnešních minut učení 💪');
+    if (zamceno(zvolenaHra)) return toast('Tuhle hru odemkneš splněním dnešních minut učení 💪');
     b.disabled = true;
     try {
       let ulohy = [], navic = {};
@@ -860,6 +879,11 @@ function hrajOnline(x, b) {
   if (b.typ === 'dama') {
     stopHry();
     stopHry = hrajDamu({ b, ja: stranaDamy(b, x.id), mojeId: x.id, souperId: sid, ja_profil: x, souper: k });
+    return;
+  }
+  if (b.typ === 'tenis') {
+    stopHry();
+    stopHry = hrajTenis({ b, ja: stranaDamy(b, x.id), mojeId: x.id, souperId: sid, souperJmeno: k.prezdivka, konec: () => setTimeout(() => jdi('#/battle'), 1500) });
     return;
   }
   if (b.typ === 'double') {

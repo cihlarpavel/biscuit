@@ -114,7 +114,7 @@ export async function zapisDamu(battleId, stav, konec = null) {
   await f.updateDoc(f.doc(db, 'battly', battleId), ...pole);
 }
 
-const zBattlu = d => { const x = d.data(); return { id: d.id, ...x, typ: x.typ || 'kviz', ulohy: JSON.parse(x.ulohy || '[]'), dama: x.vysledky?.dama ? JSON.parse(x.vysledky.dama) : null, vytvoreno: x.vytvoreno?.toMillis?.() || Date.now() }; };
+const zBattlu = d => { const x = d.data(); return { id: d.id, ...x, typ: x.typ || 'kviz', ulohy: JSON.parse(x.ulohy || '[]'), dama: x.vysledky?.dama ? JSON.parse(x.vysledky.dama) : null, tenis: x.vysledky?.tenis ? JSON.parse(x.vysledky.tenis) : null, vytvoreno: x.vytvoreno?.toMillis?.() || Date.now() }; };
 
 // Všechny battly profilu p (nejnovější první).
 export function sledujBattly(p, cb) {
@@ -141,6 +141,18 @@ export function sledujBattle(id, cb) {
 export async function zrusBattle(battleId, stav = 'zruseno') {
   const { db, f } = await pripoj();
   await f.updateDoc(f.doc(db, 'battly', battleId), 'stav', stav);
+}
+
+// Tenis: stav míčku a skóre (vysledky.tenis, JSON) a „jsem u stolu“ (vysledky.tenisPing_a/b).
+export async function zapisTenis(battleId, stav, konec = null) {
+  const { db, f } = await pripoj();
+  const pole = [new f.FieldPath('vysledky', 'tenis'), JSON.stringify(stav)];
+  if (konec) { for (const [id, v] of Object.entries(konec)) pole.push(new f.FieldPath('vysledky', id), v); pole.push('stav', 'hotovo'); }
+  await f.updateDoc(f.doc(db, 'battly', battleId), ...pole);
+}
+export async function zapisTenisPing(battleId, strana) {
+  const { db, f } = await pripoj();
+  await f.updateDoc(f.doc(db, 'battly', battleId), new f.FieldPath('vysledky', 'tenisPing_' + strana), Date.now());
 }
 
 export async function zapisPrubeh(battleId, hracId, stav, oboHotovo = false) {

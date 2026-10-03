@@ -705,3 +705,11 @@ body.noc .vec .cena.mas { color: #7fd8c4; }
 body.noc .zavrit-vyzvu { background: rgba(255, 255, 255, .1); }
 .odmitnout { flex: none; border: 0; background: none; color: var(--tlumene); font-weight: 800; font-size: 13px; text-decoration: underline; margin-left: 4px; padding: 6px 2px; }
 .h-radek.odmitnuta { opacity: .85; }
+
+/* ---------- Sušenkový tenis ---------- */
+.hra.tenis { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 16px 20px; }
+.hra.tenis .hra-hlava { display: flex; align-items: center; gap: 10px; width: 100%; max-width: 420px; }
+.tn-nadpis { flex: 1; font-weight: 800; font-size: 20px; }
+.tn-nadpis small { display: block; font-size: 12px; color: var(--tlumene); font-weight: 700; }
+#tn-platno { width: min(88vw, 360px); max-height: 72vh; border-radius: 18px; touch-action: none; box-shadow: var(--stin); }
+.tn-pokyn { font-size: 12px; color: var(--tlumene); text-align: center; margin: 0; }
