@@ -480,7 +480,7 @@ function obchod() {
         ${veci.map(v => `<button class="vec${zkouska[kat.id] === v.id ? ' on' : ''}${maVec(x, v) ? '' : ' cizi'}" data-v="${v.id}">
           ${postavicka({ ...x.vzhled, [kat.id]: v.id }, 74, kat.hlava ? 'hlava' : 'cela')}
           <small>${esc(v.nazev)}</small>
-          ${maVec(x, v) ? '' : `<span class="cena">${ikS('susenka', 16)} ${v.cena}</span>`}
+          ${!maVec(x, v) ? `<span class="cena">${ikS('susenka', 16)} ${v.cena}</span>` : v.cena ? '<span class="cena mas">✓ Máš</span>' : ''}
           ${v.cena ? `<span class="vzacnost" style="color:${vzacnost(v.cena).barva}">${vzacnost(v.cena).nazev}</span>` : ''}</button>`).join('')}
       </div>
       ${nekoupena ? `<div class="satnik-lista"><button class="btn velke" id="koupit">${x.susenky >= nekoupena.cena ? `Koupit ${esc(nekoupena.nazev)} za ${ikS('susenka', 24)} ${nekoupena.cena}` : `Chybí ti ${ikS('susenka', 24)} ${nekoupena.cena - x.susenky}`}</button></div>` : ''}

@@ -691,3 +691,6 @@ body.noc .dbl-cas, body.noc .dbl-body { background: var(--karta); }
 .hra-karta > .btn, .hra-karta .hra-tlacitka { grid-column: 2; grid-row: 1 / span 2; }
 .hra-tlacitka { display: flex; flex-direction: column; gap: 6px; }
 body.noc .hra-karta { background: var(--karta); }
+
+.vec .cena.mas { color: #2e9c84; }
+body.noc .vec .cena.mas { color: #7fd8c4; }
