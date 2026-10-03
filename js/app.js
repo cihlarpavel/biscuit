@@ -747,12 +747,18 @@ function ukazVysledek() {
 
 function onlineSekce(x) {
   if (online.chyba) return `<div class="prazdne"><p>Kamarádi se teď nedají načíst. Jsi připojená k internetu?</p></div>`;
-  const hrat = online.battly.filter(b => !mojeVysl(b, x.id).hotovo);
+  // Rozehrané dámy mají vlastní sekci, ať se nepletou s kvízy a Double (výzvy na jedno kolo).
+  const damy = online.battly.filter(b => b.typ === 'dama' && !mojeVysl(b, x.id).hotovo);
+  const hrat = online.battly.filter(b => b.typ !== 'dama' && !mojeVysl(b, x.id).hotovo);
   const cekam = online.battly.filter(b => mojeVysl(b, x.id).hotovo && !oboHotovo(b));
   const hotove = online.battly.filter(oboHotovo);
   const skore = id => { const z = { v: 0, p: 0 }; hotove.filter(b => b.hraci.includes(id)).forEach(b => { const a = mojeVysl(b, x.id).body, o = mojeVysl(b, id).body; if (a > o) z.v++; else if (a < o) z.p++; }); return z; };
   const vyzva = b => VYZVY[b.hlaska] || VYZVY[0];
   return `
+    ${damy.length ? `<h2>Rozehraná dáma 🍪</h2>${damy.map(b => { const k = kamaradka(souperkaId(b, x.id)); const tah = damaNaTahu(b, x.id);
+      return `<div class="vyzva dama-radek${tah ? ' na-tahu' : ''}"><span class="avatar velky">${av(k, 60)}</span><div><b>Dáma · ${jmeno(k)}</b>
+        <small>${tah ? 'Jsi na tahu!' : `Na tahu je ${jmeno(k)}`}</small></div>
+        <button class="btn" data-hrat="${b.id}">${tah ? 'Táhnout' : 'Otevřít desku'}</button></div>`; }).join('')}` : ''}
     ${hrat.length ? `<h2>Výzvy pro tebe</h2>${hrat.map(b => { const k = kamaradka(souperkaId(b, x.id)); const odMe = b.hraci[0] === x.id;
       if (b.typ === 'dama') { const tah = damaNaTahu(b, x.id);
         return `<div class="vyzva"><span class="avatar velky">${av(k, 60)}</span><div><b>Dáma 🍪 · ${jmeno(k)}</b>

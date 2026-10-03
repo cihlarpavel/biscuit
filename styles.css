@@ -694,3 +694,6 @@ body.noc .hra-karta { background: var(--karta); }
 
 .vec .cena.mas { color: #2e9c84; }
 body.noc .vec .cena.mas { color: #7fd8c4; }
+
+.vyzva.dama-radek { border: 3px solid #c98d5a; }
+.vyzva.dama-radek.na-tahu { border-color: var(--ruzova); }
