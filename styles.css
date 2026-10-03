@@ -537,7 +537,6 @@ body.noc .kol-text .splneno-text { color: #7fd8c4; }
 .hra-info { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 6px 0; }
 .hra-info span { background: #fff var(--papir); border: 2.5px solid #fff; box-shadow: var(--stin-papir); padding: 6px 12px; border-radius: 99px; font-weight: 800; font-size: 14px; }
 .hra-platno { position: fixed; inset: 0; background: linear-gradient(180deg, #bfe6ff 0%, #ffe3f1 70%, #fff4dc 100%); }
-.hra-platno::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 26px; background: #9be08a; border-top: 3px solid #3b2a3f; }
 .hra-platno canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; z-index: 1; }
 .hra-hud { position: absolute; z-index: 2; top: calc(12px + env(safe-area-inset-top)); left: 60px; right: 12px; display: flex; gap: 8px; justify-content: flex-end; pointer-events: none; }
 .hra-hud .zivoty { display: inline-flex; align-items: center; gap: 1px; }
