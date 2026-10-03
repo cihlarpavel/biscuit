@@ -661,7 +661,7 @@ body.noc .dbl-cas, body.noc .dbl-body { background: var(--karta); }
 .dm-hrac { display: flex; align-items: center; gap: 8px; width: min(92vw, 380px); font-size: 15px; }
 .dm-hrac b { flex: 1; }
 .dm-hrac span { display: inline-flex; align-items: center; gap: 2px; font-weight: 800; }
-.dm-hrac span .dm-kamen { width: 22px; height: 26px; }
+.dm-hrac span .dm-kamen { width: 22px; height: 22px; }
 /* Pole jsou vždy čtvercová (aspect-ratio na poli) – jinak se na iPhonu prázdné řady smrskly podle obsahu. */
 .dm-deska { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); grid-auto-rows: auto; width: min(92vw, 380px); border-radius: 14px; overflow: hidden;
   border: 5px solid #8a5a3c; box-shadow: var(--stin); }
@@ -674,6 +674,7 @@ body.noc .dbl-cas, body.noc .dbl-body { background: var(--karta); }
 .dm-pole.musi .dm-kamen { animation: dmMusi 1s ease-in-out infinite; }
 @keyframes dmMusi { 50% { transform: scale(1.12); filter: drop-shadow(0 0 5px #ffd34d); } }
 .dm-kamen { width: 88%; height: 88%; display: block; }
+.dm-kamen.dama { width: 96%; height: 96%; filter: drop-shadow(0 0 4px rgba(255, 211, 77, .8)); }
 .dm-stav { font-weight: 800; font-size: 18px; margin: 4px 0; text-align: center; }
 .dm-stav.tah { color: var(--ruzova); }
 .hry-volba .zamcena { opacity: .55; }
@@ -702,3 +703,5 @@ body.noc .vec .cena.mas { color: #7fd8c4; }
 .zavrit-vyzvu { flex: none; width: 30px; height: 30px; border-radius: 50%; border: 0; background: rgba(150, 120, 170, .15); color: var(--tlumene); font-size: 14px; font-weight: 800; margin-left: 6px; }
 .h-radek .zavrit-vyzvu { width: 26px; height: 26px; font-size: 12px; }
 body.noc .zavrit-vyzvu { background: rgba(255, 255, 255, .1); }
+.odmitnout { flex: none; border: 0; background: none; color: var(--tlumene); font-weight: 800; font-size: 13px; text-decoration: underline; margin-left: 4px; padding: 6px 2px; }
+.h-radek.odmitnuta { opacity: .85; }

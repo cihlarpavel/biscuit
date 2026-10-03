@@ -667,7 +667,7 @@ const oboHotovo = b => b.hraci.every(h => mojeVysl(b, h).hotovo);
 
 function odznakBattle() {
   const x = p();
-  const n = x ? online.battly.filter(b => (b.typ === 'dama' ? damaNaTahu(b, x.id) : !mojeVysl(b, x.id).hotovo)).length : 0;
+  const n = x ? online.battly.filter(b => b.stav !== 'odmitnuto' && (b.typ === 'dama' ? damaNaTahu(b, x.id) : !mojeVysl(b, x.id).hotovo)).length : 0;
   const tab = $('#tabs [data-tab="battle"]');
   if (tab) tab.dataset.pocet = n || '';
 }
@@ -748,17 +748,27 @@ function ukazVysledek() {
 function onlineSekce(x) {
   if (online.chyba) return `<div class="prazdne"><p>Kamarádi se teď nedají načíst. Jsi připojená k internetu?</p></div>`;
   // Rozehrané dámy mají vlastní sekci, ať se nepletou s kvízy a Double (výzvy na jedno kolo).
-  const damy = online.battly.filter(b => b.typ === 'dama' && !mojeVysl(b, x.id).hotovo);
-  const hrat = online.battly.filter(b => b.typ !== 'dama' && !mojeVysl(b, x.id).hotovo);
-  const cekam = online.battly.filter(b => mojeVysl(b, x.id).hotovo && !oboHotovo(b));
+  const odmitnute = online.battly.filter(b => b.stav === 'odmitnuto');
+  const aktivni = online.battly.filter(b => b.stav !== 'odmitnuto');
+  const damy = aktivni.filter(b => b.typ === 'dama' && !mojeVysl(b, x.id).hotovo);
+  const hrat = aktivni.filter(b => b.typ !== 'dama' && !mojeVysl(b, x.id).hotovo);
+  // Zakladatel výzvu zavře (✕), vyzvaný ji odmítne; dámu jen do svého prvního tahu (pak „Vzdát“ na desce).
+  const zavrit = b => {
+    if (b.hraci[0] === x.id) return `<button class="zavrit-vyzvu" data-zrusit="${b.id}" aria-label="Zavřít výzvu">✕</button>`;
+    if (b.typ === 'dama' && (b.dama?.n || 0) > 1) return '';
+    return `<button class="odmitnout" data-odmitnout="${b.id}">Odmítnout</button>`;
+  };
+  const cekam = online.battly.filter(b => b.stav !== 'odmitnuto' && mojeVysl(b, x.id).hotovo && !oboHotovo(b));
   const hotove = online.battly.filter(oboHotovo);
   const skore = id => { const z = { v: 0, p: 0 }; hotove.filter(b => b.hraci.includes(id)).forEach(b => { const a = mojeVysl(b, x.id).body, o = mojeVysl(b, id).body; if (a > o) z.v++; else if (a < o) z.p++; }); return z; };
   const vyzva = b => VYZVY[b.hlaska] || VYZVY[0];
   return `
+    ${odmitnute.length ? `<div class="historie">${odmitnute.map(b => { const k = kamaradka(souperkaId(b, x.id));
+      return `<div class="h-radek odmitnuta"><span>${jmeno(k)} ${H.rod('[odmítl|odmítla]', k)} tvoji výzvu (${HRY[b.typ]?.nazev || 'Kvíz'})</span><button class="zavrit-vyzvu" data-zrusit="${b.id}" aria-label="Schovat">✕</button></div>`; }).join('')}</div>` : ''}
     ${damy.length ? `<h2>Rozehraná dáma 🍪</h2>${damy.map(b => { const k = kamaradka(souperkaId(b, x.id)); const tah = damaNaTahu(b, x.id);
       return `<div class="vyzva dama-radek${tah ? ' na-tahu' : ''}"><span class="avatar velky">${av(k, 60)}</span><div><b>Dáma · ${jmeno(k)}</b>
         <small>${tah ? 'Jsi na tahu!' : `Na tahu je ${jmeno(k)}`}</small></div>
-        <button class="btn" data-hrat="${b.id}">${tah ? 'Táhnout' : 'Otevřít desku'}</button><button class="zavrit-vyzvu" data-zrusit="${b.id}" aria-label="Zavřít hru">✕</button></div>`; }).join('')}` : ''}
+        <button class="btn" data-hrat="${b.id}">${tah ? 'Táhnout' : 'Otevřít desku'}</button>${zavrit(b)}</div>`; }).join('')}` : ''}
     ${hrat.length ? `<h2>Výzvy pro tebe</h2>${hrat.map(b => { const k = kamaradka(souperkaId(b, x.id)); const odMe = b.hraci[0] === x.id;
       if (b.typ === 'dama') { const tah = damaNaTahu(b, x.id);
         return `<div class="vyzva"><span class="avatar velky">${av(k, 60)}</span><div><b>Dáma 🍪 · ${jmeno(k)}</b>
@@ -766,9 +776,9 @@ function onlineSekce(x) {
           <button class="btn${tah ? '' : ' vedlejsi'}" data-hrat="${b.id}">${tah ? 'Táhnout' : 'Deska'}</button></div>`; }
       return `<div class="vyzva"><span class="avatar velky">${av(k, 60)}</span><div><b>${odMe ? `Tvoje výzva · ${jmeno(k)}` : `${jmeno(k)} ${H.rod('[tě vyzval|tě vyzvala]', k)}!`}</b>
         <span class="vyzva-en">${esc(vyzva(b)[0])}</span><small>${esc(vyzva(b)[1])} · ${b.typ === 'double' ? 'Double 👀' : (DELKY.find(d => d.n === b.ulohy.length) || { nazev: b.ulohy.length + ' otázek' }).nazev}</small></div>
-        <button class="btn" data-hrat="${b.id}">Hrát</button><button class="zavrit-vyzvu" data-zrusit="${b.id}" aria-label="Zavřít výzvu">✕</button></div>`; }).join('')}` : ''}
+        <button class="btn" data-hrat="${b.id}">Hrát</button>${zavrit(b)}</div>`; }).join('')}` : ''}
     ${cekam.length ? `<div class="historie">${cekam.map(b => { const k = kamaradka(souperkaId(b, x.id)); const st = mojeVysl(b, k.id);
-      return `<div class="h-radek"><span>${st.odpovezeno ? `${jmeno(k)} právě hraje 🔥` : `Čeká se, až zahraje ${jmeno(k)}`}</span><small>ty ⚡ ${mojeVysl(b, x.id).body}</small><button class="zavrit-vyzvu" data-zrusit="${b.id}" aria-label="Zavřít">✕</button></div>`; }).join('')}</div>` : ''}
+      return `<div class="h-radek"><span>${st.odpovezeno ? `${jmeno(k)} právě hraje 🔥` : `Čeká se, až zahraje ${jmeno(k)}`}</span><small>ty ⚡ ${mojeVysl(b, x.id).body}</small>${b.hraci[0] === x.id ? `<button class="zavrit-vyzvu" data-zrusit="${b.id}" aria-label="Zavřít">✕</button>` : ''}</div>`; }).join('')}</div>` : ''}
     <h2>Kamarádi</h2>
     ${online.kamaradky.length ? `<div class="profily">${online.kamaradky.map(k => { const z = skore(k.id);
       return `<div class="profil-karta"><span class="avatar velky">${av(k, 70)}</span><b>${jmeno(k)}</b><small>${esc(H.titul(k.susenkyCelkem || 0, k))} · ${z.v}:${z.p}</small>
@@ -784,8 +794,14 @@ function onlineSekce(x) {
 function napojOnlineSekci(x) {
   if (!x.online || !O.nakonfigurovano()) return;
   $$('[data-hrat]').forEach(b => (b.onclick = () => hrajOnline(x, online.battly.find(v => v.id === b.dataset.hrat))));
+  $$('[data-odmitnout]').forEach(b => (b.onclick = async () => {
+    if (!confirm(H.rod('Odmítnout výzvu? Kamarád uvidí, že jsi ji [odmítl|odmítla].', x))) return;
+    b.disabled = true;
+    try { await O.zrusBattle(b.dataset.odmitnout, 'odmitnuto'); online.battly = online.battly.filter(v => v.id !== b.dataset.odmitnout); battle(); toast('Výzva odmítnutá'); }
+    catch { b.disabled = false; toast('Nepovedlo se – jsi online?'); }
+  }));
   $$('[data-zrusit]').forEach(b => (b.onclick = async () => {
-    if (!confirm('Zavřít tuhle hru? Zmizí tobě i kamarádovi a nikdo za ni nedostane sušenky.')) return;
+    if (online.battly.find(v => v.id === b.dataset.zrusit)?.stav !== 'odmitnuto' && !confirm('Zavřít tuhle výzvu? Zmizí tobě i kamarádovi a nikdo za ni nedostane sušenky.')) return;
     b.disabled = true;
     try { await O.zrusBattle(b.dataset.zrusit); online.battly = online.battly.filter(v => v.id !== b.dataset.zrusit); battle(); toast('Hra zavřená'); }
     catch { b.disabled = false; toast('Nepovedlo se – jsi online?'); }

@@ -64,12 +64,18 @@ export function hrajDouble({ data, souperJmeno, konec }) {
 // ================= Dáma =================
 const BEZ_BRANI_REMIZA = 50; // tolik tahů bez sebrání = remíza (aby dvě dámy nehonily věčně)
 
+// Kámen = sušenka; dáma = větší sušenka se zlatým okrajem a zlatou korunkou uprostřed.
 const kamen = (k) => {
   const svetly = k.toLowerCase() === 'a', dama = k === k.toUpperCase();
   const [tl, cips] = svetly ? ['#f3cf8e', '#8a5a3c'] : ['#7a4a2e', '#fff4e0'];
-  const kolo = (dy) => `<circle cx="20" cy="${20 + dy}" r="15" fill="${tl}" stroke="#1f1a24" stroke-width="2.4"/>
-    ${[[-6, -4], [5, -6], [0, 5], [7, 4], [-7, 6]].map(([x, y]) => `<circle cx="${20 + x}" cy="${20 + dy + y}" r="2" fill="${cips}"/>`).join('')}`;
-  return `<svg viewBox="0 -6 40 48" class="dm-kamen${dama ? ' dama' : ''}">${dama ? kolo(6) + kolo(-1) + '<text x="20" y="4" font-size="13" text-anchor="middle">👑</text>' : kolo(2)}</svg>`;
+  if (!dama) return `<svg viewBox="0 0 40 40" class="dm-kamen"><circle cx="20" cy="20" r="15" fill="${tl}" stroke="#1f1a24" stroke-width="2.4"/>
+    ${[[-6, -4], [5, -6], [0, 5], [7, 4], [-7, 6]].map(([x, y]) => `<circle cx="${20 + x}" cy="${20 + y}" r="2" fill="${cips}"/>`).join('')}</svg>`;
+  return `<svg viewBox="0 0 40 40" class="dm-kamen dama">
+    <circle cx="20" cy="20" r="18.5" fill="#ffd34d" stroke="#1f1a24" stroke-width="2"/>
+    <circle cx="20" cy="20" r="14.5" fill="${tl}" stroke="#b8860b" stroke-width="1.6"/>
+    ${[[-8, 6], [8, 7], [-9, -3], [9, -4]].map(([x, y]) => `<circle cx="${20 + x}" cy="${20 + y}" r="1.8" fill="${cips}"/>`).join('')}
+    <path d="M11.5 23 L13 14 L17 18.5 L20 11.5 L23 18.5 L27 14 L28.5 23 Z" fill="#ffd34d" stroke="#1f1a24" stroke-width="1.6" stroke-linejoin="round"/>
+    <circle cx="20" cy="11.2" r="1.5" fill="#e8352b"/><path d="M14 20.5 h12" stroke="#e0a800" stroke-width="1.2"/></svg>`;
 };
 
 // ja = 'a' | 'b'; b = battle; vlastni/soupeř = profily pro avatary; konecHry() = odchod zpět.
