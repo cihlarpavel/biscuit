@@ -1,5 +1,5 @@
 // „Chytej sušenky“ – hra za odměnu. Krabička dole se ovládá prstem, shora padají sušenky.
-// Sušenka 1 bod, zlatá 5 bodů (když spadne na dno, bere půl života), brokolice bere celý život,
+// Sušenka 1 bod (propadne = −½ života), zlatá 5 bodů (propadne = −1 život), chycená brokolice −1 život,
 // vzácné srdíčko dá život navíc (i nad 3, nejvýš ZIVOTY_MAX), šnek na chvíli všechno zpomalí. Každých 15 bodů nový level.
 // Ztráta života je vidět i koutkem oka: červené okraje obrazovky, velké „−1 ❤️“ a zatřesení srdíček.
 // Hra běží na <canvas> v rozlišení displeje (ostrá i na Retině).
@@ -118,9 +118,10 @@ export function spust(platno, { zbyva, priTiku = () => {}, konec }) {
   function text(t, x, y, barva, velky = false) { efekty.push({ t, x, y, barva, zivot: velky ? 1.4 : 1, velky }); }
 
   // Ztráta života: červené okraje, velký nápis uprostřed, zatřesení srdíček v liště. Vrací true, když je konec.
-  function uber(kolik, x, y, duvod) {
-    if (ochrana > 0) return false; // krátce po zásahu další neubírá
-    ochrana = .8;
+  // chranit = krátká ochrana po zásahu brokolicí (dvě brokolice těsně za sebou neberou dva životy); propadlé sušenky ubírají vždy.
+  function uber(kolik, x, y, duvod, chranit = false) {
+    if (chranit && ochrana > 0) return false;
+    if (chranit) ochrana = .8;
     zivoty = Math.max(0, zivoty - kolik);
     serie = 0; zasah = .7; otres = .35;
     text(duvod, x, y, kolik >= 1 ? '#3fa34d' : '#e0a800');
@@ -175,7 +176,7 @@ export function spust(platno, { zbyva, priTiku = () => {}, konec }) {
       const chycena = v.y + vel * .4 > kY && v.y < kY + 26 && Math.abs(v.x - krab.x) < krab.sirka / 2 + okraj;
       if (chycena) {
         veci.splice(i, 1);
-        if (v.druh === 'brokolice') { if (uber(1, v.x, kY - 10, 'Fuj, brokolice!')) return konecHry(); }
+        if (v.druh === 'brokolice') { if (uber(1, v.x, kY - 10, 'Fuj, brokolice!', true)) return konecHry(); }
         else if (v.druh === 'snek') { zpomaleni = ZPOMALENI_S; text('Zpomalení 🐌', W / 2, H * .4, '#3b8fd9', true); }
         else if (v.druh === 'srdce') {
           zivoty = Math.min(ZIVOTY_MAX, zivoty + 1);
@@ -194,8 +195,9 @@ export function spust(platno, { zbyva, priTiku = () => {}, konec }) {
         }
       } else if (v.y > H + S) {
         veci.splice(i, 1);
-        if (v.druh === 'zlata') { if (uber(.5, v.x, H - DOLE - 30, 'Zlatá utekla!')) return konecHry(); }
-        else if (v.druh === 'susenka') serie = 0;
+        // propadlá sušenka −½ srdíčka, zlatá −1 (Pavel 4. 10. 2026)
+        if (v.druh === 'zlata') { if (uber(1, v.x, H - DOLE - 30, 'Zlatá utekla!')) return konecHry(); }
+        else if (v.druh === 'susenka') { if (uber(.5, v.x, H - DOLE - 30, 'Utekla!')) return konecHry(); }
       }
     }
     for (let i = efekty.length - 1; i >= 0; i--) { const e = efekty[i]; e.y -= 50 * dt; e.zivot -= dt * 1.1; if (e.zivot <= 0) efekty.splice(i, 1); }
