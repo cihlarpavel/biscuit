@@ -681,3 +681,12 @@ body.noc .dbl-cas, body.noc .dbl-body { background: var(--karta); }
 /* Text a tlačítko na kartě Dnešní lekce se nesmí roztáhnout přes okraj karty. */
 .dnes-text { min-width: 0; }
 .dnes-text .btn { max-width: 100%; }
+
+/* Přehled her v Battle */
+.hry-prehled { display: grid; gap: 10px; margin-bottom: 8px; }
+.hra-karta { background: #fff; border-radius: 18px; padding: 12px 14px; box-shadow: var(--stin); display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 2px 10px; }
+.hra-karta b { font-size: 17px; }
+.hra-karta small { grid-column: 1; color: var(--tlumene); font-size: 13px; }
+.hra-karta > .btn, .hra-karta .hra-tlacitka { grid-column: 2; grid-row: 1 / span 2; }
+.hra-tlacitka { display: flex; flex-direction: column; gap: 6px; }
+body.noc .hra-karta { background: var(--karta); }

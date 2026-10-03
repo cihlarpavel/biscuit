@@ -312,10 +312,47 @@ function battle() {
   const x = p();
   obrazovka(`${hlavicka(x)}<section class="stranka">
     <h1 class="s-ikonou">${ik('tab-battle', 44)} Battle</h1>
-    ${x.online && O.nakonfigurovano() ? onlineSekce(x) : `<div class="prazdne">${maskot(90, 'hmm')}<p>Battle se hraje s kamarádkou nebo kamarádem, každý na svém mobilu. Ať ti rodič zapne <b>Kamarádi online</b> v sekci Pro rodiče (Já → Pro rodiče).</p></div>`}
+    ${hrySekce(x)}
+    ${x.online && O.nakonfigurovano() ? onlineSekce(x) : `<div class="prazdne kamaradi-info">${maskot(90, 'hmm')}<p>S kamarádem se hraje s kamarádkou nebo kamarádem, každý na svém mobilu. Ať ti rodič zapne <b>Kamarádi online</b> v sekci Pro rodiče (Já → Pro rodiče).</p></div>`}
   </section>`, { tab: 'battle' });
   vlozSchovanou('battle');
   napojOnlineSekci(x);
+  $('#double-trenink')?.addEventListener('click', () => doubleTrenink(x));
+  $$('[data-jak-hrat]').forEach(b => (b.onclick = () => {
+    const prvni = online.kamaradky[0];
+    if (x.online && prvni) return vybratVyzvu(x, prvni, b.dataset.jakHrat);
+    document.querySelector('.kamaradi-info, .prazdne, .pridat-kod')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    toast(x.online ? 'Nejdřív si přidej kamaráda kódem 👇' : 'Na hru s kamarádem musí rodič zapnout Kamarádi online.');
+  }));
+}
+
+// Přehled her nahoře v Battle: ať je vidět, co všechno se dá hrát. Double jde i samotně jako trénink.
+function hrySekce(x) {
+  const rekord = x.doubleRekord || 0;
+  return `<h2>Hry</h2><div class="hry-prehled">
+    <div class="hra-karta"><b>⚔️ Kvíz</b><small>Stejné otázky pro oba, kdo víc</small><button class="btn maly vedlejsi" data-jak-hrat="kviz">S kamarádem</button></div>
+    <div class="hra-karta"><b>👀 Double</b><small>Najdi shodu: obrázek, anglicky, česky${rekord ? ` · rekord ${rekord}` : ''}</small>
+      <div class="hra-tlacitka"><button class="btn maly" id="double-trenink">Trénink</button><button class="btn maly vedlejsi" data-jak-hrat="double">S kamarádem</button></div></div>
+    <div class="hra-karta"><b>🍪 Dáma</b><small>Sušenky na šachovnici, na střídačku${hraOdemcena(x) ? '' : ' · 🔒 po splnění dnešního cíle'}</small><button class="btn maly vedlejsi" data-jak-hrat="dama">S kamarádem</button></div>
+  </div>`;
+}
+
+// Double samotně: bez sušenek (aby se nedaly nahánět), jen osobní rekord.
+function doubleTrenink(x) {
+  let data;
+  try { data = sestavDouble(odemcene(x).flatMap(polozky)); } catch { return toast('Na Double je potřeba víc slovíček s obrázkem.'); }
+  nastavUceni(true);
+  hrajDouble({ data, souperJmeno: 'trénink', konec: body => {
+    nastavUceni(false);
+    const novy = body > (x.doubleRekord || 0);
+    if (novy) { x.doubleRekord = body; S.uloz(); }
+    obrazovka(`<section class="stranka konec">${maskot(130, body ? 'mrk' : 'hmm')}<h1>${body} ${body === 1 ? 'shoda' : body < 5 && body > 1 ? 'shody' : 'shod'}</h1>
+      <p class="hlaska">${novy ? 'Nový rekord! 🏆' : `Rekord: ${x.doubleRekord || 0}`}</p>
+      <p class="drobne">V tréninku se sušenky nedávají – za ty si zahraj Double s kamarádem.</p>
+      <button class="btn velke" id="znovu">Znovu</button><a class="odkaz" href="#/battle">Zpět do Battle</a></section>`, { bezListy: true });
+    if (novy) { konfety(); zvukFanfara(); }
+    $('#znovu').onclick = () => doubleTrenink(x);
+  } });
 }
 
 // ---------- Žebříček ----------
